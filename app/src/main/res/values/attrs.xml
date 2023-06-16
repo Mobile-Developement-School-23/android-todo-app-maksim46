@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Other values-->
+    <attr name="support_separator" format="reference" />
+    <attr name="support_overlay" format="reference" />
+    <attr name="label_primary" format="reference" />
+    <attr name="label_secondary" format="reference" />
+    <attr name="label_tertiary" format="reference" />
+    <attr name="label_disable" format="reference" />
+    <attr name="color_red" format="reference" />
+    <attr name="color_green" format="reference" />
+    <attr name="color_blue" format="reference" />
+    <attr name="color_grey" format="reference" />
+    <attr name="color_greylight" format="reference" />
+    <attr name="color_white" format="reference" />
+    <attr name="back_primary" format="reference" />
+    <attr name="back_secondary" format="reference" />
+    <attr name="back_elevated" format="reference" />
+
+</resources>

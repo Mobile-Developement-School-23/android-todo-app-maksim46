@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/parent1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="50dp">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cv_priorityPopup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="15dp"
+        android:dropDownHeight="200dp"
+        android:paddingBottom="15dp"
+        app:cardElevation="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="@color/L_label_tertiary"
+        app:strokeWidth="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/menu_priority_standart1"
+                style="@style/TextView.Body.Grey.Small"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="1dp"
+                android:layout_marginTop="17dp"
+                android:layout_marginBottom="17dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="80dp"
+                android:text="@string/priority_standart" />
+
+
+            <TextView
+                android:id="@+id/menu_priority_low1"
+                style="@style/TextView.Body.Grey.Small"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="1dp"
+                android:layout_marginTop="17dp"
+                android:layout_marginBottom="17dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="80dp"
+                android:text="@string/priority_low" />
+
+
+            <TextView
+                android:id="@+id/menu_priority_hight1"
+                style="@style/TextView.Body.Red"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="1dp"
+                android:layout_marginTop="17dp"
+                android:layout_marginBottom="17dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="80dp"
+                android:text="@string/priority_hight" />
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

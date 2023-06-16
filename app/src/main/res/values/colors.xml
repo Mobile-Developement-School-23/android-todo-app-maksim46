@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <!-- White. -->
+    <color name="L_ciss_separator">#33000000</color>
+    <color name="L_support_separator">#33000000</color>
+    <color name="L_support_overlay">#0F000000</color>
+    <color name="L_label_primary">#000000</color>
+    <color name="L_label_secondary">#99000000</color>
+    <color name="L_label_tertiary">#4D000000</color>
+    <color name="L_label_disable">#26000000</color>
+    <color name="L_color_red">#FF3B30</color>
+    <color name="L_color_green">#34C759</color>
+    <color name="L_color_Blue">#007AFF</color>
+    <color name="L_color_grey">#8E8E93</color>
+    <color name="L_color_greylight">#D1D1D6</color>
+    <color name="L_color_white">#FFFFFF</color>
+    <color name="L_back_primary">#F7F6F2</color>
+    <color name="L_back_secondary">#FFFFFF</color>
+    <color name="L_back_elevated">#FFFFFF</color>
+    <!-- Black -->
+    <color name="B_support_separator">#33FFFFFF</color>
+    <color name="B_support_overlay">#52000000</color>
+    <color name="B_label_primary">#FFFFFF</color>
+    <color name="B_label_secondary">#99FFFFFF</color>
+    <color name="B_label_tertiary">#66FFFFFF</color>
+    <color name="B_label_disable">#26FFFFFF</color>
+    <color name="B_color_red">#FF453A</color>
+    <color name="B_color_green">#32D74B</color>
+    <color name="B_color_Blue">#0A84FF</color>
+    <color name="B_color_grey">#8E8E93</color>
+    <color name="B_color_greylight">#48484A</color>
+    <color name="B_color_white">#FFFFFF</color>
+    <color name="B_back_primary">#161618</color>
+    <color name="B_back_secondary">#252528</color>
+    <color name="B_back_elevated">#3C3C3F</color>
+
+
+
+
+</resources>

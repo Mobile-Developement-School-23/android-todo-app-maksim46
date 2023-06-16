@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/roboto</item>
+        <item name="android:textColor">?attr/label_primary</item>
+    </style>
+
+    <style name="TextView.LargeTitle">
+        <item name="android:fontFamily">@font/roboto_bold</item>
+        <item name="android:textSize">40sp</item>
+        <item name="fontWeight">500</item>
+    </style>
+
+    <style name="TextView.SmallTitle">
+        <item name="android:fontFamily">@font/roboto_bold</item>
+        <item name="android:textSize">20sp</item>
+        <item name="fontWeight">500</item>
+    </style>
+
+    <style name="TextView.Subhead">
+        <item name="android:textSize">16sp</item>
+        <item name="fontWeight">400</item>
+        <item name="android:textColor">?attr/label_tertiary</item>
+    </style>
+
+    <style name="TextView.Body">
+        <item name="android:textSize">16sp</item>
+        <item name="fontWeight">400</item>
+    </style>
+
+    <style name="TextView.Body.Grey">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">?attr/label_tertiary</item>
+    </style>
+
+    <style name="TextView.Body.Grey.Small">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="TextView.Body.Grey.VerySmall">
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="TextView.Body.Disable">
+        <item name="android:textColor">?attr/label_disable</item>
+    </style>
+
+    <style name="TextView.Body.Red">
+        <item name="android:textColor">?attr/color_red</item>
+    </style>
+
+    <style name="TextView.Button">
+        <item name="android:textSize">14sp</item>
+        <item name="fontWeight">500</item>
+        <item name="android:textColor">?attr/color_blue</item>
+    </style>
+
+
+    <!-- CheckBox -->
+    <style name="CheckBoxStyle" parent="Theme.AppCompat.Light">
+        <item name="colorOnSurface">?attr/support_separator</item>
+        <item name="colorSecondary">?attr/color_green</item>
+        <item name="colorControlNormal">?attr/color_blue</item>
+        <item name="android:textSize">16sp</item>
+        <item name="fontWeight">500</item>
+        <item name="android:fontFamily">@font/roboto</item>
+    </style>
+
+
+    <!-- DataPickerDialog -->
+    <style name="MyDatePickerDialogTheme" parent="android:Theme.Material.Light.Dialog">
+        <item name="android:colorAccent">?attr/color_blue</item>
+        <item name="android:windowBackground">?attr/back_secondary</item>
+        <item name="android:textColorPrimary">?attr/label_primary</item>
+        <item name="android:textColorSecondary">?attr/label_tertiary</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/DatePickerTheme.ButtonBarButtonStyle</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/DatePickerTheme.ButtonBarButtonStyle</item>
+    </style>
+
+    <style name="DatePickerTheme.ButtonBarButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">?attr/color_blue</item>
+    </style>
+
+
+    <!-- DeadlineSwitch -->
+    <style name="MySwitchTheme" parent="Theme.ToDoApp">
+        <item name="colorSecondary">?attr/color_blue</item>
+    </style>
+
+    <!-- Buttons -->
+    <style name="MyButtonsTheme" parent="android:Theme.Material.Light.Dialog">
+        <item name="android:tint">?attr/label_primary</item>
+    </style>
+
+    <!-- InfoButton -->
+    <style name="MyBInfoButtonTheme" parent="android:Theme.Material.Light.Dialog">
+        <item name="android:tint">?attr/label_secondary</item>
+    </style>
+
+    <!-- DeleteButton -->
+    <style name="MyDeleteButtonTheme" parent="android:Theme.Material.Light.Dialog">
+        <item name="android:tint">?attr/color_red</item>
+    </style>
+
+    <!-- PopupAnimationActon -->
+        <style name="PopupAnimationActions" parent="android:Animation">
+          <item name="android:windowEnterAnimation">@anim/appears_action_in</item>
+          <item name="android:windowExitAnimation">@anim/disappears_action_out</item>
+      </style>
+
+    <!-- PopupAnimationInfo -->
+    <style name="PopupAnimationInfo" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/appears_info_in</item>
+        <item name="android:windowExitAnimation">@anim/disappears_info_out</item>
+    </style>
+
+    <!-- PopupAnimationPriority-->
+    <style name="PopupAnimationPriority" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/appears_priority_in</item>
+        <item name="android:windowExitAnimation">@anim/disappears_priority_out</item>
+    </style>
+
+
+
+</resources>

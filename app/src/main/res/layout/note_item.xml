@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools"
+    android:id="@+id/cl_noteItem"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:visibility="visible">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/groupForClick"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/checkBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="14dp"
+            android:theme="@style/CheckBoxStyle"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:srcCompat="@drawable/ic_unchecked" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/glVerical"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="55dp" />
+
+        <ImageView
+            android:id="@+id/iv_emergency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="14dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/glVerical"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_emergency_hight_flag" />
+
+        <TextView
+            android:id="@+id/tvNote"
+            style="@style/TextView.Body"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="12dp"
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:text="@string/note_tmp"
+            app:layout_constraintLeft_toRightOf="@+id/iv_emergency"
+            app:layout_constraintRight_toLeftOf="@+id/glEnd"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_goneMarginStart="6dp" />
+
+        <TextView
+            android:id="@+id/tvSubHeadDoneBefore"
+            style="@style/TextView.Body.Grey.VerySmall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="14dp"
+            android:text="@string/deadlineSubhead"
+            android:visibility="gone"
+            app:layout_constraintLeft_toLeftOf="@+id/tvNote"
+            app:layout_constraintTop_toBottomOf="@+id/tvNote"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/tvDoneBefore"
+            style="@style/TextView.Body.Grey.VerySmall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="14dp"
+            android:layout_marginStart="6dp"
+            tool:text="дата"
+            android:visibility="gone"
+            app:layout_constraintLeft_toRightOf="@+id/tvSubHeadDoneBefore"
+            app:layout_constraintTop_toBottomOf="@+id/tvNote"
+            app:layout_constraintBottom_toBottomOf="parent"
+             />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/glEnd"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="45dp" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/iv_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="18dp"
+        android:layout_marginBottom="14dp"
+        android:theme="@style/MyBInfoButtonTheme"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_info" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

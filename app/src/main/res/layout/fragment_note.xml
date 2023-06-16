@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/back_primary">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/containerAppBarPrimary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/devider0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/toolbar"
+            android:layout_width="0dp"
+            android:layout_height="76dp"
+            android:background="?attr/back_primary"
+            app:elevation="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/nest"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <ImageView
+            android:id="@+id/ib_close"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="22dp"
+            android:elevation="10dp"
+            android:theme="@style/MyButtonsTheme"
+            app:layout_constraintBottom_toBottomOf="@id/toolbar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/ic_baseline_close_24" />
+
+        <TextView
+            android:id="@+id/tv_save"
+            style="@style/TextView.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="22dp"
+            android:elevation="10dp"
+            android:text="@string/save_button"
+
+            app:layout_constraintBottom_toBottomOf="@id/toolbar"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_max="300dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cw_noteContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="10dp"
+                android:background="?attr/back_secondary"
+                app:cardCornerRadius="8dp"
+                app:layout_constraintBottom_toBottomOf="@+id/constraintNewNote"
+                app:layout_constraintEnd_toEndOf="@+id/constraintNewNote"
+                app:layout_constraintStart_toStartOf="@+id/constraintNewNote"
+                app:layout_constraintTop_toTopOf="@+id/constraintNewNote">
+
+                <EditText
+                    android:id="@+id/et_noteText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:background="@null"
+                    android:gravity="top"
+                    android:hint="@string/note_hint"
+                    android:inputType="textMultiLine"
+                    android:minLines="5"
+                    android:windowSoftInputMode="adjustResize"
+                    tools:text="NamewwwNvvvvvvvvvvvvvvvvvvvvvbar.AppBarLayout$Scrolld.mrial.appbar.AppBarLayout$Scrolld.material.appbar.AppBarLayout$Scrolld.material.appbar.AppBarLayout$Scrollvvvvvv" />
+
+
+            </androidx.cardview.widget.CardView>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/devider0"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/containerAppBarPrimary" />
+
+    <View
+        android:id="@+id/devider1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="84dp"
+        android:layout_marginEnd="16dp"
+        android:background="?attr/support_separator"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/devider0" />
+
+    <View
+        android:id="@+id/devider2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="96dp"
+        android:background="?attr/support_separator"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/devider1" />
+
+    <TextView
+        android:id="@+id/tv_priority"
+        style="@style/TextView.Body"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="40dp"
+
+        android:text="@string/priority"
+
+        app:layout_constraintBottom_toTopOf="@+id/devider1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_priority_value"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+
+        app:layout_constraintStart_toStartOf="@+id/tv_priority"
+        app:layout_constraintTop_toBottomOf="@+id/tv_priority"
+        tools:text="Нет" />
+
+    <TextView
+        android:id="@+id/tv_deadline"
+        style="@style/TextView.Body"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="60dp"
+        android:text="@string/deadline"
+        app:layout_constraintBottom_toTopOf="@+id/devider2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_deadline_value"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:clickable="true"
+        android:textColor="?attr/color_blue"
+        app:layout_constraintStart_toStartOf="@+id/tv_deadline"
+        app:layout_constraintTop_toBottomOf="@+id/tv_deadline"
+        tools:text="2 июня 2021" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/deadlineSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="36dp"
+        android:checked="true"
+        android:theme="@style/MySwitchTheme"
+        app:layout_constraintBottom_toTopOf="@+id/devider2"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/deleteGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="22dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/devider2">
+
+        <ImageView
+            android:id="@+id/ivTrash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_trash"
+            app:tint="?attr/label_disable" />
+
+        <TextView
+            android:id="@+id/delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            style="@style/TextView.Body.Disable"
+            android:text="@string/delete" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

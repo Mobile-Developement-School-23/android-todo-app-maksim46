@@ -1,0 +1,36 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.ToDoApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/purple_200</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondaryVariant">@color/teal_200</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" >?attr/back_primary</item>
+
+
+        <!-- Custom theme here. -->
+        <item name="support_separator">@color/B_support_separator</item>
+        <item name="support_overlay">@color/B_support_overlay</item>
+
+        <item name="label_primary">@color/B_label_primary</item>
+        <item name="label_secondary">@color/B_label_secondary</item>
+        <item name="label_tertiary">@color/B_label_tertiary</item>
+        <item name="label_disable">@color/B_label_disable</item>
+
+        <item name="color_red">@color/B_color_red</item>
+        <item name="color_green">@color/B_color_green</item>
+        <item name="color_blue">@color/B_color_Blue</item>
+        <item name="color_grey">@color/B_color_grey</item>
+        <item name="color_greylight">@color/B_color_greylight</item>
+        <item name="color_white">@color/B_color_white</item>
+
+        <item name="back_primary">@color/B_back_primary</item>
+        <item name="back_secondary">@color/B_back_secondary</item>
+        <item name="back_elevated">@color/B_back_elevated</item>
+    </style>
+</resources>

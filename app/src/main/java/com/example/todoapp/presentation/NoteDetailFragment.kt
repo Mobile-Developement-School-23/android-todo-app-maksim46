@@ -17,9 +17,11 @@ import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.todoapp.R
 import com.example.todoapp.databinding.FragmentNoteBinding
+import com.example.todoapp.domain.model.NoteData
 import com.example.todoapp.domain.model.Priority
 import com.example.todoapp.domain.model.ToDoEntity
 import com.example.todoapp.presentation.utils.DatePickerFragment
+import com.example.todoapp.presentation.utils.toEntity
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -29,7 +31,7 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note) {
     private val binding by viewBinding(FragmentNoteBinding::bind)
     private val vm: MainFragmentViewModel by activityViewModels()
     lateinit var popupWindow: PopupWindow
-    lateinit var editingToDoNote: ToDoEntity
+    private var editingToDoNote: ToDoEntity =  NoteData.ToDoItem().toEntity()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
@@ -41,7 +43,7 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note) {
                 viewLifecycleOwner.lifecycle,
                 Lifecycle.State.STARTED
             ).collect { noteData ->
-                editingToDoNote = noteData
+                 editingToDoNote = noteData
                 with(binding) {
                     etNoteText.setText(noteData.text)
 

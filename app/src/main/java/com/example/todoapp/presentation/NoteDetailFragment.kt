@@ -142,6 +142,7 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note) {
         popupWindow = PopupWindow(context)
         popupWindow.animationStyle = R.style.PopupAnimationPriority
         popupWindow.contentView = view
+        popupWindow.height =700
         popupWindow.isOutsideTouchable = true
         popupWindow.setBackgroundDrawable(null)
         popupWindow.showAsDropDown(tvPriorityValue)

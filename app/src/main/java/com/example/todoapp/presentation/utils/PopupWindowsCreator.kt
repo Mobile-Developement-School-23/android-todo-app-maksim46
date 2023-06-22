@@ -24,7 +24,7 @@ class PopupWindowsCreator {
                 PopupType.Action -> {
 
                     popupWindow.animationStyle = R.style.PopupAnimationActions
-                    popupWindow.height = 500
+                          popupWindow.height = 500
                     popupWindow.showAsDropDown(popupData.view, 0, 0, Gravity.TOP)
 
                     view.findViewById<TextView>(R.id.menu_done).setOnClickListener {

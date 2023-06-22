@@ -12,7 +12,7 @@
             motion:dragScale="1"
             motion:moveWhenScrollAtTop="true"
             motion:onTouchUp="stop"
-            motion:touchAnchorId="@id/cardView"
+            motion:touchAnchorId="@id/rv_main"
             motion:touchAnchorSide="end">
         </OnSwipe>
 

@@ -157,7 +157,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-
+                android:popupTheme = "@style/MyToolbarStyle"
                 app:layout_constraintStart_toStartOf="@+id/tv_priority"
                 app:layout_constraintTop_toBottomOf="@+id/tv_priority"
                 tools:text="Нет" />

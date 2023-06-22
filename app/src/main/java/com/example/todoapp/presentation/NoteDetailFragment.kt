@@ -1,6 +1,10 @@
 package com.example.todoapp.presentation
 
 import android.os.Bundle
+import android.util.Log
+import android.view.ContextMenu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.PopupWindow
 import android.widget.TextView
@@ -98,8 +102,13 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note) {
                 }
             }
 
-            tvPriorityValue.setOnClickListener {
+/*            tvPriorityValue.setOnClickListener {
                 choosePriorityPopup(layoutInflater.inflate(R.layout.popup_priority, null), tvPriorityValue)
+            }*/
+            registerForContextMenu(tvPriorityValue)
+            tvPriorityValue.setOnClickListener {
+                Log.d("aaa", "aaa")
+                it.showContextMenu(0F,0F)
             }
 
             deleteGroup.setOnClickListener {
@@ -127,6 +136,46 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note) {
         }
     }
 
+
+    override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
+
+        super.onCreateContextMenu(menu, v, menuInfo)
+      //  MenuInflater(requireContext()).inflate(R.menu.priority_menu, menu)
+        Log.d("aaa", "assaa")
+        val inflater = MenuInflater(requireContext())
+        inflater.inflate(R.menu.priority_menu, menu)
+    }
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.option_low -> {
+                binding.tvPriorityValue.apply {
+                    text = getString(R.string.priority_standart)
+                    setTextAppearance(R.style.TextView_Body_Grey_Small)
+                    editingToDoNote = editingToDoNote.copy(priority = Priority.Standart)
+                }
+                true
+            }
+            R.id.option_medium -> {
+                binding.tvPriorityValue.apply {
+                    text = getString(R.string.priority_low)
+                    setTextAppearance(R.style.TextView_Body_Grey_Small)
+                    editingToDoNote = editingToDoNote.copy(priority = Priority.Low)}
+                    true
+
+            }
+
+            R.id.option_high -> {
+                binding.tvPriorityValue.apply {
+                    text = getString(R.string.priority_hight)
+                    setTextAppearance(R.style.TextView_Body_Red)
+                    editingToDoNote = editingToDoNote.copy(priority = Priority.Hight)
+                }
+                true
+            }
+
+            else -> super.onContextItemSelected(item)
+        }
+    }
 
     private fun checkBeforeSave(editingToDoNote: ToDoEntity): Boolean {
         return if (editingToDoNote.text.isEmpty()) {

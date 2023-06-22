@@ -2,6 +2,7 @@ package com.example.todoapp.presentation
 
 
 import android.graphics.Paint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,6 +40,10 @@ class MainRVAdapter() : ListAdapter<NoteData, RecyclerView.ViewHolder>(AsyncDiff
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.footer_item, parent, false)
                 FooterViewHolder(view)
             }
+            R.layout.top_note_item -> {
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.top_note_item, parent, false)
+                ItemViewHolder(view)
+            }
             else -> throw IllegalArgumentException("Invalid ViewType Provided")
         }
     }
@@ -46,6 +51,7 @@ class MainRVAdapter() : ListAdapter<NoteData, RecyclerView.ViewHolder>(AsyncDiff
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 
         val item = currentList[position]
+        Log.d("AAA", item.toString())
 
         when (holder) {
             is ItemViewHolder -> holder.bind(item as NoteData.ToDoItem)
@@ -56,15 +62,18 @@ class MainRVAdapter() : ListAdapter<NoteData, RecyclerView.ViewHolder>(AsyncDiff
     override fun getItemCount() = currentList.size
 
     override fun getItemViewType(position: Int): Int {
-        return when (currentList[position]) {
-            is NoteData.ToDoItem -> R.layout.note_item
-            is NoteData.FooterItem -> R.layout.footer_item
-            else -> {
-                throw IllegalArgumentException("Invalid ViewType Provided")
+        return if (position == 0 && currentList[position] is NoteData.ToDoItem) {
+            R.layout.top_note_item
+        } else {
+            when (currentList[position]) {
+                is NoteData.ToDoItem -> R.layout.note_item
+                is NoteData.FooterItem -> R.layout.footer_item
+                else -> {
+                    throw IllegalArgumentException("Invalid ViewType Provided")
+                }
             }
         }
     }
-
 
     private inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val binding by viewBinding(NoteItemBinding::bind)

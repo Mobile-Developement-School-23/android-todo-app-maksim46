@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">ToDoApp</string>
+
+    <string name="subhead">Completed — %1$d </string>
+    <string name="head">My Tasks</string>
+    <string name="note_tmp">Buy something</string>
+    <string name="newNote">Add New Task</string>
+    <string name="delete">Delete</string>
+    <string name="note_hint">What needs to be done...</string>
+    <string name="priority_standart">None</string>
+    <string name="priority_low">Low</string>
+    <string name="priority_hight">!! High</string>
+    <string name="deadline_empty">not set</string>
+    <string name="emptyText_Toast">Note cannot be empty</string>
+    <string name="save_button">SAVE</string>
+    <string name="priority">Priority</string>
+    <string name="deadline">Complete by</string>
+    <string name="deadlineSubhead">Complete by:</string>
+    <string name="done">Change status</string>
+    <string name="update">Edit</string>
+
+</resources>

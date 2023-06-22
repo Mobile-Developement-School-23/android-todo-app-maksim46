@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/back_primary"
+    app:layoutDescription="@xml/fragment_main_scene"
+    tools:context=".presentation.MainFragment">
+
+    <View
+        android:id="@+id/ab_header"
+        android:layout_width="match_parent"
+        android:layout_height="164dp"
+        android:background="?attr/back_primary"
+        android:fitsSystemWindows="true"
+        app:elevation="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/tv_title"
+        style="@style/TextView.LargeTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="60dp"
+        android:layout_marginBottom="44dp"
+        android:elevation="10dp"
+        android:scaleX="1.0"
+        android:scaleY="1.0"
+        android:text="@string/head"
+        app:layout_constraintBottom_toBottomOf="@id/ab_header"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_subtitle"
+        style="@style/TextView.Subhead"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="60dp"
+        android:layout_marginBottom="16dp"
+        android:elevation="10dp"
+        android:scaleX="1.0"
+        android:scaleY="1.0"
+        android:text="@string/subhead"
+        app:layout_constraintBottom_toBottomOf="@id/ab_header"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/bt_hide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="20dp"
+        android:background="@null"
+        android:elevation="10dp"
+        android:src="@drawable/ic_eye"
+        app:layout_constraintBottom_toBottomOf="@id/ab_header"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_main"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/rv_background"
+        android:clipToPadding="false"
+        android:paddingStart="4dp"
+        android:paddingEnd="2dp"
+        android:paddingBottom="25dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ab_header">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="40dp"
+        android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="?attr/color_blue"
+        app:elevation="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:pressedTranslationZ="12dp"
+        app:tint="?attr/color_white" />
+
+    <View
+        android:id="@+id/animCircle"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:background="@drawable/circle"
+        android:elevation="10dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/fab"
+        app:layout_constraintLeft_toLeftOf="@+id/fab"
+        app:layout_constraintRight_toRightOf="@+id/fab"
+        app:layout_constraintTop_toTopOf="@+id/fab" />
+
+</androidx.constraintlayout.motion.widget.MotionLayout>

@@ -34,7 +34,6 @@
 
     <EditText
         android:id="@+id/etNewNote"
-        style="@style/TextView.Body.Grey"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="17dp"
@@ -42,8 +41,10 @@
         android:layout_marginBottom="24dp"
         android:background="@null"
         android:ems="10"
+        style="@style/EditTextTheme"
         android:hint="@string/newNote"
         android:windowSoftInputMode="adjustPan"
+        android:textCursorDrawable="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/glVerical"

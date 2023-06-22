@@ -27,7 +27,7 @@ sealed class NoteData {
 enum class Priority(val value: Int) {
     Low(0),
     Standart(1),
-    Hight(2)
+    High(2)
 }
 
 data class ClickData(

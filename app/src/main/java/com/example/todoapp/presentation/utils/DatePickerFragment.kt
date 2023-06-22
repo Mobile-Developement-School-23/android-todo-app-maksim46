@@ -8,7 +8,8 @@ import android.widget.DatePicker
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
 import com.example.todoapp.R
-import java.util.*
+import java.util.Calendar
+import java.util.Date
 
 class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener {
     private val calendar = Calendar.getInstance()
@@ -29,9 +30,7 @@ class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
         calendar.set(Calendar.YEAR, year)
         calendar.set(Calendar.MONTH, month)
         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-
         val chosedDate = calendar.time.time
-
         selectedDateBundle.putLong("SELECTED_DATE", chosedDate)
         setFragmentResult("FRAGMENT_RESULT_KEY", selectedDateBundle)
     }

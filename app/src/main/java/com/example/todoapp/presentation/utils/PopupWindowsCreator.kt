@@ -9,9 +9,7 @@ import com.example.todoapp.domain.model.NoteData
 
 
 class PopupWindowsCreator {
-
     companion object {
-
         fun createPopup(popupWindow: PopupWindow, view: View, popupData: PopupData, callback: PopupResultListener) {
 
             popupWindow.contentView = view
@@ -19,13 +17,12 @@ class PopupWindowsCreator {
             popupWindow.setBackgroundDrawable(null)
             popupWindow.overlapAnchor = true
 
-
             when (popupData.popupType) {
                 PopupType.Action -> {
 
                     popupWindow.animationStyle = R.style.PopupAnimationActions
-                          popupWindow.height = 500
-                    popupWindow.showAsDropDown(popupData.view, 0, 0, Gravity.TOP)
+                    popupWindow.isClippingEnabled = false
+                    popupWindow.showAsDropDown(popupData.view, 0, -400, Gravity.TOP)
 
                     view.findViewById<TextView>(R.id.menu_done).setOnClickListener {
                         callback.onPopupResult(CallbackAction.Done, popupData.note)
@@ -42,7 +39,6 @@ class PopupWindowsCreator {
                 }
 
                 PopupType.Info -> {
-                  //  popupWindow.height = 150
                     popupWindow.animationStyle = R.style.PopupAnimationInfo
                     popupWindow.showAsDropDown(popupData.view, 0, 0, Gravity.TOP)
                     val textView = view.findViewById<TextView>(R.id.tv_popup)
@@ -62,7 +58,8 @@ class PopupWindowsCreator {
     data class PopupData(
         val note: NoteData = NoteData.ToDoItem(),
         val view: View? = null,
-        val popupType: PopupType = PopupType.Empty
+        val popupType: PopupType = PopupType.Empty,
+        val randomForUpdateFlow:Int = (0..1000).random()
     )
 
     enum class PopupType(val value: Int) {

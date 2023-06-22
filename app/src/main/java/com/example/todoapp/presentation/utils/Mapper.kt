@@ -66,14 +66,14 @@ fun choosePriority(priority: Priority): Int {
     return when (priority) {
         Priority.Low -> Priority.Low.value
         Priority.Standart -> Priority.Standart.value
-        Priority.Hight -> Priority.Hight.value
+        Priority.High -> Priority.High.value
     }
 }
 
 fun choosePriorityByInt(value: Int): Priority {
     return when (value) {
         Priority.Low.value -> Priority.Low
-        Priority.Hight.value -> Priority.Hight
+        Priority.High.value -> Priority.High
         else -> {
             Priority.Standart
         }

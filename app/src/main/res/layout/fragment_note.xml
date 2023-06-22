@@ -100,6 +100,8 @@
                             android:hint="@string/note_hint"
                             android:inputType="textMultiLine"
                             android:minLines="5"
+                            style="@style/EditTextTheme"
+                            android:textCursorDrawable="@null"
                             android:windowSoftInputMode="adjustResize"
                             tools:text="NamewwwNvvvvvvvvvvvvvvvvvvvvvbar.AppBarLayout$Scrolld.mrial.appbar.AppBarLayout$Scrolld.material.appbar.AppBarLayout$Scrolld.material.appbar.AppBarLayout$Scrollvvvvvv" />
 
@@ -145,9 +147,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginBottom="40dp"
-
                 android:text="@string/priority"
-
                 app:layout_constraintBottom_toTopOf="@+id/devider1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -157,7 +157,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-
                 app:layout_constraintStart_toStartOf="@+id/tv_priority"
                 app:layout_constraintTop_toBottomOf="@+id/tv_priority"
                 tools:text="Нет" />

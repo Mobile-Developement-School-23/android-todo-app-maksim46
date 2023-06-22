@@ -3,7 +3,6 @@ package com.example.todoapp.presentation
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
-import android.util.Log
 import android.view.ContextMenu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -11,7 +10,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.get
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
@@ -29,7 +27,8 @@ import com.example.todoapp.presentation.utils.DatePickerFragment
 import com.example.todoapp.presentation.utils.toEntity
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 
 class NoteDetailFragment : Fragment(R.layout.fragment_note) {
@@ -37,7 +36,6 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note) {
     private val vm: MainFragmentViewModel by activityViewModels()
     var isUserTriggeredDeadLineSwitch = false
 
-    //  lateinit var popupWindow: PopupWindow
     private var editingToDoNote: ToDoEntity = NoteData.ToDoItem().toEntity()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -67,19 +65,19 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note) {
                             tvPriorityValue.setTextAppearance(R.style.TextView_Body_Grey_Small)
                         }
 
-                        Priority.Hight -> {
+                        Priority.High -> {
                             tvPriorityValue.text = getString(R.string.priority_hight)
                             tvPriorityValue.setTextAppearance(R.style.TextView_Body_Red)
                         }
                     }
-
+               /*     val currentLocale = resources.configuration.locales.get(0)
+                    val a = Locale("ru")*/
                     if (noteData.deadline != 0L) {
                         binding.tvDeadlineValue.text =
-                            SimpleDateFormat("dd MMMM yyyy", Locale("ru")).format(noteData.deadline)
+                            SimpleDateFormat("dd MMMM yyyy", resources.configuration.locales.get(0)).format(noteData.deadline)
                         deadlineSwitch.isChecked = true
                     } else {
                         deadlineSwitch.isChecked = false
-                        // deadlineSwitch.toggle()
                         tvDeadlineValue.visibility = View.GONE
                     }
                     isUserTriggeredDeadLineSwitch = true
@@ -91,7 +89,6 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note) {
                         deleteGroup.isEnabled = true
                         delete.setTextAppearance(R.style.TextView_Body_Red)
                         ivTrash.setColorFilter(ContextCompat.getColor(requireContext(), R.color.L_color_red))
-
                     }
                 }
             }
@@ -106,18 +103,13 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note) {
             deadlineSwitch.setOnCheckedChangeListener { _, isChecked ->
                 if (isUserTriggeredDeadLineSwitch) {
                     if (isChecked) {
-                        Log.d("aaaa", "checked")
                         DatePickerFragment().show(supportFragmentManager, "DatePickerFragment")
                     } else {
-                        Log.d("aaaa", "Else checked")
                         editingToDoNote = editingToDoNote.copy(deadline = 0L)
                         tvDeadlineValue.visibility = View.GONE
                     }
                 }
             }
-            /*            tvPriorityValue.setOnClickListener {
-                            choosePriorityPopup(layoutInflater.inflate(R.layout.popup_priority, null), tvPriorityValue)
-                        }*/
 
             registerForContextMenu(tvPriorityValue)
             tvPriorityValue.setOnClickListener {
@@ -177,18 +169,16 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note) {
                     editingToDoNote = editingToDoNote.copy(priority = Priority.Standart)
                 }
                 true
-
             }
 
             R.id.option_high -> {
                 binding.tvPriorityValue.apply {
                     text = getString(R.string.priority_hight)
                     setTextAppearance(R.style.TextView_Body_Red)
-                    editingToDoNote = editingToDoNote.copy(priority = Priority.Hight)
+                    editingToDoNote = editingToDoNote.copy(priority = Priority.High)
                 }
                 true
             }
-
             else -> super.onContextItemSelected(item)
         }
     }
@@ -203,66 +193,20 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note) {
 
     }
 
-    /*    private fun choosePriorityPopup(view: View, tvPriorityValue: View) {
-            popupWindow = PopupWindow(context)
-            popupWindow.animationStyle = R.style.PopupAnimationPriority
-            popupWindow.contentView = view
-            popupWindow.height = 700
-            popupWindow.isOutsideTouchable = true
-            popupWindow.setBackgroundDrawable(null)
-            popupWindow.showAsDropDown(tvPriorityValue)
-
-            view.findViewById<TextView>(R.id.menu_priority_standart1).setOnClickListener {
-                (tvPriorityValue as TextView).apply {
-                    text = getString(R.string.priority_standart)
-                    setTextAppearance(R.style.TextView_Body_Grey_Small)
-                    editingToDoNote = editingToDoNote.copy(priority = Priority.Standart)
-                }
-                popupWindow.dismiss()
-            }
-            view.findViewById<TextView>(R.id.menu_priority_low1).setOnClickListener {
-                (tvPriorityValue as TextView).apply {
-                    text = getString(R.string.priority_low)
-                    setTextAppearance(R.style.TextView_Body_Grey_Small)
-                    editingToDoNote = editingToDoNote.copy(priority = Priority.Low)
-                }
-                popupWindow.dismiss()
-            }
-            view.findViewById<TextView>(R.id.menu_priority_hight1).setOnClickListener {
-                (tvPriorityValue as TextView).apply {
-                    text = getString(R.string.priority_hight)
-                    setTextAppearance(R.style.TextView_Body_Red)
-                    editingToDoNote = editingToDoNote.copy(priority = Priority.Hight)
-                }
-                popupWindow.dismiss()
-            }
-        }*/
-
     private fun setDatePickerFragmentResultListener(supportFragmentManager: FragmentManager) {
         supportFragmentManager.setFragmentResultListener("FRAGMENT_RESULT_KEY", viewLifecycleOwner) { resultKey, bundle ->
             if (bundle.containsKey("SELECTED_DATE")) {
                 val choosedDate = bundle.getLong("SELECTED_DATE")
                 editingToDoNote = editingToDoNote.copy(deadline = choosedDate)
                 val selectedDate =
-                    SimpleDateFormat("dd MMMM yyyy", Locale("ru")).format(choosedDate)
+                    SimpleDateFormat("dd MMMM yyyy", resources.configuration.locales.get(0)).format(choosedDate)
                 binding.tvDeadlineValue.text = selectedDate
                 binding.tvDeadlineValue.visibility = View.VISIBLE
-                isUserTriggeredDeadLineSwitch=false
+                isUserTriggeredDeadLineSwitch = false
                 binding.deadlineSwitch.isChecked = true
-                isUserTriggeredDeadLineSwitch=true
-          /*  } else if (!binding.tvDeadlineValue.isVisible) {
-                binding.deadlineSwitch.isChecked = false*/
-            } else {
-
+                isUserTriggeredDeadLineSwitch = true
             }
         }
     }
-
-    /*    override fun onPause() {
-            super.onPause()
-            if (this::popupWindow.isInitialized) {
-                popupWindow.dismiss()
-            }
-        }*/
 }
 

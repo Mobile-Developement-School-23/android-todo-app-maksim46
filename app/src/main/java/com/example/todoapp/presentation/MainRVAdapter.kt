@@ -2,26 +2,24 @@ package com.example.todoapp.presentation
 
 
 import android.graphics.Paint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.AsyncDifferConfig
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.todoapp.R
 import com.example.todoapp.databinding.FooterItemBinding
-
-
 import com.example.todoapp.databinding.NoteItemBinding
-import com.example.todoapp.domain.model.*
+import com.example.todoapp.domain.model.ClickData
+import com.example.todoapp.domain.model.NoteData
+import com.example.todoapp.domain.model.PressType
+import com.example.todoapp.domain.model.Priority
 import com.example.todoapp.presentation.utils.DUtils
 import com.example.todoapp.presentation.utils.PopupWindowsCreator
-
 import java.text.SimpleDateFormat
-import java.util.*
 
 
 class MainRVAdapter() : ListAdapter<NoteData, RecyclerView.ViewHolder>(AsyncDifferConfig.Builder(DUtils()).build()) {
@@ -49,10 +47,7 @@ class MainRVAdapter() : ListAdapter<NoteData, RecyclerView.ViewHolder>(AsyncDiff
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-
         val item = currentList[position]
-        Log.d("AAA", item.toString())
-
         when (holder) {
             is ItemViewHolder -> holder.bind(item as NoteData.ToDoItem)
             is FooterViewHolder -> holder.bind(item as NoteData.FooterItem)
@@ -85,12 +80,11 @@ class MainRVAdapter() : ListAdapter<NoteData, RecyclerView.ViewHolder>(AsyncDiff
                     noteItem.onNoteClick(ClickData(PressType.LONG, noteItem.id, groupForClick))
                     true
                 }
-
                 ivInfo.setOnClickListener { noteItem.onInfoClick(PopupWindowsCreator.PopupData(noteItem, ivInfo, PopupWindowsCreator.PopupType.Info)) }
 
                 tvNote.text = noteItem.text
                 when (noteItem.priority) {
-                    Priority.Hight -> {
+                    Priority.High -> {
                         checkBox.setImageResource(R.drawable.ic_unchecked_red)
                         ivEmergency.setImageResource(R.drawable.ic_emergency_hight_flag)
                         ivEmergency.visibility = View.VISIBLE
@@ -108,7 +102,7 @@ class MainRVAdapter() : ListAdapter<NoteData, RecyclerView.ViewHolder>(AsyncDiff
                     tvNote.paintFlags = tvNote.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
                     tvNote.setTextAppearance(R.style.TextView_Body_Grey)
                 } else {
-                    if (noteItem.priority != Priority.Hight) {
+                    if (noteItem.priority != Priority.High) {
                         checkBox.setImageResource(R.drawable.ic_unchecked)
                     }
                     tvNote.paintFlags =
@@ -116,7 +110,7 @@ class MainRVAdapter() : ListAdapter<NoteData, RecyclerView.ViewHolder>(AsyncDiff
                     tvNote.setTextAppearance(R.style.TextView_Body)
                 }
                 if (noteItem.deadline != 0L) {
-                    tvDoneBefore.text = SimpleDateFormat("dd MMMM yyyy", Locale("ru")).format(noteItem.deadline)
+                    tvDoneBefore.text = SimpleDateFormat("dd MMMM yyyy", itemView.context.resources.configuration.locales.get(0)).format(noteItem.deadline)
                     tvDoneBefore.visibility = View.VISIBLE
                     tvSubHeadDoneBefore.visibility = View.VISIBLE
                 }else{

@@ -16,7 +16,7 @@
     <string name="priority">Важность</string>
     <string name="deadline">Сделать до</string>
     <string name="deadlineSubhead">Сделать до:</string>
-    <string name="done">Завершить</string>
+    <string name="done">Сменить статус</string>
     <string name="update">Редактировать</string>
 
 </resources>

@@ -1,17 +1,17 @@
 package com.example.todoapp.presentation
 
+
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AnimationUtils
 import android.widget.PopupWindow
-import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,11 +20,9 @@ import com.example.todoapp.R
 import com.example.todoapp.databinding.FragmentMainBinding
 import com.example.todoapp.domain.model.InfoForNavigationToScreenB
 import com.example.todoapp.domain.model.NoteData
-import com.example.todoapp.presentation.utils.PopupWindowsCreator
 import com.example.todoapp.presentation.utils.PopupResultListener
+import com.example.todoapp.presentation.utils.PopupWindowsCreator
 import com.example.todoapp.presentation.utils.startAnimation
-
-
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,9 +31,7 @@ class MainFragment : Fragment(R.layout.fragment_main), PopupResultListener {
 
     private val binding by viewBinding(FragmentMainBinding::bind)
     private val vm: MainFragmentViewModel by activityViewModels() { viewModelFactory }
-
     private val adapter by lazy { MainRVAdapter() }
-
     private val component by lazy { (requireActivity().application as ToDoAppApp).component }
 
     @Inject
@@ -55,7 +51,6 @@ class MainFragment : Fragment(R.layout.fragment_main), PopupResultListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-
         with(binding) {
             rvMain.layoutManager = LinearLayoutManager(requireActivity())
             rvMain.adapter = adapter
@@ -69,10 +64,7 @@ class MainFragment : Fragment(R.layout.fragment_main), PopupResultListener {
                 }) {
                     vm.onNavigateAction(InfoForNavigationToScreenB(navigateToScreenB = true))
                     binding.animCircle.visibility = View.INVISIBLE
-
                 }
-
-
             }
 
 

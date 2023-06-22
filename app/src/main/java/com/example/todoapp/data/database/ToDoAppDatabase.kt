@@ -5,7 +5,6 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.todoapp.presentation.utils.Converters
 
-
 @Database(entities = [ToDoListDbModel::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class ToDoAppDatabase : RoomDatabase() {

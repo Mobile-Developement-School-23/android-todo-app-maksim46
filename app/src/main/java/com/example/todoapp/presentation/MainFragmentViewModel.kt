@@ -5,14 +5,25 @@ import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.example.todoapp.data.repository.NoteDataRepositoryImpl
 import com.example.todoapp.di.ApplicationScope
-import com.example.todoapp.domain.model.*
-import com.example.todoapp.presentation.utils.*
+import com.example.todoapp.domain.model.ClickData
+import com.example.todoapp.domain.model.InfoForNavigationToScreenB
+import com.example.todoapp.domain.model.NoteData
+import com.example.todoapp.domain.model.PressType
+import com.example.todoapp.domain.model.Priority
+import com.example.todoapp.domain.model.ToDoEntity
+import com.example.todoapp.presentation.utils.PopupWindowsCreator
 import com.example.todoapp.presentation.utils.itemTouchHelper.IntItemTouchHelper
+import com.example.todoapp.presentation.utils.toEntity
+import com.example.todoapp.presentation.utils.toListOfNoteData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Date
 import javax.inject.Inject
 
 @ApplicationScope
@@ -54,8 +65,9 @@ class MainFragmentViewModel @Inject constructor(
         }
     }
 
-
-    private fun getListOfNotes() {                                                                      // функция громоздская, но оставил так т.к. выполняет одно законченное действие - получает список заметок из БД. Промежуточные данные нигде больше не нужны.
+    // функция громоздская, но оставил так т.к. выполняет одно законченное действие - получает список заметок из БД.
+    // Промежуточные данные нигде больше не нужны.
+    private fun getListOfNotes() {
             getListJob = viewModelScope.launch {
             (noteDataRepositoryImpl.getToDoNoteList(_isDoneVisible.value)).collect { toDoEntityList ->
                 _listOfNotesFlow.update {
@@ -88,7 +100,6 @@ class MainFragmentViewModel @Inject constructor(
                 NoteData.ToDoItem(text = text, createDate = Date(), updateDate = Date())
                     .toEntity()
             )
-
         }
     }
 

@@ -133,6 +133,7 @@ class MainRVAdapter() : ListAdapter<NoteData, RecyclerView.ViewHolder>(AsyncDiff
                             footerNoteData.onAddClick(etNewNote.text.toString())
                             etNewNote.text.clear()
                             etNewNote.clearFocus()
+
                         }
                     } else {
                         ibAddNew.visibility = View.INVISIBLE

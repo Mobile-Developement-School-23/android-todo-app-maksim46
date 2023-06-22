@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/back_primary"
-
     app:layoutDescription="@xml/fragment_main_scene"
     tools:context=".presentation.MainFragment">
 
@@ -20,24 +19,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:orientation="vertical"
-        android:layout_marginBottom="25dp"
-        app:layout_constraintGuide_percent="0.05"
-      />
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:orientation="vertical"
-        android:layout_marginBottom="25dp"
-        app:layout_constraintGuide_percent="0.95"
-        />
 
     <TextView
         android:id="@+id/tv_title"
@@ -84,14 +65,16 @@
         android:id="@+id/rv_main"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:overScrollMode="never"
-        android:background="?attr/back_primary"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/rv_background"
         android:clipToPadding="false"
+        android:paddingStart="4dp"
+        android:paddingEnd="2dp"
         android:paddingBottom="25dp"
-
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/guideline2"
-        app:layout_constraintStart_toStartOf="@id/guideline1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ab_header">
 
     </androidx.recyclerview.widget.RecyclerView>

@@ -1,13 +1,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/option_low"
-        style="@style/TextView.Body"
+    <item
+        android:id="@+id/option_low"
         android:title="@string/priority_low" />
-    <item android:id="@+id/option_medium"
+    <item
+        android:id="@+id/option_medium"
         android:title="@string/priority_standart" />
-    <item android:id="@+id/option_high"
-        android:title="@string/priority_hight"
-
-        />
+    <item
+        android:id="@+id/option_high"
+        android:title="@string/priority_hight" />
 
 </menu>

@@ -42,7 +42,7 @@ class PopupWindowsCreator {
                 }
 
                 PopupType.Info -> {
-                    popupWindow.height = 150
+                  //  popupWindow.height = 150
                     popupWindow.animationStyle = R.style.PopupAnimationInfo
                     popupWindow.showAsDropDown(popupData.view, 0, 0, Gravity.TOP)
                     val textView = view.findViewById<TextView>(R.id.tv_popup)

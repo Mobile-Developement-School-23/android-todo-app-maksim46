@@ -123,7 +123,7 @@
         <item name="android:windowExitAnimation">@anim/disappears_priority_out</item>
     </style>
 
-    <style name="MyTabStyle">
+<!--    <style name="MyTabStyle">
         <item name="android:actionBarTabTextStyle">@style/MyTabTextStyle</item>
     </style>
 
@@ -134,11 +134,13 @@
         <item name="android:textColor">@color/L_color_Blue</item>
     </style>
     <style name="MyContextMenuTextAppearance" parent="@android:style/TextAppearance.Widget.TextView.PopupMenu">
-        <item name="android:textColor">#FF0000</item> <!-- Цвет текста (красный) -->
-    </style>
-    <style name="MyToolbarStyle" parent="@android:style/Widget.Holo.ActionBar">
+        <item name="android:textColor">#FF0000</item> &lt;!&ndash; Цвет текста (красный) &ndash;&gt;
+    </style>-->
+
+
+<!--    <style name="MyToolbarStyle" parent="@android:style/Widget.Holo.ActionBar">
         <item name="android:colorBackground">@color/L_color_Blue</item>
         <item name="android:textColor">@color/black</item>
 
-    </style>
+    </style>-->
 </resources>

@@ -50,6 +50,7 @@ class PopupWindowsCreator {
                     }
                 }
                 PopupType.Empty -> throw IllegalArgumentException("Invalid PopupType Provided")
+
             }
         }
     }

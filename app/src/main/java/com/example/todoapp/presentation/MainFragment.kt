@@ -91,6 +91,7 @@ class MainFragment : Fragment(R.layout.fragment_main), PopupResultListener {
                 when (isVisible) {
                     true -> binding.btHide.setImageResource(R.drawable.ic_eye_off)
                     false -> binding.btHide.setImageResource(R.drawable.ic_eye)
+                      //tmp
                 }
             }
         }

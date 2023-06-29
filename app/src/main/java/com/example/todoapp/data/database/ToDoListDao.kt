@@ -18,6 +18,9 @@ interface ToDoListDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
      fun insertNote(note: ToDoListDbModel): Long
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertListOfNotes(list: List<ToDoListDbModel>): List<Long>
+
     @Query("DELETE FROM todo_list WHERE id=:noteId")
      fun deleteToDoNote(noteId :Int?)
 

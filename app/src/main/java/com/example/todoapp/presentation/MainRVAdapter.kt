@@ -75,9 +75,9 @@ class MainRVAdapter() : ListAdapter<NoteData, RecyclerView.ViewHolder>(AsyncDiff
 
         fun bind(noteItem: NoteData.ToDoItem) {
             with(binding) {
-                groupForClick.setOnClickListener { noteItem.onNoteClick(ClickData(PressType.SHORT, noteItem.id, null)) }
+                groupForClick.setOnClickListener { noteItem.onNoteClick(ClickData(PressType.SHORT, noteItem, null)) }
                 groupForClick.setOnLongClickListener {
-                    noteItem.onNoteClick(ClickData(PressType.LONG, noteItem.id, groupForClick))
+                    noteItem.onNoteClick(ClickData(PressType.LONG, noteItem, groupForClick))
                     true
                 }
                 ivInfo.setOnClickListener { noteItem.onInfoClick(PopupWindowsCreator.PopupData(noteItem, ivInfo, PopupWindowsCreator.PopupType.Info)) }

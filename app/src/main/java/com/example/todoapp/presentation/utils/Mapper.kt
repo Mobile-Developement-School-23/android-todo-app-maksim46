@@ -1,9 +1,43 @@
 package com.example.todoapp.presentation.utils
 
+import androidx.room.TypeConverter
 import com.example.todoapp.data.database.ToDoListDbModel
+import com.example.todoapp.data.network.ToDoDtoModel
+import com.example.todoapp.data.network.ToDoPayload
 import com.example.todoapp.domain.model.NoteData
 import com.example.todoapp.domain.model.Priority
 import com.example.todoapp.domain.model.ToDoEntity
+import java.util.Date
+import java.util.UUID
+
+val uniqueID = UUID.randomUUID().toString()
+
+fun ToDoDtoModel.toPayload(): ToDoPayload {
+    return ToDoPayload(element = this)
+}
+
+fun ToDoDtoModel.toEntity(): ToDoEntity {
+    return ToDoEntity(
+        id = id,
+        text = text,
+        priority = importanceToEntityPriority(importance),
+        deadline = deadline,
+        isDone = done,
+        createDate = toTimeDate(createdAt),
+        updateDate = toTimeDate(changedAt)
+    )
+}
+
+fun ToDoEntity.toDtoModel() = ToDoDtoModel(
+    id = id,
+    text = text,
+    importance = priorityToDtoModelImportance(priority),
+    done = isDone,
+    deadline = deadline,
+    createdAt = toUnixTime(createDate),
+    changedAt = toUnixTime(updateDate),
+    lastUpdatedBy = uniqueID
+)
 
 fun ToDoEntity.toNoteData(): NoteData.ToDoItem {
     return NoteData.ToDoItem(
@@ -37,7 +71,7 @@ fun ToDoEntity.toDbModel(): ToDoListDbModel {
         deadline = this.deadline,
         isDone = this.isDone,
         createDate = this.createDate,
-        updateDate =this.updateDate
+        updateDate = this.updateDate
     )
 }
 
@@ -80,3 +114,30 @@ fun choosePriorityByInt(value: Int): Priority {
     }
 }
 
+fun priorityToDtoModelImportance(priority: Priority): String {
+    return when (priority) {
+        Priority.Low -> "low"
+        Priority.Standart -> "basic"
+        else -> "important"
+    }
+}
+
+fun importanceToEntityPriority(importance: String): Priority {
+    return when (importance) {
+        "low" -> Priority.Low
+        "basic" -> Priority.Standart
+        else -> Priority.High
+    }
+}
+
+@TypeConverter
+fun toUnixTime(date: Date): Long {
+    if (date.time == 0L) return 0
+    return date.time / 1000
+}
+
+@TypeConverter
+fun toTimeDate(time: Long): Date {
+    if (time == 0L) return Date(0)
+    return Date(time * 1000)
+}

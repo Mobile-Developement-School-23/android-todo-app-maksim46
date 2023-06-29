@@ -32,7 +32,7 @@ enum class Priority(val value: Int) {
 
 data class ClickData(
     val pressType: PressType,
-    val id: String,
+    val noteData: NoteData,
     val view: View?
 )
 

@@ -12,7 +12,7 @@
             motion:dragScale="1"
             motion:moveWhenScrollAtTop="true"
             motion:onTouchUp="stop"
-            motion:touchAnchorId="@id/rv_main"
+            motion:touchAnchorId="@id/swiperefresh"
             motion:touchAnchorSide="end">
         </OnSwipe>
 
@@ -57,6 +57,20 @@
             motion:layout_constraintStart_toStartOf="parent" />
 
         <Constraint
+            android:id="@+id/bt_YALoggin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="20dp"
+            android:background="@null"
+            android:elevation="10dp"
+            android:scaleX="1.0"
+            android:scaleY="1.0"
+            android:src="@drawable/ic_login"
+            motion:layout_constraintTop_toTopOf="@id/ab_header"
+            motion:layout_constraintEnd_toEndOf="parent" />
+
+        <Constraint
             android:id="@+id/bt_hide"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -67,6 +81,19 @@
             android:src="@drawable/ic_eye"
             motion:layout_constraintBottom_toBottomOf="@+id/ab_header"
             motion:layout_constraintEnd_toEndOf="parent" />
+
+        <Constraint
+            android:id="@+id/tv_loginName"
+            style="@style/TextView.Subhead"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:layout_marginTop="20dp"
+            android:elevation="10dp"
+            android:scaleX="1.0"
+            android:scaleY="1.0"
+            motion:layout_constraintTop_toTopOf="@id/ab_header"
+            motion:layout_constraintEnd_toStartOf="@+id/bt_YALoggin" />
 
 
     </ConstraintSet>
@@ -109,6 +136,20 @@
             motion:layout_constraintStart_toStartOf="parent" />
 
         <Constraint
+            android:id="@+id/bt_YALoggin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="20dp"
+            android:background="@null"
+            android:elevation="10dp"
+            android:scaleX="0.0"
+            android:scaleY="0.0"
+            android:src="@drawable/ic_login"
+            motion:layout_constraintTop_toTopOf="@id/ab_header"
+            motion:layout_constraintEnd_toEndOf="parent" />
+
+        <Constraint
             android:id="@+id/bt_hide"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -119,5 +160,18 @@
             android:src="@drawable/ic_eye"
             motion:layout_constraintBottom_toBottomOf="@id/ab_header"
             motion:layout_constraintEnd_toEndOf="@+id/cv_header" />
+
+        <Constraint
+            android:id="@+id/tv_loginName"
+            style="@style/TextView.Subhead"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:layout_marginTop="20dp"
+            android:elevation="10dp"
+            android:scaleX="0.0"
+            android:scaleY="0.0"
+            motion:layout_constraintTop_toTopOf="@id/ab_header"
+            motion:layout_constraintEnd_toStartOf="@+id/bt_YALoggin" />
     </ConstraintSet>
 </MotionScene>

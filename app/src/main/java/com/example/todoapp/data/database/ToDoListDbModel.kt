@@ -17,4 +17,4 @@ data class ToDoListDbModel(
     val updateDate: Date
 )
 
-//INSERT INTO todo_list (text, priority,deadline,isDone) VALUES ('test4','2','123','true')
+//INSERT INTO todo_list (text, priority,deadline,isDone, createDate,updateDate) VALUES ('test6','2','123','0',1111111111111, 222222222222)

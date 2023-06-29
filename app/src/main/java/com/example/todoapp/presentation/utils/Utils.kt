@@ -25,3 +25,8 @@ fun View.startAnimation(animation: Animation, onEnd: () -> Unit) {
     })
     this.startAnimation(animation)
 }
+
+fun <T> T.applyCustom(action: T.() -> Unit): T {
+    this.action()
+    return this
+}

@@ -35,7 +35,7 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note) {
     private val binding by viewBinding(FragmentNoteBinding::bind)
     private val vm: MainFragmentViewModel by activityViewModels()
     var isUserTriggeredDeadLineSwitch = false
-
+    var isUpdated = true
     private var editingToDoNote: ToDoEntity = NoteData.ToDoItem().toEntity()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -70,8 +70,8 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note) {
                             tvPriorityValue.setTextAppearance(R.style.TextView_Body_Red)
                         }
                     }
-               /*     val currentLocale = resources.configuration.locales.get(0)
-                    val a = Locale("ru")*/
+                    /*     val currentLocale = resources.configuration.locales.get(0)
+                         val a = Locale("ru")*/
                     if (noteData.deadline != 0L) {
                         binding.tvDeadlineValue.text =
                             SimpleDateFormat("dd MMMM yyyy", resources.configuration.locales.get(0)).format(noteData.deadline)
@@ -83,6 +83,7 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note) {
                     isUserTriggeredDeadLineSwitch = true
 
                     if (noteData.text.isEmpty()) {
+                        isUpdated=false
                         deleteGroup.isEnabled = false
 
                     } else {
@@ -134,7 +135,12 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note) {
                         editingToDoNote.copy(updateDate = Date())
                     }
                 if (checkBeforeSave(editingToDoNote)) {
-                    vm.updateToDoNote(editingToDoNote)
+                    if (isUpdated){
+                        vm.updateToDoNote(editingToDoNote)
+                    }
+                   else{
+                       vm.addNewNote(editingToDoNote)
+                    }
                     findNavController().popBackStack()
                 }
             }
@@ -179,6 +185,7 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note) {
                 }
                 true
             }
+
             else -> super.onContextItemSelected(item)
         }
     }

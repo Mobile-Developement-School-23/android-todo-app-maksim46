@@ -1,18 +1,16 @@
 package com.example.todoapp.domain.repository
 
-import androidx.lifecycle.LiveData
-import com.example.todoapp.domain.model.NoteData
+import com.example.todoapp.data.database.ToDoListDbModel
 import com.example.todoapp.domain.model.ToDoEntity
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
 
-interface NoteDataRepository {
+interface LocalNoteDataRepository {
 
-    suspend fun addToDoNote(note: ToDoEntity):Long
+    suspend fun insertToDoNote(note: ToDoEntity):Long
 
+    suspend fun insertListOfNotes(list: List<ToDoListDbModel>)
     suspend fun deleteToDoNote(id: String)
 
-    suspend fun insertToDoNote(note: ToDoEntity)
 
     suspend fun updateToDoNote(note: ToDoEntity)
 

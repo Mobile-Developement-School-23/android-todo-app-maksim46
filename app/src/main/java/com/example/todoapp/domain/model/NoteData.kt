@@ -47,4 +47,10 @@ data class InfoForNavigationToScreenB(
     val navigateToScreenB: Boolean = false
 )
 
+data class LastResponce(
+    val status: Boolean = false,
+    val date: Date = Date(0),
+    val isOnline: Boolean = false
+)
+
 const val NEW_NOTE = -1

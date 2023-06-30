@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/back_primary"
+    android:id="@+id/motion_parent"
     app:layoutDescription="@xml/fragment_main_scene"
     tools:context=".presentation.MainFragment">
 

@@ -24,6 +24,7 @@ class RemoteNoteDataRepository @Inject constructor(private val toDoNoteApi: ToDo
     }
 
     fun getListOfToDoNote(onError: (message: String) -> Unit): Flow<List<ToDoDtoModel>?> {
+        Log.d("SYNC", "REQUEST TO REMOTE DB")
         return flow { emit(toDoNoteApi.getListOfToDoNote(onError)?.list) }
     }
 

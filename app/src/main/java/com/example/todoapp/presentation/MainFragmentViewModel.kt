@@ -8,6 +8,7 @@ import com.example.todoapp.data.repository.NoteDataRepository
 import com.example.todoapp.di.ApplicationScope
 import com.example.todoapp.domain.model.ClickData
 import com.example.todoapp.domain.model.InfoForNavigationToScreenB
+import com.example.todoapp.domain.model.LastResponce
 import com.example.todoapp.domain.model.NoteData
 import com.example.todoapp.domain.model.PressType
 import com.example.todoapp.domain.model.Priority
@@ -74,12 +75,12 @@ class MainFragmentViewModel @Inject constructor(
     private val _isFresh = MutableStateFlow<Date>(Date())
     val isFresh: StateFlow<Date> = _isFresh.asStateFlow()
 
-    private var isOnline = true
+    private var isOnline = false
     private var previousState = true
     private var currentState = true
     private lateinit var getListJob: Job
 
-    private val handler = CoroutineExceptionHandler { _, exception -> Log.d("CoroutineException","Caught $exception") }
+    private val handler = CoroutineExceptionHandler { _, exception -> Log.d("CoroutineException", "Caught $exception") }
 
     init {
         getListOfNotes()
@@ -93,26 +94,38 @@ class MainFragmentViewModel @Inject constructor(
         }
 
         connectivityObserver.observe().onEach {
+
+            when (it) {
+                ConnectivityObserver.Status.Available -> {
+                    isOnline=true
+                    syncNotes()
+                }
+                else -> {
+                    isOnline=false
+                }
+            }
             isOnline = it == ConnectivityObserver.Status.Available
-            Log.d("MERGE", "Inet STAT $isOnline")
             previousState = currentState
             currentState = isOnline
 
-            if (!previousState && currentState) {
-                syncNotes().applyCustom {
-                    if (this.second){
-                    _isFresh.value= this.first}
-
-                }
-            }
+  /*          if (!previousState && currentState) {
+                syncNotes()*/
+                //.applyCustom {
+//                    if (this.second) {
+//                        _isFresh.value = this.first
+//                    }
+//
+//                }
+      //      }
         }.launchIn(viewModelScope)
 
 
-        syncNotes().applyCustom {
-            if (this.second){
-                _isFresh.value= this.first}
+        /*        syncNotes().applyCustom {
+                    if (this.second) {
+                        _isFresh.value = this.first
+                    }
 
-        }
+                }*/
 
 
     }
@@ -138,6 +151,11 @@ class MainFragmentViewModel @Inject constructor(
         }
     }
 
+    fun getLastResponce(): Flow<LastResponce> {
+        // return noteDataRepository.lastResponce
+        return noteDataRepository.uiEvent
+
+    }
 
     fun getErrorMessage(): StateFlow<String> {
         return noteDataRepository.onErrorMessage
@@ -158,7 +176,7 @@ class MainFragmentViewModel @Inject constructor(
 
     fun changeDoneStatus(note: NoteData.ToDoItem) {
         viewModelScope.launch(ioDispatcher + handler) {
-            noteDataRepository.updateDoneStatus(note,isOnline)
+            noteDataRepository.updateDoneStatus(note, isOnline)
             //  throw RuntimeException("Coroutine 2 failed")
         }
 
@@ -193,7 +211,7 @@ class MainFragmentViewModel @Inject constructor(
             PressType.LONG -> viewModelScope.launch(ioDispatcher + handler) {
                 _popupAction.update {
                     PopupWindowsCreator.PopupData(
-                        note=note.noteData,
+                        note = note.noteData,
                         view = note.view,
                         popupType = PopupWindowsCreator.PopupType.Action
                     )
@@ -244,8 +262,24 @@ class MainFragmentViewModel @Inject constructor(
         _navigateAction.update { navInfo.copy(navigateToScreenB = false) }
     }
 
+/*    fun syncNotes(): LastResponce {
+        var responce = LastResponce()
 
-    private fun mergeDBs(onItemsReceived: (List<ToDoEntity>) -> Unit) {
+        if (isOnline) {
+            noteDataRepository.syncNotes(isOnline)
+        } else {
+            noteDataRepository.syncNotes(!isOnline)
+            responce = responce.copy(status = false)
+        }
+
+        return responce
+    }*/
+    fun syncNotes() {
+
+            noteDataRepository.syncNotes(isOnline)
+
+    }
+    /*private fun mergeDBs(onItemsReceived: (List<ToDoEntity>) -> Unit) {
         viewModelScope.launch(ioDispatcher + handler) {
             val deferred: Deferred<Flow<List<ToDoEntity>>> = async {
                 (noteDataRepository.mergeNotes())
@@ -256,28 +290,27 @@ class MainFragmentViewModel @Inject constructor(
             }
 
         }
-    }
+    }*/
 
 
-    fun syncNotes() :Pair<Date,Boolean> {
-        Log.d("MERGE", "SYNC START")
-        viewModelScope.launch(ioDispatcher + handler) {
-            val mergedList = mutableListOf<ToDoEntity>()
-            mergeDBs { mergedList.addAll(it) }
-            withContext(Dispatchers.IO) {
-                Thread.sleep(2000)
+    /*    fun syncNotes() :Pair<Date,Boolean> {
+            Log.d("MERGE", "SYNC START")
+            viewModelScope.launch(ioDispatcher + handler) {
+                val mergedList = mutableListOf<ToDoEntity>()
+                mergeDBs { mergedList.addAll(it) }
+                withContext(Dispatchers.IO) {
+                    Thread.sleep(2000)
+                }
+                Log.d("SYNC", "isOnlineNOW $isOnline")
+
+                noteDataRepository.syncNotes(mergedList.toList(), isOnline)
             }
-            Log.d("MERGE", "mergedListsize $mergedList.size")
-
-            noteDataRepository.syncNotes(mergedList.toList(), isOnline)
-        }
-        return Pair(Date(),isOnline)
-    }
-
+            return Pair(Date(),isOnline)
+        }*/
 
     fun yaLogin(token: String) {
         viewModelScope.launch(ioDispatcher + handler) {
-          _yaLogin.emitAll(noteDataRepository.yaLogin(token,isOnline))
+            _yaLogin.emitAll(noteDataRepository.yaLogin(token, isOnline))
         }
     }
 

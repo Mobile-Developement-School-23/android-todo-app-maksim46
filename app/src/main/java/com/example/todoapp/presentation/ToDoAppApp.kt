@@ -10,20 +10,41 @@ import javax.inject.Inject
 
 
 class ToDoAppApp: Application() {
+
+
+
     val component by lazy {
         DaggerApplicationComponent.factory().create(this)
     }
-
-    override fun onCreate() {
-        super.onCreate()
-        appContext = applicationContext
-    }
+    @Inject
+    lateinit var myWorkerFactory: MyWorkerFactory
 
     companion object {
         var appContext: Context? = null
     }
 
-    @Inject
+
+    override fun onCreate() {
+
+
+
+        // Выполнение инъекции в этот класс Application
+
+        super.onCreate()
+        component.inject(this)
+        appContext = applicationContext
+
+        WorkManager.initialize(
+            this,
+            Configuration.Builder()
+                .setWorkerFactory(myWorkerFactory)
+                .build()
+        )
+    }
+
+
+
+    /*    @Inject
     lateinit var myWorkerFactory: MyWorkerFactory
 
     private fun setupWorkerFactory() {
@@ -33,5 +54,12 @@ class ToDoAppApp: Application() {
                 .setWorkerFactory(myWorkerFactory)
                 .build()
         )
+    }*/
+
+
+
+
     }
-}
+
+
+

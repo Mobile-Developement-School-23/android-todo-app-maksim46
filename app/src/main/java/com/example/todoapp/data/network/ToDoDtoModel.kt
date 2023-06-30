@@ -2,6 +2,7 @@ package com.example.todoapp.data.network
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.util.Date
 
 @Serializable
 class ToDoDtoModel(
@@ -40,5 +41,6 @@ data class ToDoResponse(
 data class ToDoListResponse(
     val list: List<ToDoDtoModel>,
     val revision: Int,
-    val status: String
+    val status: String,
+
 )

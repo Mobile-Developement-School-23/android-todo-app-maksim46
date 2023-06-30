@@ -17,6 +17,7 @@ import kotlin.reflect.KClass
 @MapKey
 annotation class WorkerKey(val value: KClass<out Worker>)*/
 
+/*
 @Retention(AnnotationRetention.RUNTIME)
 @MapKey
 annotation class WorkerKey(val value: KClass<out ListenableWorker>)
@@ -31,4 +32,16 @@ abstract class ParcelPollModule {
     internal abstract fun bindMyWorkerFactory(worker: SyncWorker.Factory): ChildWorkerFactory
 
 
+}*/
+
+@Retention(AnnotationRetention.RUNTIME)
+@MapKey
+annotation class WorkerKey(val value: KClass<out Worker>)
+@Module
+abstract class WorkerModule {
+
+    @Binds
+    @IntoMap
+    @WorkerKey(SyncWorker::class)
+    internal abstract fun bindMyWorkerFactory(worker: SyncWorker.Factory): ChildWorkerFactory
 }

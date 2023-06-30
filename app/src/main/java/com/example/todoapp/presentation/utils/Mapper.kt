@@ -10,7 +10,7 @@ import com.example.todoapp.domain.model.ToDoEntity
 import java.util.Date
 import java.util.UUID
 
-val uniqueID = UUID.randomUUID().toString()
+val uniqueID = GetUuid().getDeviceUUID()
 
 fun ToDoDtoModel.toPayload(): ToDoPayload {
     return ToDoPayload(element = this)

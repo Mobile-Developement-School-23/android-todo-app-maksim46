@@ -93,7 +93,10 @@ class NoteDataRepository @Inject constructor(
         }
 
     }
-
+fun checkWorker(){
+    println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+    Log.d("AAAAAAAA","AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+}
 
     fun getToDoNoteList(doneStatus: Boolean): Flow<List<ToDoEntity>> {
         return localNoteDataRepositoryImpl.getToDoNoteList(doneStatus)

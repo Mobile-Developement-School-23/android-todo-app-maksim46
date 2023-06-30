@@ -21,6 +21,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.Configuration
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkInfo
@@ -82,7 +83,7 @@ class MainFragment : Fragment(R.layout.fragment_main), PopupResultListener {
 
         /*     val syncWorkManager= SyncWorkManager(requireContext(),vm)
                 syncWorkManager.createWork()*/
-        val workRequest = PeriodicWorkRequest.Builder(SyncWorker, 15, TimeUnit.MINUTES, 5, TimeUnit.MINUTES)
+        val workRequest = PeriodicWorkRequest.Builder(SyncWorker::class.java, 15, TimeUnit.MINUTES, 5, TimeUnit.MINUTES)
             .build()
         val workManager = WorkManager.getInstance(requireContext())
         workManager.enqueueUniquePeriodicWork(
@@ -90,6 +91,8 @@ class MainFragment : Fragment(R.layout.fragment_main), PopupResultListener {
             ExistingPeriodicWorkPolicy.KEEP,
             workRequest
         )
+
+
         workManager.getWorkInfoByIdLiveData(workRequest.id).observe(viewLifecycleOwner, Observer { workInfo ->
             if (workInfo != null && workInfo.state == WorkInfo.State.FAILED) {
 
@@ -99,6 +102,7 @@ class MainFragment : Fragment(R.layout.fragment_main), PopupResultListener {
                 // Вы можете добавить здесь код для обработки неудачного выполнения
             }
         })
+
 
 
 

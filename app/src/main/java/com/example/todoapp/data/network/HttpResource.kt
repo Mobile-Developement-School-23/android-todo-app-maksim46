@@ -5,3 +5,4 @@ object HttpResource {
      const val authToken: String = "insubordination"
      const val YANDEX_LOGIN_URL = "https://login.yandex.ru/info?"
 }
+

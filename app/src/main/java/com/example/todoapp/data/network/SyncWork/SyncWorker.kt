@@ -4,23 +4,27 @@ import android.content.Context
 import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import com.example.todoapp.data.repository.NoteDataRepository
+import javax.inject.Inject
 
-class SyncWorker(context: Context, workerParam:WorkerParameters): Worker(context,workerParam) {
+class SyncWorker  constructor(context: Context, workerParam: WorkerParameters, private val noteDataRepository: NoteDataRepository) : Worker(context, workerParam) {
 
     override fun doWork(): Result {
-
-            //  vm.syncNotes()
-        return if (myFunction()) {
-            Result.success()
-        } else {
-            Result.failure()
-        }
-
+Log.d("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA111111", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+noteDataRepository.checkWorker()
+      return  Result.success()
     }
 
-    private fun myFunction(): Boolean {
-        Log.d("MERGE", "WORKER-work")
-        print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-        return true
+
+
+    class Factory @Inject constructor(
+        val noteDataRepository: NoteDataRepository,
+
+    ): ChildWorkerFactory {
+
+        override fun create(appContext: Context, params: WorkerParameters): SyncWorker {
+            return SyncWorker(appContext, params ,noteDataRepository)
+        }
     }
 }
+

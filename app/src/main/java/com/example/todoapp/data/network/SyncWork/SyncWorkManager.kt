@@ -1,17 +1,23 @@
 package com.example.todoapp.data.network.SyncWork
 
-class SyncWorkManager(){
+import android.content.Context
+import com.example.todoapp.presentation.MainFragmentViewModel
+import javax.inject.Inject
 
+
+class SyncWorkManager(context: Context) {
 }
-/*class SyncWorkManager(context: Context, private val vm: MainFragmentViewModel) {
-}*/
 /*
-    private val workManager: WorkManager by lazy {
-        WorkManager.getInstance(context)
-    }
-    fun synchTask(){
-        vm.syncNotes()
-    }
+    @Inject
+    lateinit var myWorkerFactory: MyWorkerFactory
+
+
+    WorkManager.initialize(
+    this,
+    Configuration.Builder()
+    .setWorkerFactory(myWorkerFactory)
+    .build()
+    )
     fun createWork() {
         val constraints = Constraints.Builder()
             .setRequiresCharging(true)

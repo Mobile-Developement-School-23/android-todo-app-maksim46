@@ -5,40 +5,33 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AnimationUtils
 import android.widget.PopupWindow
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.work.Configuration
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequest
-import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import androidx.work.Worker
-import androidx.work.WorkerParameters
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.todoapp.R
 import com.example.todoapp.data.network.SyncWork.SyncWorker
 import com.example.todoapp.databinding.FragmentMainBinding
 import com.example.todoapp.domain.model.InfoForNavigationToScreenB
 import com.example.todoapp.domain.model.NoteData
+import com.example.todoapp.presentation.utils.LastSuccessSync
 import com.example.todoapp.presentation.utils.PopupResultListener
 import com.example.todoapp.presentation.utils.PopupWindowsCreator
-import com.example.todoapp.presentation.utils.applyCustom
 import com.example.todoapp.presentation.utils.startAnimation
 import com.google.android.material.snackbar.Snackbar
 import com.yandex.authsdk.YandexAuthException
@@ -46,7 +39,6 @@ import com.yandex.authsdk.YandexAuthLoginOptions
 import com.yandex.authsdk.YandexAuthOptions
 import com.yandex.authsdk.YandexAuthSdk
 import com.yandex.authsdk.YandexAuthToken
-
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.concurrent.TimeUnit
@@ -61,6 +53,7 @@ class MainFragment : Fragment(R.layout.fragment_main), PopupResultListener {
     private val component by lazy { (requireActivity().application as ToDoAppApp).component }
     private val yandexLoginSdk by lazy { YandexAuthSdk(requireContext(), YandexAuthOptions(requireContext(), true)) }
     var tmpErrMessage = ""
+    private val dimen = 2000
 
     @Inject
     lateinit var popUpWindows: PopupWindow
@@ -71,44 +64,26 @@ class MainFragment : Fragment(R.layout.fragment_main), PopupResultListener {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-
     override fun onAttach(context: Context) {
         component.inject(this)
         super.onAttach(context)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
 
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
-
-        val workRequest = PeriodicWorkRequest.Builder(SyncWorker::class.java, 15, TimeUnit.MINUTES, 5, TimeUnit.MINUTES)
+        val workRequest = PeriodicWorkRequest.Builder(SyncWorker::class.java, 8, TimeUnit.HOURS, 30, TimeUnit.MINUTES)
             .setConstraints(constraints)
             .build()
         val workManager = WorkManager.getInstance(requireContext())
         workManager.enqueueUniquePeriodicWork(
-            "SYnkWork",
+            "SyncWork",
             ExistingPeriodicWorkPolicy.KEEP,
             workRequest
         )
-
-        workManager.getWorkInfoByIdLiveData(workRequest.id).observe(viewLifecycleOwner, Observer { workInfo ->
-            if (workInfo != null && workInfo.state == WorkInfo.State.FAILED) {
-                Log.d("WORKM", "WORKER-fail")
-
-            }
-        })
-
-
-
 
         with(binding) {
             rvMain.layoutManager = LinearLayoutManager(requireActivity())
@@ -126,38 +101,18 @@ class MainFragment : Fragment(R.layout.fragment_main), PopupResultListener {
                 }
             }
             swiperefresh.setOnRefreshListener {
-               vm.syncNotes()
-      /*          if (!responce.status) {
-                    Snackbar.make(binding.rvMain, "Нет интернета. Данные не синхронизированны", Snackbar.LENGTH_LONG).show()
-                }*/
-                //.applyCustom {
-                //   if (this.second) {
-
-                /*val thi = SimpleDateFormat("dd MMMM yyyy hh mm", resources.configuration.locales.get(0)).format(this.first)
-                Toast.makeText(context, thi, Toast.LENGTH_SHORT).show()*/
-      /*          Handler(Looper.getMainLooper()).postDelayed({
-                    swiperefresh.isRefreshing = false
-                }, 1000)*/
-                //     }
-                //   }
-                //  Toast.makeText(context, "обновляется", Toast.LENGTH_SHORT).show()
+                vm.syncNotes()
                 Handler(Looper.getMainLooper()).postDelayed({
                     swiperefresh.isRefreshing = false
-                }, 2000)
+                }, dimen.toLong())
             }
-
-
 
             btHide.setOnClickListener { vm.flipDoneVisibility() }
             itemTouchHelper.attachToRecyclerView(rvMain)
 
-
-
             btYALoggin.setOnClickListener {
-
                 val loginOptionsBuilder = YandexAuthLoginOptions.Builder()
                 val intent = yandexLoginSdk.createLoginIntent(loginOptionsBuilder.build())
-
                 loginResultLauncher.launch(intent)
             }
 
@@ -176,69 +131,37 @@ class MainFragment : Fragment(R.layout.fragment_main), PopupResultListener {
             }
         }
 
-
-
-        viewLifecycleOwner.lifecycleScope.launch {
-
-            vm.getErrorMessage().flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).collect { errMessage ->
-                if ((errMessage.isNotEmpty()) && (errMessage != tmpErrMessage)) {
-                    tmpErrMessage = errMessage
-                    Snackbar.make(binding.rvMain, tmpErrMessage, Snackbar.LENGTH_LONG).show()
-                    //   Toast.makeText(context, tmpErrMessage, Toast.LENGTH_SHORT).show()
-
-                }
-            }
-        }
-
-        /*        viewLifecycleOwner.lifecycleScope.launch {
-                    var lastSuccessSync = ""
-                    vm.getLastResponce().flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).collect { lastResponce ->
-                        if (lastResponce.status) {
-                            lastSuccessSync = SimpleDateFormat("dd MMMM yyyy hh mm", resources.configuration.locales.get(0)).format(lastResponce.date)}
-
-                            val message = if (lastSuccessSync.isEmpty()) {
-                                "База данных не синхронизированна"
-                            } else {
-                                "База данных не синхронизированна. Последняя синхронизация $lastSuccessSync"
-                            }
-                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-
-                        }
-                    }*/
         viewLifecycleOwner.lifecycleScope.launch {
             var lastSuccessSync = ""
             vm.getLastResponce().flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).collect { lastResponce ->
-                Log.d(
-                    "RESPONSE",
-                    "${lastResponce.status} ${
-                        SimpleDateFormat(
-                            " dd MMMM yyyy hh mm ",
-                            resources.configuration.locales.get(0)
-                        ).format(lastResponce.date)
-                    }"
-                )
-                var message=""
+                var message = ""
                 if (lastResponce.status) {
-                    message = "Дела синхронизированы"
-                    lastSuccessSync = SimpleDateFormat("dd MMMM yyyy hh mm", resources.configuration.locales.get(0)).format(lastResponce.date)
+                    message = getString(R.string.synch)
+                    lastSuccessSync = SimpleDateFormat("dd MMMM yyyy HH mm", resources.configuration.locales.get(0)).format(lastResponce.date)
+                    LastSuccessSync().setLastSuccessSync(lastSuccessSync.toString())
                 } else {
-                     message = if (lastSuccessSync.isEmpty()) {
-                        "Дела не синхронизированы"
-                    } else {
-                        "Дела не синхронизированы. Версия данных от $lastSuccessSync"
-                    }
-
-                   // Snackbar.make(binding.rvMain, message, Snackbar.LENGTH_LONG).show()
-                    /*            .setAction("Обновить") {
-                                    vm.syncNotes()*/
-                    //   } .show()
-                    // Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                    lastSuccessSync = LastSuccessSync().getLastSuccessSync()!!
+                    message = "${getString(R.string.not_synch)} $lastSuccessSync"
                 }
                 Snackbar.make(binding.rvMain, message, Snackbar.LENGTH_LONG).show()
             }
         }
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            vm.getErrorMessage().flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).collect { onErrMessage ->
+                if (onErrMessage.isNotEmpty()) {
+                    Snackbar.make(binding.rvMain, tmpErrMessage, Snackbar.LENGTH_SHORT).show()
+                }
+            }
+        }
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            vm.corErrorMessage.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).collect { corErrorMessage ->
+                if (corErrorMessage.isNotEmpty()) {
+                    Snackbar.make(binding.rvMain, corErrorMessage, Snackbar.LENGTH_SHORT).show()
+                }
+            }
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             vm.isDoneVisible.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).collect { isVisible ->
@@ -271,23 +194,12 @@ class MainFragment : Fragment(R.layout.fragment_main), PopupResultListener {
             }
         }
 
-        /*        viewLifecycleOwner.lifecycleScope.launch {
-                    vm.combineNotesFlow.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).collect { combinedList ->
-                        combinedList.forEach { entity ->
-                            println(entity)
-                        }
-                    }
-                }*/
-
-
         viewLifecycleOwner.lifecycleScope.launch {
             vm.yaLogin.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).collect { yaLogin ->
                 binding.tvLoginName.text = yaLogin
-                // Toast.makeText(context, "${getString(R.string.hello)}+$ yaLogin", Toast.LENGTH_SHORT).show()
             }
         }
     }
-
 
     override fun onPopupResult(action: PopupWindowsCreator.CallbackAction, result: NoteData) {
         when (action) {
@@ -312,15 +224,11 @@ class MainFragment : Fragment(R.layout.fragment_main), PopupResultListener {
             val yandexAuthToken: YandexAuthToken? = yandexLoginSdk.extractToken(result.resultCode, result.data)
             if (yandexAuthToken != null) {
                 vm.yaLogin(yandexAuthToken.value)
-
-                println(yandexAuthToken.value)
-                println("SUCCESS LOG")
             }
         } catch (e: YandexAuthException) {
             println("ERROR+${e.toString()}")
         }
     }
-
 
     override fun onPause() {
         super.onPause()

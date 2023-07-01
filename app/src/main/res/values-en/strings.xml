@@ -19,4 +19,6 @@
     <string name="done">Change status</string>
     <string name="update">Edit</string>
     <string name="hello">Hi</string>
+    <string name="synch">Tasks in sync</string>
+    <string name="not_synch">Tasks out of sync. Data version from</string>
 </resources>

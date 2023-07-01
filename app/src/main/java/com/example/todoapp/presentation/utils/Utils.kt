@@ -12,7 +12,6 @@ fun Context.hideKeyboard(view: View) {
     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 }
 
-
 fun View.startAnimation(animation: Animation, onEnd: () -> Unit) {
     animation.setAnimationListener(object : Animation.AnimationListener {
         override fun onAnimationStart(animation: Animation?) = Unit

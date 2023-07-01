@@ -6,7 +6,7 @@ import java.util.UUID
 
 class GetUuid {
 
-    private val SP_FILENAME = "com.myapp.prefs"
+    private val SP_FILENAME = "GetUuid"
     private val UUID_KEY = "uuid_key"
     val context = ToDoAppApp.appContext
 

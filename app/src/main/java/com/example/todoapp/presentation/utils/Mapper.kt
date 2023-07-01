@@ -8,7 +8,6 @@ import com.example.todoapp.domain.model.NoteData
 import com.example.todoapp.domain.model.Priority
 import com.example.todoapp.domain.model.ToDoEntity
 import java.util.Date
-import java.util.UUID
 
 val uniqueID = GetUuid().getDeviceUUID()
 
@@ -140,4 +139,9 @@ fun toUnixTime(date: Date): Long {
 fun toTimeDate(time: Long): Date {
     if (time == 0L) return Date(0)
     return Date(time * 1000)
+}
+
+
+fun Int.pixToDp(density: Float ): Int {
+   return (this * density).toInt()
 }

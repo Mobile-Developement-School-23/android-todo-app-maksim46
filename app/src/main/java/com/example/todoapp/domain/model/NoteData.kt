@@ -47,7 +47,7 @@ data class InfoForNavigationToScreenB(
     val navigateToScreenB: Boolean = false
 )
 
-data class LastResponce(
+data class LastResponse(
     val status: Boolean = false,
     val date: Date = Date(0),
     val isOnline: Boolean = false

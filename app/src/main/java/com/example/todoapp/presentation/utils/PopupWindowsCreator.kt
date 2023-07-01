@@ -55,7 +55,6 @@ class PopupWindowsCreator {
         }
     }
 
-
     data class PopupData(
         val note: NoteData = NoteData.ToDoItem(),
         val view: View? = null,

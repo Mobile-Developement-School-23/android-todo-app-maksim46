@@ -99,10 +99,6 @@
         app:layout_constraintTop_toBottomOf="@id/ab_header"
         android:layout_height="0dp">
 
-
-
-
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_main"
         android:layout_width="0dp"

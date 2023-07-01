@@ -2,10 +2,7 @@ package com.example.todoapp.data.network
 
 import io.ktor.client.HttpClient
 import io.ktor.client.features.ClientRequestException
-
 import io.ktor.client.features.HttpResponseValidator
-
-import io.ktor.client.features.ResponseException
 import io.ktor.client.features.ServerResponseException
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
@@ -41,9 +38,7 @@ class NetworkClient {
         HttpResponseValidator {
             validateResponse { response: HttpResponse ->
                 when (response.status.value) {
-                    400 -> throw ClientRequestException(response, "ClientRequestException")
-                    401 -> throw AuthenticationException(response, "AuthenticationException")
-                    404 -> throw ElementNotFoundException(response, "ElementNotFoundException")
+                    in 400..499 -> throw ClientRequestException(response, "ClientRequestException")
                     in 500..599 -> throw ServerResponseException(response, "ServerResponseException")
                 }
             }
@@ -85,19 +80,6 @@ class NetworkClient {
     }
 }
 
-class AuthenticationException(response: HttpResponse, message: String) : ResponseException(response, message) {
-    constructor(response: HttpResponse) : this(response, "no response text provided")
-
-    override val message: String = "Client request(${response.call.request.url}) " +
-            "invalid: ${response.status}. Text: \"$message\""
-}
-
-class ElementNotFoundException(response: HttpResponse, message: String) : ResponseException(response, message) {
-    constructor(response: HttpResponse) : this(response, "no response text provided")
-
-    override val message: String = "Client request(${response.call.request.url}) " +
-            "invalid: ${response.status}. Text: \"$message\""
-}
 
 
 

@@ -8,34 +8,33 @@ import com.example.todoapp.data.repository.NoteDataRepository
 import com.example.todoapp.di.ApplicationScope
 import com.example.todoapp.domain.model.ClickData
 import com.example.todoapp.domain.model.InfoForNavigationToScreenB
-import com.example.todoapp.domain.model.LastResponce
+import com.example.todoapp.domain.model.LastResponse
 import com.example.todoapp.domain.model.NoteData
 import com.example.todoapp.domain.model.PressType
 import com.example.todoapp.domain.model.Priority
 import com.example.todoapp.domain.model.ToDoEntity
+import com.example.todoapp.presentation.utils.PopupWindowsCreator
+import com.example.todoapp.presentation.utils.itemTouchHelper.IntItemTouchHelper
 import com.example.todoapp.presentation.utils.networkConnectivity.ConnectivityObserver
 import com.example.todoapp.presentation.utils.networkConnectivity.NetworkConnectivityObserver
-import com.example.todoapp.presentation.utils.PopupWindowsCreator
-import com.example.todoapp.presentation.utils.applyCustom
-import com.example.todoapp.presentation.utils.itemTouchHelper.IntItemTouchHelper
 import com.example.todoapp.presentation.utils.toEntity
 import com.example.todoapp.presentation.utils.toListOfNoteData
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.Date
 import javax.inject.Inject
 
@@ -44,7 +43,6 @@ class MainFragmentViewModel @Inject constructor(
     private val connectivityObserver: NetworkConnectivityObserver,
     private val noteDataRepository: NoteDataRepository
 ) : ViewModel(), IntItemTouchHelper {
-
 
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
@@ -66,21 +64,21 @@ class MainFragmentViewModel @Inject constructor(
     private val _toDoNoteByIdForEdit = MutableStateFlow<ToDoEntity>(ToDoEntity("0", "", Priority.Standart, 0, false, Date(0), Date(0)))
     val toDoNoteByIdForEdit: StateFlow<ToDoEntity> = _toDoNoteByIdForEdit.asStateFlow()
 
-    private val _combineNotesFlow = MutableStateFlow<List<ToDoEntity>>(emptyList())
-    val combineNotesFlow: StateFlow<List<ToDoEntity>> = _combineNotesFlow.asStateFlow()
+    private val _corErrorMessage = MutableSharedFlow<String>(0, 16)
+    val corErrorMessage: SharedFlow<String> = _corErrorMessage.asSharedFlow()
 
     private val _yaLogin = MutableStateFlow<String>("")
     val yaLogin: StateFlow<String> = _yaLogin.asStateFlow()
-
-    private val _isFresh = MutableStateFlow<Date>(Date())
-    val isFresh: StateFlow<Date> = _isFresh.asStateFlow()
 
     private var isOnline = false
     private var previousState = true
     private var currentState = true
     private lateinit var getListJob: Job
 
-    private val handler = CoroutineExceptionHandler { _, exception -> Log.d("CoroutineException", "Caught $exception") }
+    private val handler = CoroutineExceptionHandler { _, exception ->
+        _corErrorMessage.tryEmit("Непредвиденная ошибка")
+        Log.d("CoroutineException", "Caught $exception")
+    }
 
     init {
         getListOfNotes()
@@ -94,44 +92,23 @@ class MainFragmentViewModel @Inject constructor(
         }
 
         connectivityObserver.observe().onEach {
-
             when (it) {
                 ConnectivityObserver.Status.Available -> {
-                    isOnline=true
+                    isOnline = true
                     syncNotes()
                 }
                 else -> {
-                    isOnline=false
+                    isOnline = false
                 }
             }
             isOnline = it == ConnectivityObserver.Status.Available
             previousState = currentState
             currentState = isOnline
 
-  /*          if (!previousState && currentState) {
-                syncNotes()*/
-                //.applyCustom {
-//                    if (this.second) {
-//                        _isFresh.value = this.first
-//                    }
-//
-//                }
-      //      }
         }.launchIn(viewModelScope)
-
-
-        /*        syncNotes().applyCustom {
-                    if (this.second) {
-                        _isFresh.value = this.first
-                    }
-
-                }*/
-
 
     }
 
-    // функция громоздская, но оставил так т.к. выполняет одно законченное действие - получает список заметок из БД.
-    // Промежуточные данные нигде больше не нужны.
     private fun getListOfNotes() {
         getListJob = viewModelScope.launch(ioDispatcher + handler) {
 
@@ -151,16 +128,12 @@ class MainFragmentViewModel @Inject constructor(
         }
     }
 
-    fun getLastResponce(): Flow<LastResponce> {
-        // return noteDataRepository.lastResponce
-        return noteDataRepository.uiEvent
-
+    fun getLastResponce(): Flow<LastResponse> {
+        return noteDataRepository.syncStatusResponce
     }
 
-    fun getErrorMessage(): StateFlow<String> {
+    fun getErrorMessage(): SharedFlow<String> {
         return noteDataRepository.onErrorMessage
-
-
     }
 
 
@@ -168,18 +141,14 @@ class MainFragmentViewModel @Inject constructor(
         viewModelScope.launch(ioDispatcher + handler) {
             _numberOfDone.emitAll(
                 noteDataRepository.getNumberOfDone()
-
             )
         }
-
     }
 
     fun changeDoneStatus(note: NoteData.ToDoItem) {
         viewModelScope.launch(ioDispatcher + handler) {
             noteDataRepository.updateDoneStatus(note, isOnline)
-            //  throw RuntimeException("Coroutine 2 failed")
         }
-
     }
 
     fun addNewNote(note: ToDoEntity) {
@@ -198,11 +167,9 @@ class MainFragmentViewModel @Inject constructor(
         viewModelScope.launch(ioDispatcher + handler) {
             noteDataRepository.updateToDoNote(note, isOnline)
         }
-
     }
 
     fun flipDoneVisibility() {
-
         _isDoneVisible.update { it.not() }
     }
 
@@ -230,7 +197,6 @@ class MainFragmentViewModel @Inject constructor(
     private fun onFooterClickAction(text: String) {
         addNewNote(NoteData.ToDoItem(text = text, createDate = Date(), updateDate = Date()).toEntity())
     }
-
 
     private fun getToDoNoteForEdit(id: Int) {
         if (id > 0) {
@@ -262,51 +228,10 @@ class MainFragmentViewModel @Inject constructor(
         _navigateAction.update { navInfo.copy(navigateToScreenB = false) }
     }
 
-/*    fun syncNotes(): LastResponce {
-        var responce = LastResponce()
-
-        if (isOnline) {
-            noteDataRepository.syncNotes(isOnline)
-        } else {
-            noteDataRepository.syncNotes(!isOnline)
-            responce = responce.copy(status = false)
-        }
-
-        return responce
-    }*/
     fun syncNotes() {
-
-            noteDataRepository.syncNotes(isOnline)
-
+        val vmscope = viewModelScope
+        noteDataRepository.syncNotes(isOnline, vmscope)
     }
-    /*private fun mergeDBs(onItemsReceived: (List<ToDoEntity>) -> Unit) {
-        viewModelScope.launch(ioDispatcher + handler) {
-            val deferred: Deferred<Flow<List<ToDoEntity>>> = async {
-                (noteDataRepository.mergeNotes())
-            }
-            val res: Flow<List<ToDoEntity>> = deferred.await()
-            res.collect() { items ->
-                onItemsReceived(items)
-            }
-
-        }
-    }*/
-
-
-    /*    fun syncNotes() :Pair<Date,Boolean> {
-            Log.d("MERGE", "SYNC START")
-            viewModelScope.launch(ioDispatcher + handler) {
-                val mergedList = mutableListOf<ToDoEntity>()
-                mergeDBs { mergedList.addAll(it) }
-                withContext(Dispatchers.IO) {
-                    Thread.sleep(2000)
-                }
-                Log.d("SYNC", "isOnlineNOW $isOnline")
-
-                noteDataRepository.syncNotes(mergedList.toList(), isOnline)
-            }
-            return Pair(Date(),isOnline)
-        }*/
 
     fun yaLogin(token: String) {
         viewModelScope.launch(ioDispatcher + handler) {

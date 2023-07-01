@@ -28,8 +28,6 @@ import com.example.todoapp.presentation.utils.toEntity
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
-
 
 class NoteDetailFragment : Fragment(R.layout.fragment_note) {
     private val binding by viewBinding(FragmentNoteBinding::bind)
@@ -42,8 +40,6 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note) {
 
         val supportFragmentManager = requireActivity().supportFragmentManager
         setDatePickerFragmentResultListener(supportFragmentManager)
-
-
 
         viewLifecycleOwner.lifecycleScope.launch {
             vm.toDoNoteByIdForEdit.flowWithLifecycle(

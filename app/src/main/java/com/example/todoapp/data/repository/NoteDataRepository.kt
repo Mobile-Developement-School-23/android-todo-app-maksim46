@@ -43,6 +43,7 @@ class NoteDataRepository @Inject constructor(
     private val _syncStatusResponce = Channel<LastResponse>()
     val syncStatusResponce = _syncStatusResponce.receiveAsFlow()
 
+
     suspend fun saveToDoNote(note: ToDoEntity, isOnline: Boolean) {
         val addedNoteId = localNoteDataRepositoryImpl.insertToDoNote(note)
         if (isOnline) {

@@ -23,6 +23,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -90,7 +91,7 @@ class MainFragmentViewModel @Inject constructor(
                 getListOfNotes()
             }
         }
-
+        syncNotes()
         connectivityObserver.observe().onEach {
             when (it) {
                 ConnectivityObserver.Status.Available -> {
@@ -99,6 +100,7 @@ class MainFragmentViewModel @Inject constructor(
                 }
                 else -> {
                     isOnline = false
+
                 }
             }
             isOnline = it == ConnectivityObserver.Status.Available

@@ -19,8 +19,12 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMap
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Calendar
@@ -133,46 +137,37 @@ class NoteDataRepository @Inject constructor(
             }
         }
     }
-
     fun syncNotes(isOnline: Boolean, vmscope: CoroutineScope) {
         vmscope.launch(Dispatchers.IO + handler) {
             if (!isOnline) {
                 _syncStatusResponce.send(LastResponse(status = false, isOnline = false))
             } else {
-                val mergedList = mutableListOf<ToDoEntity>()
-                mergeDBs(vmscope) { mergedList.addAll(it) }
-                withContext(Dispatchers.IO) { Thread.sleep(2000) }
-                val response = startSyncNotes(mergedList.toList(), isOnline)
+                val mergedList = mergeDBs(vmscope)
+                val response = startSyncNotes(mergedList, isOnline)
                 _syncStatusResponce.send(response)
             }
         }
     }
 
-    private suspend fun mergeDBs(vmscope: CoroutineScope, onItemsReceived: (List<ToDoEntity>) -> Unit) {
-        vmscope.launch(Dispatchers.IO + handler) {
-            val deferred: Deferred<Flow<List<ToDoEntity>>> = async {
-                val local = localNoteDataRepositoryImpl.getToDoNoteListForSynk(true)
-                val remote = remoteNoteDataRepository.getListOfToDoNote { }
-                combineToDoEntityAndDto(local, remote)
-            }
-            val res: Flow<List<ToDoEntity>> = deferred.await()
-            res.collect() { items ->
-                onItemsReceived(items)
-            }
-        }
+    private suspend fun mergeDBs(vmscope: CoroutineScope): List<ToDoEntity> {
+        return vmscope.async(Dispatchers.IO + handler) {
+            val local = localNoteDataRepositoryImpl.getToDoNoteListForSynk(true).first()
+            val remote = remoteNoteDataRepository.getListOfToDoNote { }.firstOrNull()
+            combineToDoEntityAndDto(local, remote)
+        }.await()
     }
 
-    private fun combineToDoEntityAndDto(localDbNotes: Flow<List<ToDoEntity>>, remoteDbNotes: Flow<List<ToDoDtoModel>?>): Flow<List<ToDoEntity>> {
-        return localDbNotes.combine(remoteDbNotes) { listEntity, listDto ->
-            val listDtoToEntity = listDto?.map { it.toEntity() } ?: emptyList()
-            val combinedList = listEntity + listDtoToEntity
-            combinedList.groupBy { it.id }
-                .map { (_, entitiesWithSameId) ->
-                    entitiesWithSameId.maxByOrNull { it.updateDate }!!
-                }
-                .filter { it.deadline != -1L }
-        }
+    private fun combineToDoEntityAndDto(localDbNotes: List<ToDoEntity>, remoteDbNotes: List<ToDoDtoModel>?): List<ToDoEntity> {
+        val listDtoToEntity = remoteDbNotes?.map { it.toEntity() } ?: emptyList()
+        val combinedList = localDbNotes + listDtoToEntity
+        return combinedList.groupBy { it.id }
+            .map { (_, entitiesWithSameId) ->
+                entitiesWithSameId.maxByOrNull { it.updateDate }!!
+            }
+            .filter { it.deadline != -1L }
     }
+
+
 
     fun yaLogin(token: String, isOnline: Boolean): Flow<String> {
         return if (isOnline) {

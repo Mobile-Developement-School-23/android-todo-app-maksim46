@@ -1,3 +1,12 @@
+UPD сейчас нашел ошибку, при первой установке приложения происходи крш, т.к. null в дефолте стоял у shared preff 
+в  class LastSuccessSync  нужно поменять 
+     fun getLastSuccessSync(): String? {
+        val sharedPrefs = context?.getSharedPreferences(SP_FILENAME, Context.MODE_PRIVATE)
+        return sharedPrefs?.getString(LAST_SYNC_TIME_KEY, null)
+    }
+    на return sharedPrefs?.getString(LAST_SYNC_TIME_KEY, " ")
+
+
 телеграм @maxim_rolich
 
 Привет

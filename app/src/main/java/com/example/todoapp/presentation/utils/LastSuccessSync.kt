@@ -11,7 +11,7 @@ class LastSuccessSync {
 
      fun getLastSuccessSync(): String? {
         val sharedPrefs = context?.getSharedPreferences(SP_FILENAME, Context.MODE_PRIVATE)
-        return sharedPrefs?.getString(LAST_SYNC_TIME_KEY, null)
+        return sharedPrefs?.getString(LAST_SYNC_TIME_KEY, " ")
     }
 
      fun setLastSuccessSync(lastSuccessSync: String) {

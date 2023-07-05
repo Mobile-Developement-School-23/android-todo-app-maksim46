@@ -65,8 +65,8 @@ class MainFragmentViewModel @Inject constructor(
     private val _toDoNoteByIdForEdit = MutableStateFlow<ToDoEntity>(ToDoEntity("0", "", Priority.Standart, 0, false, Date(0), Date(0)))
     val toDoNoteByIdForEdit: StateFlow<ToDoEntity> = _toDoNoteByIdForEdit.asStateFlow()
 
-    private val _corErrorMessage = MutableSharedFlow<String>(0, 16)
-    val corErrorMessage: SharedFlow<String> = _corErrorMessage.asSharedFlow()
+    private val _corErrorMessage = MutableSharedFlow<LastResponse>(0, 16)
+    val corErrorMessage: SharedFlow<LastResponse> = _corErrorMessage.asSharedFlow()
 
     private val _yaLogin = MutableStateFlow<String>("")
     val yaLogin: StateFlow<String> = _yaLogin.asStateFlow()
@@ -77,7 +77,7 @@ class MainFragmentViewModel @Inject constructor(
     private lateinit var getListJob: Job
 
     private val handler = CoroutineExceptionHandler { _, exception ->
-        _corErrorMessage.tryEmit("Непредвиденная ошибка")
+        _corErrorMessage.tryEmit(LastResponse(false))
         Log.d("CoroutineException", "Caught $exception")
     }
 

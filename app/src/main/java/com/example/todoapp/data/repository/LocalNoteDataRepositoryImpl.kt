@@ -53,7 +53,7 @@ class LocalNoteDataRepositoryImpl @Inject constructor(private val myToDoListDao:
     }
 
     override fun getToDoNoteListForSynk(doneStatus: Boolean): Flow<List<ToDoEntity>> {
-        val toDoNoteList = myToDoListDao.getAllToDoList(doneStatus)
+        val toDoNoteList = myToDoListDao.getAllToDoListForSynk(doneStatus)
         val convertedToDoNoteList = toDoNoteList.map { it.toListOfToDoEntyty() }
         return convertedToDoNoteList
     }

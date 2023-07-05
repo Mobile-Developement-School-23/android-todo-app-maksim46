@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AnimationUtils
@@ -85,6 +86,7 @@ class MainFragment : Fragment(R.layout.fragment_main), PopupResultListener {
             workRequest
         )
 
+        val swipeRefreshLayout = binding.swiperefresh
         with(binding) {
             rvMain.layoutManager = LinearLayoutManager(requireActivity())
             rvMain.adapter = adapter
@@ -100,11 +102,8 @@ class MainFragment : Fragment(R.layout.fragment_main), PopupResultListener {
                     binding.animCircle.visibility = View.INVISIBLE
                 }
             }
-            swiperefresh.setOnRefreshListener {
+            swipeRefreshLayout.setOnRefreshListener {
                 vm.syncNotes()
-                Handler(Looper.getMainLooper()).postDelayed({
-                    swiperefresh.isRefreshing = false
-                }, dimen.toLong())
             }
 
             btHide.setOnClickListener { vm.flipDoneVisibility() }
@@ -122,6 +121,7 @@ class MainFragment : Fragment(R.layout.fragment_main), PopupResultListener {
                 viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED
             ).collect { dataFromDB ->
                 adapter.submit(dataFromDB)
+
             }
         }
 
@@ -144,6 +144,7 @@ class MainFragment : Fragment(R.layout.fragment_main), PopupResultListener {
                     message = "${getString(R.string.not_synch)} $lastSuccessSync"
                 }
                 Snackbar.make(binding.rvMain, message, Snackbar.LENGTH_LONG).show()
+                swipeRefreshLayout.isRefreshing = false
             }
         }
 
@@ -157,8 +158,8 @@ class MainFragment : Fragment(R.layout.fragment_main), PopupResultListener {
 
         viewLifecycleOwner.lifecycleScope.launch {
             vm.corErrorMessage.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).collect { corErrorMessage ->
-                if (corErrorMessage.isNotEmpty()) {
-                    Snackbar.make(binding.rvMain, corErrorMessage, Snackbar.LENGTH_SHORT).show()
+                if (!corErrorMessage.status) {
+                    Snackbar.make(binding.rvMain, getString(R.string.unexpected_error), Snackbar.LENGTH_SHORT).show()
                 }
             }
         }

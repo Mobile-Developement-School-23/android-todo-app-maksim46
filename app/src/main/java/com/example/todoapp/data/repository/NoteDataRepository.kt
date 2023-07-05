@@ -152,7 +152,11 @@ class NoteDataRepository @Inject constructor(
     private suspend fun mergeDBs(vmscope: CoroutineScope): List<ToDoEntity> {
         return vmscope.async(Dispatchers.IO + handler) {
             val local = localNoteDataRepositoryImpl.getToDoNoteListForSynk(true).first()
+            Log.d("AAALoc", local.size.toString())
             val remote = remoteNoteDataRepository.getListOfToDoNote { }.firstOrNull()
+            if (remote != null) {
+                Log.d("AAARem", remote.size.toString())
+            }
             combineToDoEntityAndDto(local, remote)
         }.await()
     }

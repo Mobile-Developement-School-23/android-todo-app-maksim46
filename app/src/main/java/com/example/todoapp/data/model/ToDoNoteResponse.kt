@@ -1,5 +1,6 @@
-package com.example.todoapp.data.network
+package com.example.todoapp.data.model
 
+import com.example.todoapp.data.network.ToDoDtoModel
 import kotlinx.serialization.Serializable
 
 @Serializable

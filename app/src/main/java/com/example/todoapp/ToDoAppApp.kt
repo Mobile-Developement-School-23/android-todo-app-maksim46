@@ -1,4 +1,4 @@
-package com.example.todoapp.presentation
+package com.example.todoapp
 
 import android.app.Application
 import android.content.Context
@@ -8,6 +8,10 @@ import com.example.todoapp.data.network.SyncWork.MyWorkerFactory
 import com.example.todoapp.di.DaggerApplicationComponent
 import javax.inject.Inject
 
+/**
+ * Custom Application class allows to hold reference to [applicationComponent]
+ * as long as application lives.
+ */
 
 class ToDoAppApp: Application() {
 

@@ -10,8 +10,8 @@ import com.example.todoapp.domain.model.NoteData
 
 class PopupWindowsCreator {
     companion object {
-        fun createPopup(popupWindow: PopupWindow, view: View, popupData: PopupData, callback: PopupResultListener) {
-
+      //  fun createPopup(popupWindow: PopupWindow, view: View, popupData: PopupData, callback: PopupResultListener) {
+      fun createPopup(popupWindow: PopupWindow, view: View, popupData: PopupData,onError: (action: CallbackAction, data:NoteData) -> Unit) {
             popupWindow.contentView = view
             popupWindow.isOutsideTouchable = true
             popupWindow.setBackgroundDrawable(null)
@@ -25,15 +25,18 @@ class PopupWindowsCreator {
                     popupWindow.showAsDropDown(popupData.view, 0, -400, Gravity.TOP)
 
                     view.findViewById<TextView>(R.id.menu_done).setOnClickListener {
-                        callback.onPopupResult(CallbackAction.Done, popupData.note)
+                        onError(CallbackAction.Done, popupData.note)
+                        //callback.onPopupResult(CallbackAction.Done, popupData.note)
                         popupWindow.dismiss()
                     }
                     view.findViewById<TextView>(R.id.menu_update).setOnClickListener {
-                        callback.onPopupResult(CallbackAction.Update, popupData.note)
+                        onError(CallbackAction.Update, popupData.note)
+                      //  callback.onPopupResult(CallbackAction.Update, popupData.note)
                         popupWindow.dismiss()
                     }
                     view.findViewById<TextView>(R.id.menu_delete).setOnClickListener {
-                        callback.onPopupResult(CallbackAction.Delete, popupData.note)
+                        onError(CallbackAction.Delete, popupData.note)
+                      //  callback.onPopupResult(CallbackAction.Delete, popupData.note)
                         popupWindow.dismiss()
                     }
                 }

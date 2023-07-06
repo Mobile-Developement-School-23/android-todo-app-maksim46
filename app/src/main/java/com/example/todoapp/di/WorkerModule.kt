@@ -1,5 +1,6 @@
 package com.example.todoapp.di
 
+import androidx.work.CoroutineWorker
 import androidx.work.Worker
 import com.example.todoapp.data.network.SyncWork.ChildWorkerFactory
 import com.example.todoapp.data.network.SyncWork.SyncWorker

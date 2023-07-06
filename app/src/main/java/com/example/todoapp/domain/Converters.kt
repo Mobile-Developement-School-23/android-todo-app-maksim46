@@ -1,4 +1,4 @@
-package com.example.todoapp.presentation.utils
+package com.example.todoapp.domain
 
 import androidx.room.TypeConverter
 import java.util.*

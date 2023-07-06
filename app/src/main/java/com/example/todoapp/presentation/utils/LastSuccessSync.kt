@@ -1,8 +1,7 @@
 package com.example.todoapp.presentation.utils
 
 import android.content.Context
-import androidx.core.content.ContentProviderCompat.requireContext
-import com.example.todoapp.presentation.ToDoAppApp
+import com.example.todoapp.ToDoAppApp
 
 class LastSuccessSync {
     val SP_FILENAME = "GetLastTime"

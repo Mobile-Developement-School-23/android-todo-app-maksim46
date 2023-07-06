@@ -1,7 +1,7 @@
-package com.example.todoapp.presentation.utils
+package com.example.todoapp.domain
 
 import android.content.Context
-import com.example.todoapp.presentation.ToDoAppApp
+import com.example.todoapp.ToDoAppApp
 import java.util.UUID
 
 class GetUuid {
@@ -12,7 +12,7 @@ class GetUuid {
 
     fun getDeviceUUID(): String {
         val sharedPrefs = context?.getSharedPreferences(SP_FILENAME, Context.MODE_PRIVATE)
-        var uuid = sharedPrefs?.getString(UUID_KEY, null)
+        var uuid = sharedPrefs?.getString(UUID_KEY, "1")
 
         if (uuid == null) {
             uuid = UUID.randomUUID().toString()

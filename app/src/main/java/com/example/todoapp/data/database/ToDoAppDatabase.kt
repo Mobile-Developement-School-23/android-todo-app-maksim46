@@ -3,7 +3,7 @@ package com.example.todoapp.data.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.example.todoapp.presentation.utils.Converters
+import com.example.todoapp.domain.Converters
 
 @Database(entities = [ToDoListDbModel::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)

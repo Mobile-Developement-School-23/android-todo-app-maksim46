@@ -4,24 +4,22 @@ import com.example.todoapp.data.database.ToDoListDao
 import com.example.todoapp.data.database.ToDoListDbModel
 import com.example.todoapp.domain.model.ToDoEntity
 import com.example.todoapp.domain.repository.LocalNoteDataRepository
-import com.example.todoapp.presentation.utils.toDbModel
-import com.example.todoapp.presentation.utils.toEntity
-import com.example.todoapp.presentation.utils.toListOfToDoEntyty
+import com.example.todoapp.domain.toDbModel
+import com.example.todoapp.domain.toEntity
+import com.example.todoapp.domain.toListOfToDoEntyty
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class LocalNoteDataRepositoryImpl @Inject constructor(private val myToDoListDao: ToDoListDao) :
+class LocalNoteDataRepository @Inject constructor(private val myToDoListDao: ToDoListDao) :
     LocalNoteDataRepository {
 
     override suspend fun insertToDoNote(note: ToDoEntity): Long {
-        val addedNoteId = myToDoListDao.insertNote(note.toDbModel())
-        return addedNoteId
+        return myToDoListDao.insertNote(note.toDbModel())
     }
 
     override suspend fun insertListOfNotes(list: List<ToDoListDbModel>): List<Long> {
-        val addedNoteId = myToDoListDao.insertListOfNotes(list)
-        return addedNoteId
+        return myToDoListDao.insertListOfNotes(list)
     }
 
     override suspend fun deleteToDoNote(id: String) {
@@ -42,20 +40,17 @@ class LocalNoteDataRepositoryImpl @Inject constructor(private val myToDoListDao:
 
     override suspend fun getToDoNote(id: String): ToDoEntity {
         val tmpId = id.toIntOrNull()
-        val oneNoteByID = myToDoListDao.getOneToDoNote(tmpId).toEntity()
-        return oneNoteByID
+        return myToDoListDao.getOneToDoNote(tmpId).toEntity()
     }
 
     override fun getToDoNoteList(doneStatus: Boolean): Flow<List<ToDoEntity>> {
         val toDoNoteList = myToDoListDao.getAllToDoList(doneStatus)
-        val convertedToDoNoteList = toDoNoteList.map { it.toListOfToDoEntyty() }
-        return convertedToDoNoteList
+        return toDoNoteList.map { it.toListOfToDoEntyty() }
     }
 
     override fun getToDoNoteListForSynk(doneStatus: Boolean): Flow<List<ToDoEntity>> {
         val toDoNoteList = myToDoListDao.getAllToDoListForSynk(doneStatus)
-        val convertedToDoNoteList = toDoNoteList.map { it.toListOfToDoEntyty() }
-        return convertedToDoNoteList
+        return toDoNoteList.map { it.toListOfToDoEntyty() }
     }
 
     override fun getNumberOfDone(): Flow<Int> {

@@ -1,7 +1,7 @@
 package com.example.todoapp.di
 
 import androidx.lifecycle.ViewModel
-import com.example.todoapp.presentation.MainFragmentViewModel
+import com.example.todoapp.presentation.view.MainFragmentViewModel
 import com.example.todoapp.presentation.utils.itemTouchHelper.IntItemTouchHelper
 import dagger.Binds
 import dagger.Module
@@ -18,5 +18,5 @@ interface ViewModelModule {
     fun bindMainFragmentViewModel(impl: MainFragmentViewModel): ViewModel
 
     @Binds
-    fun bindItemTouchHelperAdapter(impl :MainFragmentViewModel):IntItemTouchHelper
+    fun bindItemTouchHelperAdapter(impl : MainFragmentViewModel):IntItemTouchHelper
 }

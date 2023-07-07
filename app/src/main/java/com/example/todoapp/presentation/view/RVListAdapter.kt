@@ -3,18 +3,20 @@ package com.example.todoapp.presentation.view
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.AsyncDifferConfig
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todoapp.R
 import com.example.todoapp.domain.model.NoteData
-import com.example.todoapp.presentation.utils.DUtils
+import com.example.todoapp.presentation.utility.DUtils
+import javax.inject.Inject
 
-class RVListAdapter (
-    private val viewModel: MainFragmentViewModel,
-    articleDiffCalculator: DUtils,
-    ) : ListAdapter<NoteData, RecyclerView.ViewHolder>(AsyncDifferConfig.Builder(DUtils()).build()) {
+/**
+ * ListAdapter for note list.
+ */
 
+class RVListAdapter @Inject  constructor (
+    diffCalculator: DUtils,
+    ) : ListAdapter<NoteData, RecyclerView.ViewHolder>(diffCalculator) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             R.layout.note_item -> {

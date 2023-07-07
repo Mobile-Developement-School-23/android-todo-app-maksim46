@@ -3,6 +3,11 @@ package com.example.todoapp.domain
 import android.content.Context
 import com.example.todoapp.ToDoAppApp
 import java.util.UUID
+import javax.inject.Inject
+
+/**
+ * Shared Preferences for provide and store device ID
+ */
 
 class GetUuid {
 

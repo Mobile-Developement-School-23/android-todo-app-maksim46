@@ -13,8 +13,6 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
-
-
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -22,35 +20,34 @@ import com.example.todoapp.R
 import com.example.todoapp.data.model.onErrorModel
 import com.example.todoapp.domain.model.InfoForNavigationToScreenB
 import com.example.todoapp.domain.model.NoteData
-import com.example.todoapp.di.NoteFragmentComponent
-import com.example.todoapp.presentation.utils.LastSuccessSync
-import com.example.todoapp.presentation.utils.PopupWindowsCreator
-import com.example.todoapp.presentation.utils.startAnimation
+import com.example.todoapp.presentation.utility.LastSuccessSync
+import com.example.todoapp.presentation.utility.PopupWindowsHandler
+import com.example.todoapp.presentation.utility.startAnimation
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import javax.inject.Inject
+/**
+ * Contains logic for main screen views configuration.
+ */
 
-class MainViewController(
-
+class MainViewController @Inject constructor(
     private val popUpWindows: PopupWindow,
     private val itemTouchHelper: ItemTouchHelper,
-    private val component: NoteFragmentComponent,
     private val activity: Activity,
-    private val rootView: View,
     private val rvAdapter: RVListAdapter,
-    private val viewLifecycleOwner: LifecycleOwner,
     private val vm: MainFragmentViewModel,
-    // private  val bindings:View
+    private val lastSuccessSynch: LastSuccessSync,
 ) {
+
     lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var rootView: View
+    private lateinit var viewLifecycleOwner: LifecycleOwner
 
-
-
-
-
-    fun setUpViews() {
-
+    fun setUpViews(root: View, viewLifecycleOwner1: LifecycleOwner) {
+        rootView = root
+        viewLifecycleOwner = viewLifecycleOwner1
         setUpArticlesList()
         setUpSwipeToRefresh()
         setUpFab()
@@ -59,23 +56,17 @@ class MainViewController(
         setUpNumberOfDone()
         setUpGetLastResponce()
         setUpGetErrorMessage()
-       // setUpCorErrorMessage()
         setUpIsDoneVisible()
         setUpPopupAction()
         setUpYaLogin()
         setUpNav()
     }
 
-    fun setUpArticlesList() {
-
-
+    private fun setUpArticlesList() {
         val recyclerView: RecyclerView = rootView.findViewById(R.id.rv_main)
-
         recyclerView.layoutManager = LinearLayoutManager(activity)
         recyclerView.adapter = rvAdapter
-
         itemTouchHelper.attachToRecyclerView(recyclerView)
-
         viewLifecycleOwner.lifecycleScope.launch {
             vm.listOfNotesFlow.flowWithLifecycle(
                 viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED
@@ -85,13 +76,12 @@ class MainViewController(
         }
     }
 
-    fun setUpFab() {
+    private fun setUpFab() {
         val fab: FloatingActionButton = rootView.findViewById(R.id.fab)
         val animCircle: View = rootView.findViewById(R.id.animCircle)
         fab.setOnClickListener {
             fab.visibility = View.INVISIBLE
             animCircle.visibility = View.VISIBLE
-
             animCircle.startAnimation(AnimationUtils.loadAnimation(rootView.context, R.anim.fab_anim).apply {
                 interpolator = AccelerateDecelerateInterpolator()
             }) {
@@ -99,28 +89,21 @@ class MainViewController(
                 animCircle.visibility = View.INVISIBLE
             }
         }
-
     }
 
-
-    fun setUpBtHide() {
+    private fun setUpBtHide() {
         val btHide: ImageButton = rootView.findViewById(R.id.bt_hide)
-
         btHide.setOnClickListener { vm.flipDoneVisibility() }
-
-
     }
 
-    fun setUpBtYaLoggin() {
+    private fun setUpBtYaLoggin() {
         val btYALoggin: ImageButton = rootView.findViewById(R.id.bt_YALoggin)
         btYALoggin.setOnClickListener {
             vm.yaLoginClick(true)
         }
-
     }
 
-
-    fun setUpNumberOfDone() {
+    private fun setUpNumberOfDone() {
         val tvSubtitle: TextView = rootView.findViewById(R.id.tv_subtitle)
         viewLifecycleOwner.lifecycleScope.launch {
             vm.numberOfDone.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).collect { amountOfDone ->
@@ -129,7 +112,7 @@ class MainViewController(
         }
     }
 
-    fun setUpGetLastResponce() {
+    private fun setUpGetLastResponce() {
         viewLifecycleOwner.lifecycleScope.launch {
             var lastSuccessSync = ""
             vm.getLastResponse().flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).collect { lastResponce ->
@@ -138,9 +121,9 @@ class MainViewController(
                     message = activity.getString(R.string.synch)
                     lastSuccessSync =
                         SimpleDateFormat("dd MMMM yyyy HH mm", rootView.resources.configuration.locales.get(0)).format(lastResponce.date)
-                    LastSuccessSync().setLastSuccessSync(lastSuccessSync.toString())
+                    lastSuccessSynch.setLastSuccessSync(lastSuccessSync.toString())
                 } else {
-                    lastSuccessSync = LastSuccessSync().getLastSuccessSync()!!
+                    lastSuccessSync = lastSuccessSynch.getLastSuccessSync()!!
                     message = "${activity.getString(R.string.not_synch)} $lastSuccessSync"
                 }
                 Snackbar.make(rootView.findViewById(R.id.rv_main), message, Snackbar.LENGTH_LONG).show()
@@ -149,7 +132,7 @@ class MainViewController(
         }
     }
 
-    fun setUpGetErrorMessage() {
+    private fun setUpGetErrorMessage() {
         viewLifecycleOwner.lifecycleScope.launch {
             vm.getErrorMessage().flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).collect { onErrMessage ->
                 var errMessage = ""
@@ -159,7 +142,9 @@ class MainViewController(
                     onErrorModel.ER_404 -> errMessage = activity.getString(R.string.er_404)
                     onErrorModel.ER_UNKNOWN -> errMessage = activity.getString(R.string.er_unexpected)
                     onErrorModel.ER_INTERNAL -> errMessage = activity.getString(R.string.er_internal)
-                    else -> {  errMessage = ""   }
+                    else -> {
+                        errMessage = ""
+                    }
                 }
                 if (errMessage.isNotEmpty()) {
                     Snackbar.make(rootView.findViewById(R.id.rv_main), errMessage, Snackbar.LENGTH_SHORT).show()
@@ -167,60 +152,38 @@ class MainViewController(
             }
         }
     }
-/*    fun setUpCorErrorMessage() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            vm.corErrorMessage.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).collect { corErrorMessage ->
-                var errMessage = ""
-                when (onErrMessage) {
-                    onErrorModel.ER_400 -> errMessage = activity.getString(R.string.er_400)
-                    onErrorModel.ER_401 -> errMessage = activity.getString(R.string.er_401)
-                    onErrorModel.ER_404 -> errMessage = activity.getString(R.string.er_404)
-                    onErrorModel.ER_UNKNOWN -> errMessage = activity.getString(R.string.er_unexpected)
-                    onErrorModel.ER_INTERNAL -> errMessage = activity.getString(R.string.er_internal)
-                    else -> {  errMessage = ""   }
-                }
-                if (errMessage.isNotEmpty()) {
-                    Snackbar.make(rootView.findViewById(R.id.rv_main), activity.getString(R.string.unexpected_error), Snackbar.LENGTH_SHORT).show()
-                }
-            }
-        }
-    }*/
 
-    fun setUpIsDoneVisible() {
+    private fun setUpIsDoneVisible() {
         val btHide: ImageButton = rootView.findViewById(R.id.bt_hide)
-
         viewLifecycleOwner.lifecycleScope.launch {
             vm.isDoneVisible.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).collect { isVisible ->
                 when (isVisible) {
                     true -> btHide.setImageResource(R.drawable.ic_eye_off)
                     false -> btHide.setImageResource(R.drawable.ic_eye)
-
                 }
             }
         }
     }
 
-    fun setUpPopupAction() {
+    private fun setUpPopupAction() {
         viewLifecycleOwner.lifecycleScope.launch {
             vm.popupAction.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).collect { popupData ->
                 if (viewLifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
                     val popupView = when (popupData.popupType) {
-                        PopupWindowsCreator.PopupType.Info -> activity.layoutInflater.inflate(R.layout.popup_info, null)
-                        PopupWindowsCreator.PopupType.Action -> activity.layoutInflater.inflate(R.layout.popup_note_action, null)
-                        PopupWindowsCreator.PopupType.Empty -> throw IllegalArgumentException("Invalid PopupType Provided")
+                        PopupWindowsHandler.PopupType.Info -> activity.layoutInflater.inflate(R.layout.popup_info, null)
+                        PopupWindowsHandler.PopupType.Action -> activity.layoutInflater.inflate(R.layout.popup_note_action, null)
+                        PopupWindowsHandler.PopupType.Empty -> throw IllegalArgumentException("Invalid PopupType Provided")
                     }
-
-                    PopupWindowsCreator.createPopup(popUpWindows, popupView, popupData) { action, data ->
+                    PopupWindowsHandler.createPopup(popUpWindows, popupView, popupData) { action, data ->
                         when (action) {
-                            PopupWindowsCreator.CallbackAction.Done -> vm.changeDoneStatus((data as NoteData.ToDoItem))
-                            PopupWindowsCreator.CallbackAction.Update -> vm.onNavigateAction(
+                            PopupWindowsHandler.CallbackAction.Done -> vm.changeDoneStatus((data as NoteData.ToDoItem))
+                            PopupWindowsHandler.CallbackAction.Update -> vm.onNavigateAction(
                                 InfoForNavigationToScreenB(
                                     (data as NoteData.ToDoItem).id.toInt(),
                                     navigateToScreenB = true
                                 )
                             )
-
-                            PopupWindowsCreator.CallbackAction.Delete -> {
+                            PopupWindowsHandler.CallbackAction.Delete -> {
                                 vm.delete((data as NoteData.ToDoItem).id)
                             }
                         }
@@ -230,8 +193,7 @@ class MainViewController(
         }
     }
 
-
-    fun setUpNav() {
+    private fun setUpNav() {
         viewLifecycleOwner.lifecycleScope.launch {
             vm.navigateAction.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).collect {
                 if (it.navigateToScreenB) {
@@ -241,9 +203,7 @@ class MainViewController(
         }
     }
 
-
-    fun setUpYaLogin() {
-
+    private fun setUpYaLogin() {
         val tvLoginName: TextView = rootView.findViewById(R.id.tv_loginName)
         viewLifecycleOwner.lifecycleScope.launch {
             vm.yaLogin.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).collect { yaLogin ->
@@ -252,13 +212,14 @@ class MainViewController(
         }
     }
 
-
-    fun setUpSwipeToRefresh() {
+    private fun setUpSwipeToRefresh() {
         swipeRefreshLayout = rootView.findViewById(R.id.swiperefresh)
         swipeRefreshLayout.setOnRefreshListener {
             vm.syncNotes()
         }
     }
+
+
 }
 
 

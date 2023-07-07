@@ -1,8 +1,9 @@
 package com.example.todoapp.data.repository
 
 import android.util.Log
-import com.example.todoapp.data.network.ToDoDtoModel
+import com.example.todoapp.data.network.model.ToDoDtoModel
 import com.example.todoapp.data.model.onErrorModel
+import com.example.todoapp.di.ApplicationScope
 import com.example.todoapp.domain.model.LastResponse
 import com.example.todoapp.domain.model.NoteData
 import com.example.todoapp.domain.model.ToDoEntity
@@ -29,25 +30,26 @@ import java.util.Calendar
 import java.util.Date
 import javax.inject.Inject
 
+/**
+ * Common repository for communication with data sources
+ * It contains logic about retrieving and updating notes.
+ */
 
+@ApplicationScope
 class NoteDataRepository @Inject constructor(
     private val localNoteDataRepository: LocalNoteDataRepository,
     private val remoteNoteDataRepository: RemoteNoteDataRepository
 ) {
-
-
     private val _onErrorMessage = MutableSharedFlow<onErrorModel>(0, 16)
     val onErrorMessage: SharedFlow<onErrorModel> = _onErrorMessage.asSharedFlow()
 
     private val _syncStatusResponse = Channel<LastResponse>()
     val syncStatusResponse = _syncStatusResponse.receiveAsFlow()
 
-
     private val handler = CoroutineExceptionHandler { _, exception ->
         _onErrorMessage.tryEmit(onErrorModel.ER_INTERNAL)
         Log.d("CoroutineException", "Caught $exception")
     }
-
 
     private val repoCoroutineScope = CoroutineScope(Job() + Dispatchers.Default+handler)
     suspend fun saveToDoNote(note: ToDoEntity, isOnline: Boolean) {
@@ -153,25 +155,12 @@ class NoteDataRepository @Inject constructor(
             }
         }
     }
-/*    fun syncNotes(isOnline: Boolean) {
-        vmscope.launch(Dispatchers.IO + handler) {
-            if (!isOnline) {
-                _syncStatusResponse.send(LastResponse(status = false, isOnline = false))
-            } else {
-                val mergedList = mergeDBs(vmscope)
-                val response = startSyncNotes(mergedList, isOnline)
-                _syncStatusResponse.send(response)
-            }
-        }
-    }*/
 
     private suspend fun mergeDBs(): List<ToDoEntity> {
         return repoCoroutineScope.async(Dispatchers.IO + handler) {
             val local = localNoteDataRepository.getToDoNoteListForSynk(true).first()
-            Log.d("AAALoc", local.size.toString())
             val remote = remoteNoteDataRepository.getListOfToDoNote { }.firstOrNull()
             if (remote != null) {
-                Log.d("AAARem", remote.size.toString())
             }
             combineToDoEntityAndDto(local, remote)
         }.await()
@@ -187,8 +176,6 @@ class NoteDataRepository @Inject constructor(
             .filter { it.deadline != -1L }
     }
 
-
-
     fun yaLogin(token: String, isOnline: Boolean): Flow<String> {
         return if (isOnline) {
             remoteNoteDataRepository.yaLogin(token) {
@@ -197,7 +184,6 @@ class NoteDataRepository @Inject constructor(
         } else {
             flow { }
         }
-
     }
     fun cancelCoroutine() {
         repoCoroutineScope.cancel()

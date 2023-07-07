@@ -1,6 +1,10 @@
-package com.example.todoapp.presentation.utils.networkConnectivity
+package com.example.todoapp.presentation.utility.networkConnectivity
 
 import kotlinx.coroutines.flow.Flow
+
+/**
+ * Interface of [NetworkConnectivityObserver]  for network connectivity observing
+ */
 
 interface ConnectivityObserver {
     fun observe(): Flow<Status>

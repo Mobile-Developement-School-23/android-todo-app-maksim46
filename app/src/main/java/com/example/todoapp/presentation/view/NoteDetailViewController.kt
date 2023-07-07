@@ -1,7 +1,6 @@
 package com.example.todoapp.presentation.view
 
 import android.app.Activity
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -18,27 +17,28 @@ import com.example.todoapp.domain.model.ToDoEntity
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
+import javax.inject.Inject
 
-class NoteDetailViewController(
+/**
+ * Contains logic for second screen views configuration.
+ */
+
+class NoteDetailViewController @Inject constructor(
     private val activity: Activity,
-    private val rootView: View,
-    private val rvAdapter: RVListAdapter,
-    private val viewLifecycleOwner: LifecycleOwner,
     private val vm: MainFragmentViewModel,
-
-    ) {
+) {
+    private lateinit var rootView: View
+    private lateinit var viewLifecycleOwner: LifecycleOwner
     var isUserTriggeredDeadLineSwitch = false
     var isUpdated = true
-    // private var editingToDoNote: ToDoEntity = NoteData.ToDoItem().toEntity()
 
-
-    fun setUpViews() {
-
+    fun setUpViews(root: View, viewLifecycleOwner1: LifecycleOwner) {
+        rootView = root
+        viewLifecycleOwner = viewLifecycleOwner1
         setUpInitial()
         setUpButtonsBehaviour()
         setUpDatePickerResult()
     }
-
 
     private fun setUpInitial() {
 
@@ -56,10 +56,9 @@ class NoteDetailViewController(
                 viewLifecycleOwner.lifecycle,
                 Lifecycle.State.STARTED
             ).collect { noteData ->
-                Log.d("DEADLINE notedata", noteData.toString())
                 vm.editNote(noteData)
 
-                etNoteText.setText(noteData.text)
+                etNoteText.text = noteData.text
 
                 when (noteData.priority) {
 
@@ -80,17 +79,14 @@ class NoteDetailViewController(
                 }
 
                 if (noteData.deadline != 0L) {
-                    Log.d("DEADLINE !=0", noteData.deadline.toString())
                     tvDeadlineValue.text =
                         SimpleDateFormat("dd MMMM yyyy", activity.resources.configuration.locales.get(0)).format(noteData.deadline)
                     deadlineSwitch.isChecked = true
                 } else {
-                    Log.d("DEADLINE =0", noteData.deadline.toString())
                     deadlineSwitch.isChecked = false
                     tvDeadlineValue.visibility = View.GONE
                 }
                 isUserTriggeredDeadLineSwitch = true
-
 
                 if (noteData.text.isEmpty()) {
                     isUpdated = false
@@ -113,12 +109,10 @@ class NoteDetailViewController(
         val deleteGroup: View = rootView.findViewById(R.id.deleteGroup)
         val ibClose: ImageView = rootView.findViewById(R.id.ib_close)
         val tvSave: TextView = rootView.findViewById(R.id.tv_save)
-
         deleteGroup.setOnClickListener {
             vm.delete(vm.getEditNote().id)
             findNavController(rootView).popBackStack()
         }
-
         ibClose.setOnClickListener {
             findNavController(rootView).popBackStack()
         }
@@ -148,10 +142,8 @@ class NoteDetailViewController(
                 }
             if (checkBeforeSave(editingToDoNote)) {
                 if (isUpdated) {
-                    Log.d("SECOND", "update   $editingToDoNote")
                     vm.updateToDoNote(editingToDoNote)
                 } else {
-                    Log.d("SECOND", "save   $editingToDoNote")
                     vm.addNewNote(editingToDoNote)
                 }
                 findNavController(rootView).popBackStack()
@@ -166,10 +158,10 @@ class NoteDetailViewController(
                 Lifecycle.State.STARTED
             ).collect { bundle ->
                 if (bundle.containsKey("SELECTED_DATE")) {
-                    val choosedDate = bundle.getLong("SELECTED_DATE")
-                    vm.editNote(vm.getEditNote().copy(deadline = choosedDate))
+                    val chosedDate = bundle.getLong("SELECTED_DATE")
+                    vm.editNote(vm.getEditNote().copy(deadline = chosedDate))
                     val selectedDate =
-                        SimpleDateFormat("dd MMMM yyyy", activity.resources.configuration.locales.get(0)).format(choosedDate)
+                        SimpleDateFormat("dd MMMM yyyy", activity.resources.configuration.locales.get(0)).format(chosedDate)
                     val tvDeadlineValue: TextView = rootView.findViewById(R.id.tv_deadline_value)
                     val deadlineSwitch: SwitchCompat = rootView.findViewById(R.id.deadlineSwitch)
                     tvDeadlineValue.text = selectedDate

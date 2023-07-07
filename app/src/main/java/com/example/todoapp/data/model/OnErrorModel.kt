@@ -1,5 +1,7 @@
 package com.example.todoapp.data.model
-
+/**
+ *Set of possible errors for handling.
+ */
 enum class onErrorModel() {
     ER_400,
     ER_404,

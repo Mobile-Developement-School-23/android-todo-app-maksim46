@@ -1,6 +1,5 @@
 package com.example.todoapp.presentation.view
 
-import android.content.Context
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -10,7 +9,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.PopupWindow
 import androidx.core.content.ContextCompat
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
@@ -19,57 +17,35 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.ItemTouchHelper
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.todoapp.R
 import com.example.todoapp.ToDoAppApp
 import com.example.todoapp.databinding.FragmentNoteBinding
 import com.example.todoapp.domain.model.Priority
-import com.example.todoapp.di.NoteFragmentComponent
-import com.example.todoapp.di.NoteFragmentViewComponent
-import com.example.todoapp.presentation.utils.DatePickerFragment
+import com.example.todoapp.presentation.utility.DatePickerFragment
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * Second fragment of the application.
+ * Contains logic of ContexMenu and DataPickerFragment management.
+ */
 class NoteDetailFragment : Fragment(R.layout.fragment_note) {
     private val binding by viewBinding(FragmentNoteBinding::bind)
     private val vm: MainFragmentViewModel by activityViewModels()
-    var isUserTriggeredDeadLineSwitch = false
-    private val component by lazy { (requireActivity().application as ToDoAppApp).component }
-    //  private var editingToDoNote: ToDoEntity = NoteData.ToDoItem().toEntity()*/
 
     @Inject
-    lateinit var itemTouchHelper: ItemTouchHelper
+    lateinit var noteDetailViewController: NoteDetailViewController
 
-    @Inject
-    lateinit var popUpWindows: PopupWindow
-
-
-    private var fragmentViewComponent: NoteFragmentViewComponent? = null
-    private lateinit var fragmentComponent: NoteFragmentComponent
-
-    override fun onAttach(context: Context) {
-        component.inject(this)
-        super.onAttach(context)
+    private val component by lazy {
+        (requireActivity().application as ToDoAppApp).component.fragmentNoteDetailComponent().create(this, this.requireActivity())
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        fragmentComponent = NoteFragmentComponent(component, this, vm)
-
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        component.inject(this)
         val view = inflater.inflate(R.layout.fragment_note, container, false)
-
-        fragmentViewComponent =
-            NoteFragmentViewComponent(
-                popUpWindows,
-                itemTouchHelper,
-                fragmentComponent,
-                view,
-                viewLifecycleOwner
-            ).apply { noteDetailFragmentViewController.setUpViews() }
+        noteDetailViewController.setUpViews(view, viewLifecycleOwner)
         return view
     }
 
@@ -88,17 +64,14 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note) {
             it.showContextMenu(0F, 0F)
         }
 
-
         viewLifecycleOwner.lifecycleScope.launch {
             vm.isShowDataPicker.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).collect { isShow ->
                 if (isShow) {
                     DatePickerFragment().show(supportFragmentManager, "DatePickerFragment")
                 }
-
             }
         }
     }
-
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
         super.onCreateContextMenu(menu, v, menuInfo)
@@ -107,7 +80,6 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note) {
         spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(requireContext(), R.color.L_color_red)), 0, spannable.length, 0)
         menu.get(2).title = spannable
     }
-
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
@@ -146,28 +118,6 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note) {
         supportFragmentManager.setFragmentResultListener("FRAGMENT_RESULT_KEY", viewLifecycleOwner) { _, bundle ->
             vm.setDatePickerResult(bundle)
         }
-
-        /*    private fun setDatePickerFragmentResultListener(supportFragmentManager: FragmentManager) {
-        supportFragmentManager.setFragmentResultListener("FRAGMENT_RESULT_KEY", viewLifecycleOwner) { resultKey, bundle ->
-            if (bundle.containsKey("SELECTED_DATE")) {
-                val choosedDate = bundle.getLong("SELECTED_DATE")
-                vm.editNote(vm.getEditNote().copy(deadline = choosedDate))
-                val selectedDate =
-                    SimpleDateFormat("dd MMMM yyyy", resources.configuration.locales.get(0)).format(choosedDate)
-                binding.tvDeadlineValue.text = selectedDate
-                binding.tvDeadlineValue.visibility = View.VISIBLE
-                isUserTriggeredDeadLineSwitch = false
-                binding.deadlineSwitch.isChecked = true
-                isUserTriggeredDeadLineSwitch = true
-            }
-        }
-    }*/
-
-
-        /*               supportFragmentManager.setFragmentResultListener("FRAGMENT_RESULT_KEY", viewLifecycleOwner) { _, bundle ->
-                       vm.setDatePickerResult(bundle)
-
-                   }*/
     }
 }
 

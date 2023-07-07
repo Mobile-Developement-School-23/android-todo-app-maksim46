@@ -1,11 +1,16 @@
-package com.example.todoapp.presentation.utils.itemTouchHelper
+package com.example.todoapp.presentation.utility.itemTouchHelper
 
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.example.todoapp.R
+import com.example.todoapp.presentation.utility.networkConnectivity.NetworkConnectivityObserver
 import javax.inject.Inject
+
+/**
+ * Helper for notes swipes implementation on [MainFragment] recycler
+ */
 
 class SwipeBackgroundHelper @Inject constructor(){
 

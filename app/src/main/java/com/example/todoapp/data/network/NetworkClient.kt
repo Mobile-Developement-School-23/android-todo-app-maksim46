@@ -19,8 +19,13 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
 import kotlinx.serialization.json.Json
+import javax.inject.Inject
 
-class NetworkClient {
+/**
+ * Network client for network requests
+ */
+
+class NetworkClient @Inject constructor(){
     val client = HttpClient {
         install(JsonFeature) {
             serializer = KotlinxSerializer(Json {

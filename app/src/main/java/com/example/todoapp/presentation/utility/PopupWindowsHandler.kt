@@ -1,4 +1,4 @@
-package com.example.todoapp.presentation.utils
+package com.example.todoapp.presentation.utility
 
 import android.view.Gravity
 import android.view.View
@@ -7,11 +7,12 @@ import android.widget.TextView
 import com.example.todoapp.R
 import com.example.todoapp.domain.model.NoteData
 
-
-class PopupWindowsCreator {
+/**
+ * Handler for [MainFragment] PopupWindows
+ */
+class PopupWindowsHandler {
     companion object {
-      //  fun createPopup(popupWindow: PopupWindow, view: View, popupData: PopupData, callback: PopupResultListener) {
-      fun createPopup(popupWindow: PopupWindow, view: View, popupData: PopupData,onError: (action: CallbackAction, data:NoteData) -> Unit) {
+      fun createPopup(popupWindow: PopupWindow, view: View, popupData: PopupData, action: (action: CallbackAction, data:NoteData) -> Unit) {
             popupWindow.contentView = view
             popupWindow.isOutsideTouchable = true
             popupWindow.setBackgroundDrawable(null)
@@ -25,22 +26,18 @@ class PopupWindowsCreator {
                     popupWindow.showAsDropDown(popupData.view, 0, -400, Gravity.TOP)
 
                     view.findViewById<TextView>(R.id.menu_done).setOnClickListener {
-                        onError(CallbackAction.Done, popupData.note)
-                        //callback.onPopupResult(CallbackAction.Done, popupData.note)
+                        action(CallbackAction.Done, popupData.note)
                         popupWindow.dismiss()
                     }
                     view.findViewById<TextView>(R.id.menu_update).setOnClickListener {
-                        onError(CallbackAction.Update, popupData.note)
-                      //  callback.onPopupResult(CallbackAction.Update, popupData.note)
+                        action(CallbackAction.Update, popupData.note)
                         popupWindow.dismiss()
                     }
                     view.findViewById<TextView>(R.id.menu_delete).setOnClickListener {
-                        onError(CallbackAction.Delete, popupData.note)
-                      //  callback.onPopupResult(CallbackAction.Delete, popupData.note)
+                        action(CallbackAction.Delete, popupData.note)
                         popupWindow.dismiss()
                     }
                 }
-
                 PopupType.Info -> {
                     popupWindow.animationStyle = R.style.PopupAnimationInfo
                     popupWindow.showAsDropDown(popupData.view, 0, 0, Gravity.TOP)
@@ -53,7 +50,6 @@ class PopupWindowsCreator {
                     }
                 }
                 PopupType.Empty -> throw IllegalArgumentException("Invalid PopupType Provided")
-
             }
         }
     }

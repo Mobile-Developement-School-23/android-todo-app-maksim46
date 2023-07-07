@@ -10,8 +10,11 @@ import com.example.todoapp.domain.model.ClickData
 import com.example.todoapp.domain.model.NoteData
 import com.example.todoapp.domain.model.PressType
 import com.example.todoapp.domain.model.Priority
-import com.example.todoapp.presentation.utils.PopupWindowsCreator
+import com.example.todoapp.presentation.utility.PopupWindowsHandler
 import java.text.SimpleDateFormat
+/**
+ * RecyclerView.ItemViewHolder implementation for [RVListAdapter].
+ */
 
 class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val binding by viewBinding(NoteItemBinding::bind)
@@ -23,7 +26,7 @@ class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 noteItem.onNoteClick(ClickData(PressType.LONG, noteItem, groupForClick))
                 true
             }
-            ivInfo.setOnClickListener { noteItem.onInfoClick(PopupWindowsCreator.PopupData(noteItem, ivInfo, PopupWindowsCreator.PopupType.Info)) }
+            ivInfo.setOnClickListener { noteItem.onInfoClick(PopupWindowsHandler.PopupData(noteItem, ivInfo, PopupWindowsHandler.PopupType.Info)) }
 
             tvNote.text = noteItem.text
             when (noteItem.priority) {

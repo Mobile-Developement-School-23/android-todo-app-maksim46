@@ -1,8 +1,11 @@
-package com.example.todoapp.data.network
+package com.example.todoapp.data.network.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.util.Date
+
+/**
+ * Models for notes network communication .
+ */
 
 @Serializable
 class ToDoDtoModel(
@@ -12,7 +15,7 @@ class ToDoDtoModel(
     @SerialName("text")
     val text: String,
     @SerialName("importance")
-    val importance: String,          //"low" / "basic" / "important"
+    val importance: String,
     @SerialName("deadline")
     val deadline: Long,
     @SerialName("done")
@@ -43,4 +46,4 @@ data class ToDoListResponse(
     val revision: Int,
     val status: String,
 
-)
+    )

@@ -11,7 +11,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class LocalNoteDataRepository @Inject constructor(private val myToDoListDao: ToDoListDao) :
+/**
+ * Data source contains logic for loading data from local database
+ */
+class LocalNoteDataRepository @Inject constructor(
+    private val myToDoListDao: ToDoListDao
+) :
     LocalNoteDataRepository {
 
     override suspend fun insertToDoNote(note: ToDoEntity): Long {

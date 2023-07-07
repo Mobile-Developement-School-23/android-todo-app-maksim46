@@ -1,4 +1,4 @@
-package com.example.todoapp.presentation.utils
+package com.example.todoapp.presentation.utility
 
 import android.content.Context
 import androidx.work.Constraints
@@ -9,15 +9,20 @@ import androidx.work.WorkManager
 
 import com.example.todoapp.data.network.SyncWork.SyncWorker
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-class SyncWM (private val context: Context) {
+/**
+ * Defined WorkManager for periodic synchronization settings
+ */
+class SyncWM @Inject constructor(
+    private val context: Context
+){
 
     fun startSynchWM() {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
-       // val workRequest = PeriodicWorkRequest.Builder(SyncWorker::class.java, 8, TimeUnit.HOURS, 30, TimeUnit.MINUTES)
-        val workRequest = PeriodicWorkRequest.Builder(SyncWorker::class.java, 15, TimeUnit.MINUTES, 5, TimeUnit.MINUTES)
+        val workRequest = PeriodicWorkRequest.Builder(SyncWorker::class.java, 8, TimeUnit.HOURS, 30, TimeUnit.MINUTES)
             .setConstraints(constraints)
             .build()
 

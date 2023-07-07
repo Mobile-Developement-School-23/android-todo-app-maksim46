@@ -6,14 +6,18 @@ import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.todoapp.databinding.FooterItemBinding
 import com.example.todoapp.domain.model.NoteData
+const val THRESHOLD = 2
 
- class FooterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+/**
+ * RecyclerView.FooterViewHolder implementation for [RVListAdapter].
+ */
+class FooterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val binding by viewBinding(FooterItemBinding::bind)
     fun bind(footerNoteData: NoteData.FooterItem) {
         with(binding) {
             etNewNote.doAfterTextChanged {
                 etNewNote.requestFocus()
-                if (it?.let { it.length > 2 } == true) {
+                if (it?.let { it.length > THRESHOLD } == true) {
                     ibAddNew.visibility = View.VISIBLE
                     ibAddNew.setOnClickListener {
                         footerNoteData.onAddClick(etNewNote.text.toString())

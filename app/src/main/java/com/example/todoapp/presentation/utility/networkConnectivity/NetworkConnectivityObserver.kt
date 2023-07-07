@@ -1,9 +1,8 @@
-package com.example.todoapp.presentation.utils.networkConnectivity
+package com.example.todoapp.presentation.utility.networkConnectivity
 
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
-import com.example.todoapp.presentation.utils.networkConnectivity.ConnectivityObserver
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -11,9 +10,13 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * For network connectivity observing
+ */
+
 class NetworkConnectivityObserver @Inject constructor(
     private val context: Context
-): ConnectivityObserver {
+) : ConnectivityObserver {
 
     private val connectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

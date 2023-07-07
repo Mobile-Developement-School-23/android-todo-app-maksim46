@@ -1,4 +1,4 @@
-package com.example.todoapp.presentation.utils.itemTouchHelper
+package com.example.todoapp.presentation.utility.itemTouchHelper
 
 
 import android.graphics.Canvas
@@ -6,12 +6,19 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todoapp.R
 import javax.inject.Inject
-class ItemTouchHelperCallback @Inject constructor (
+
+/**
+ * Callback for notes swipes implementation on [MainFragment] recycler
+ */
+
+
+class ItemTouchHelperCallback @Inject constructor(
     private val swipeBackgroundHelper: SwipeBackgroundHelper,
-    private val touchHelperAdapter: IntItemTouchHelper) : ItemTouchHelper.Callback() {
+    private val onItemSwiped: (position: Int, direction: Int) -> Unit
+) : ItemTouchHelper.Callback() {
 
     override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
-        if (viewHolder.itemViewType== R.layout.footer_item ) return 0
+        if (viewHolder.itemViewType == R.layout.footer_item) return 0
         else {
             val swipeFlags = ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
             return makeMovementFlags(0, swipeFlags)
@@ -23,10 +30,18 @@ class ItemTouchHelperCallback @Inject constructor (
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        touchHelperAdapter.onItemSwiped(viewHolder.bindingAdapterPosition , direction)
+        onItemSwiped(viewHolder.bindingAdapterPosition, direction)
     }
 
-    override fun onChildDraw(canvas: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean ) {
+    override fun onChildDraw(
+        canvas: Canvas,
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder,
+        dX: Float,
+        dY: Float,
+        actionState: Int,
+        isCurrentlyActive: Boolean
+    ) {
         if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
             val viewItem = viewHolder.itemView
             swipeBackgroundHelper.startPaintDraw(canvas, viewItem, dX)
@@ -35,6 +50,6 @@ class ItemTouchHelperCallback @Inject constructor (
     }
 
 
-
 }
+
 

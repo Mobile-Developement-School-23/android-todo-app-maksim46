@@ -2,6 +2,10 @@ package com.example.todoapp.data.network
 
 import android.util.Log
 import com.example.todoapp.data.model.onErrorModel
+import com.example.todoapp.data.network.model.ToDoDtoModel
+import com.example.todoapp.data.network.model.ToDoListResponse
+import com.example.todoapp.data.network.model.ToDoResponse
+import com.example.todoapp.data.network.model.YaLoginDtoModel
 import com.example.todoapp.domain.toPayload
 import io.ktor.client.features.ClientRequestException
 import io.ktor.client.features.ServerResponseException
@@ -10,24 +14,24 @@ import io.ktor.client.request.header
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.delay
 import javax.inject.Inject
+/**
+ * Description  of API network requests
+ * contains logic for network error handling and retries
+ */
+const val INIT_REVISION = "-1"
 
-class ToDoNoteApiImpl @Inject constructor() : ToDoNoteApi {
-    private val httpClient: NetworkClient by lazy {
-        NetworkClient()
-    }
+class ToDoNoteApiImpl @Inject constructor(
+    private val httpClient: NetworkClient
+) : ToDoNoteApi {
 
-    private var dbRevizion = "-1"
-
-    private suspend fun <T> executeRequest(
-        requestCall: suspend () -> T,
-        onCompletion: ((T) -> Unit)? = null,
-        onError: (message: onErrorModel) -> Unit,
-        retryIfError: Set<HttpStatusCode> = setOf()
+    private var dbRevizion = INIT_REVISION
+    suspend fun <T> executeRequest(
+        requestCall: suspend () -> T, onCompletion: ((T) -> Unit)? = null,
+        onError: (message: onErrorModel) -> Unit, retryIfError: Set<HttpStatusCode> = setOf()
     ): T? {
         var response: T? = null
         var isError = true
         var retries = 0
-
         while (retries < 2) {
             try {
                 response = requestCall()
@@ -43,25 +47,21 @@ class ToDoNoteApiImpl @Inject constructor() : ToDoNoteApi {
                 when (ce.response.status) {
                     HttpStatusCode.BadRequest -> {
                         onError(onErrorModel.ER_400)
-                        Log.d("RESPONSE", "Ошибка 400: Неверный запрос")
                         isError = false
                     }
 
                     HttpStatusCode.Unauthorized -> {
                         onError(onErrorModel.ER_401)
-                        Log.d("RESPONSE", "Ошибка 401: Ошибка авторизации")
                         isError = false
                     }
 
                     HttpStatusCode.NotFound -> {
                         onError(onErrorModel.ER_404)
-                        Log.d("RESPONSE", "Ошибка 404: Элемент не найден")
                         isError = false
                     }
 
                     else -> {
                         onError(onErrorModel.ER_UNKNOWN)
-                        Log.d("RESPONSE", "Неожиданный код состояния HTTP")
                         isError = false
                     }
                 }
@@ -86,7 +86,6 @@ class ToDoNoteApiImpl @Inject constructor() : ToDoNoteApi {
         return response
     }
 
-
     override suspend fun getListOfToDoNote(onError: (message: onErrorModel) -> Unit): ToDoListResponse? {
         return executeRequest(
             requestCall = {
@@ -98,8 +97,7 @@ class ToDoNoteApiImpl @Inject constructor() : ToDoNoteApi {
                 if (response != null) {
                     dbRevizion = dbRevizion.toInt().coerceAtLeast(response.revision).toString()
                 }
-            },
-            onError = onError
+            }, onError = onError
         )
     }
 
@@ -112,8 +110,7 @@ class ToDoNoteApiImpl @Inject constructor() : ToDoNoteApi {
             },
             onCompletion = { response ->
                 dbRevizion = dbRevizion.toInt().coerceAtLeast(response.revision).toString()
-            },
-            onError = onError
+            }, onError = onError
         )
         return response?.revision ?: -1
     }
@@ -125,8 +122,7 @@ class ToDoNoteApiImpl @Inject constructor() : ToDoNoteApi {
                 if (response != null) {
                     dbRevizion = dbRevizion.toInt().coerceAtLeast(response.revision).toString()
                 }
-            },
-            onError = onError,
+            }, onError = onError,
             retryIfError = setOf(HttpStatusCode.BadRequest)
         )?.element
     }
@@ -138,8 +134,7 @@ class ToDoNoteApiImpl @Inject constructor() : ToDoNoteApi {
                 if (response != null) {
                     dbRevizion = dbRevizion.toInt().coerceAtLeast(response.revision).toString()
                 }
-            },
-            onError = onError,
+            }, onError = onError,
             retryIfError = setOf(HttpStatusCode.BadRequest)
         )?.element
     }
@@ -151,8 +146,7 @@ class ToDoNoteApiImpl @Inject constructor() : ToDoNoteApi {
                 if (response != null) {
                     dbRevizion = dbRevizion.toInt().coerceAtLeast(response.revision).toString()
                 }
-            },
-            onError = onError,
+            }, onError = onError,
             retryIfError = setOf(HttpStatusCode.BadRequest)
         )?.element
     }
@@ -164,8 +158,7 @@ class ToDoNoteApiImpl @Inject constructor() : ToDoNoteApi {
                 if (response != null) {
                     dbRevizion = dbRevizion.toInt().coerceAtLeast(response.revision).toString()
                 }
-            },
-            onError = onError,
+            }, onError = onError,
             retryIfError = setOf(HttpStatusCode.BadRequest)
         )?.list
     }
@@ -176,8 +169,9 @@ class ToDoNoteApiImpl @Inject constructor() : ToDoNoteApi {
                 httpClient.client.get(HttpResource.YANDEX_LOGIN_URL) {
                     header("Authorization", "OAuth $token")
                 }
-            },
-            onError = onError
+            }, onError = onError
         )?.realName ?: ""
     }
+
+
 }

@@ -1,4 +1,4 @@
-package com.example.todoapp.presentation.utils
+package com.example.todoapp.presentation.utility
 
 import android.app.DatePickerDialog
 import android.app.Dialog
@@ -11,13 +11,14 @@ import com.example.todoapp.R
 import java.util.Calendar
 import java.util.Date
 
+/**
+ * DialogFragment of [NoteDetailFragment] for pick deadline date
+ */
 class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener {
     private val calendar = Calendar.getInstance()
-
     private val selectedDateBundle = Bundle()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
         val day = calendar.get(Calendar.DAY_OF_MONTH)

@@ -1,10 +1,14 @@
-package com.example.todoapp.presentation.utils
+package com.example.todoapp.presentation.utility
 
 import android.app.Activity
 import android.content.Context
 import android.view.View
 import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
+
+/**
+ * Provides some utility extension functions
+ */
 
 fun Context.hideKeyboard(view: View) {
     val inputMethodManager =

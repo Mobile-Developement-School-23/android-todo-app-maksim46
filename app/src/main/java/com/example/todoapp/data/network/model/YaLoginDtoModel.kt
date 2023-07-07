@@ -1,8 +1,11 @@
-package com.example.todoapp.data.network
+package com.example.todoapp.data.network.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/**
+ * Model for Yandex authorization network communication .
+ */
 @Serializable
 data class YaLoginDtoModel(
 

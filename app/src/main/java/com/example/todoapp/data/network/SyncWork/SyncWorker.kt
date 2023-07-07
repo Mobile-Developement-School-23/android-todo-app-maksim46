@@ -13,6 +13,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
+/**
+ * WorkManager for periodic notes synchronization
+ */
+
 class SyncWorker constructor(private val context: Context, workerParam: WorkerParameters, private val noteDataRepository: NoteDataRepository) :
     Worker(context, workerParam) {
     private val handler = CoroutineExceptionHandler { _, exception -> Log.d("CoroutineException", "Caught $exception") }

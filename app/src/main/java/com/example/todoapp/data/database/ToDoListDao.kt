@@ -3,6 +3,9 @@ package com.example.todoapp.data.database
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * Description of possible operation with local data base
+ */
 @Dao
 interface ToDoListDao {
 

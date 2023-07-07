@@ -2,9 +2,11 @@ package com.example.todoapp.data.database
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.time.LocalDateTime
-import java.util.*
+import java.util.Date
 
+/**
+ *Model of notes for local databasr
+ */
 @Entity(tableName = "todo_list")
 data class ToDoListDbModel(
     @PrimaryKey(autoGenerate = true)

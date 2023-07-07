@@ -15,12 +15,12 @@ import com.example.todoapp.domain.model.NoteData
 import com.example.todoapp.domain.model.PressType
 import com.example.todoapp.domain.model.Priority
 import com.example.todoapp.domain.model.ToDoEntity
-import com.example.todoapp.presentation.utils.PopupWindowsCreator
-import com.example.todoapp.presentation.utils.itemTouchHelper.IntItemTouchHelper
-import com.example.todoapp.presentation.utils.networkConnectivity.ConnectivityObserver
-import com.example.todoapp.presentation.utils.networkConnectivity.NetworkConnectivityObserver
+import com.example.todoapp.presentation.utility.PopupWindowsHandler
+import com.example.todoapp.presentation.utility.networkConnectivity.ConnectivityObserver
+import com.example.todoapp.presentation.utility.networkConnectivity.NetworkConnectivityObserver
 import com.example.todoapp.domain.toEntity
 import com.example.todoapp.domain.toListOfNoteData
+
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -40,11 +40,16 @@ import kotlinx.coroutines.launch
 import java.util.Date
 import javax.inject.Inject
 
+/**
+ * The view model for notes list.
+ * Responsible for initiating data loading, transforming data into UI format
+ * and handling user actions.
+ */
 @ApplicationScope
-class MainFragmentViewModel @Inject constructor(
-    private val connectivityObserver: NetworkConnectivityObserver,
-    private val noteDataRepository: NoteDataRepository
-) : ViewModel(), IntItemTouchHelper {
+    class MainFragmentViewModel @Inject constructor(
+        private val connectivityObserver: NetworkConnectivityObserver,
+        private val noteDataRepository: NoteDataRepository
+    ) : ViewModel()  {
 
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
@@ -57,8 +62,8 @@ class MainFragmentViewModel @Inject constructor(
     private val _isDoneVisible = MutableStateFlow<Boolean>(false)
     val isDoneVisible: StateFlow<Boolean> = _isDoneVisible.asStateFlow()
 
-    private val _popupAction = MutableStateFlow<PopupWindowsCreator.PopupData>(PopupWindowsCreator.PopupData())
-    val popupAction: StateFlow<PopupWindowsCreator.PopupData> = _popupAction.asStateFlow()
+    private val _popupAction = MutableStateFlow<PopupWindowsHandler.PopupData>(PopupWindowsHandler.PopupData())
+    val popupAction: StateFlow<PopupWindowsHandler.PopupData> = _popupAction.asStateFlow()
 
     private val _navigateAction = MutableStateFlow<InfoForNavigationToScreenB>(InfoForNavigationToScreenB())
     val navigateAction: StateFlow<InfoForNavigationToScreenB> = _navigateAction.asStateFlow()
@@ -66,14 +71,8 @@ class MainFragmentViewModel @Inject constructor(
     private val _toDoNoteByIdForEdit = MutableStateFlow<ToDoEntity>(ToDoEntity("0", "", Priority.Standart, 0, false, Date(0), Date(0)))
     val toDoNoteByIdForEdit: StateFlow<ToDoEntity> = _toDoNoteByIdForEdit.asStateFlow()
 
-    /*    private val _corErrorMessage = MutableSharedFlow<onErrorModel>(0, 16)
-        val corErrorMessage: SharedFlow<onErrorModel> = _corErrorMessage.asSharedFlow()*/
-
-
-
     private val _datePickerFragmentResultListener = MutableSharedFlow<Bundle>(0, 16)
     val datePickerFragmentResultListener:SharedFlow<Bundle> = _datePickerFragmentResultListener.asSharedFlow()
-
 
     private val _isShowDataPicker = MutableStateFlow<Boolean>(false)
     val isShowDataPicker: StateFlow<Boolean> = _isShowDataPicker.asStateFlow()
@@ -86,21 +85,15 @@ class MainFragmentViewModel @Inject constructor(
 
     var editingToDoNote: ToDoEntity = NoteData.ToDoItem().toEntity()
 
-
     private var isOnline = false
     private var previousState = true
     private var currentState = true
     private lateinit var getListJob: Job
 
-    /*    private val handler = CoroutineExceptionHandler { _, exception ->
-            _corErrorMessage.tryEmit(onErrorModel.ER_INTERNAL)
-            Log.d("CoroutineException", "Caught $exception")
-        }*/
     private val handler = CoroutineExceptionHandler { _, exception ->
         noteDataRepository.setErrorMessage(onErrorModel.ER_INTERNAL)
         Log.d("CoroutineException", "Caught $exception")
     }
-
     init {
         getListOfNotes()
         countNumberOfDone()
@@ -118,7 +111,6 @@ class MainFragmentViewModel @Inject constructor(
                     isOnline = true
                     syncNotes()
                 }
-
                 else -> {
                     isOnline = false
 
@@ -127,39 +119,11 @@ class MainFragmentViewModel @Inject constructor(
             isOnline = it == ConnectivityObserver.Status.Available
             previousState = currentState
             currentState = isOnline
-
         }.launchIn(viewModelScope)
-
     }
-
-    fun editNote(note: ToDoEntity) {
-        editingToDoNote = editingToDoNote.copy(
-            id = note.id,
-            text = note.text,
-            priority = note.priority,
-            deadline = note.deadline,
-            isDone = note.isDone,
-            createDate = note.createDate,
-            updateDate = note.updateDate
-        )
-
-
-    }
-
-    fun getEditNote(): ToDoEntity {
-        Log.d("SECOND", "GET $editingToDoNote  ")
-        return editingToDoNote
-    }
-
-    fun setShowDataPicker(isShow: Boolean) {
-        _isShowDataPicker.value = true
-        _isShowDataPicker.value = false
-    }
-
 
     private fun getListOfNotes() {
         getListJob = viewModelScope.launch(ioDispatcher + handler) {
-
             (noteDataRepository.getToDoNoteList(_isDoneVisible.value)).collect { toDoEntityList ->
                 _listOfNotesFlow.update {
                     mutableListOf<NoteData>().apply {
@@ -176,6 +140,15 @@ class MainFragmentViewModel @Inject constructor(
         }
     }
 
+    fun getEditNote(): ToDoEntity {
+        return editingToDoNote
+    }
+
+    fun setShowDataPicker(isShow: Boolean) {
+        _isShowDataPicker.value = true
+        _isShowDataPicker.value = false
+    }
+
     fun getLastResponse(): Flow<LastResponse> {
         return noteDataRepository.syncStatusResponse
     }
@@ -188,10 +161,6 @@ class MainFragmentViewModel @Inject constructor(
         _datePickerFragmentResultListener.tryEmit(bundle)
     }
 
-/*    fun getDatePickerResult(): SharedFlow<Bundle> {
-        return datePickerFragmentResultListener
-    }*/
-
     private fun countNumberOfDone() {
         viewModelScope.launch(ioDispatcher + handler) {
             _numberOfDone.emitAll(
@@ -202,7 +171,6 @@ class MainFragmentViewModel @Inject constructor(
 
     fun changeDoneStatus(note: NoteData.ToDoItem) {
         viewModelScope.launch(ioDispatcher + handler) {
-
             noteDataRepository.updateDoneStatus(note, isOnline)
         }
     }
@@ -238,20 +206,29 @@ class MainFragmentViewModel @Inject constructor(
         when (note.pressType) {
             PressType.LONG -> viewModelScope.launch(ioDispatcher + handler) {
                 _popupAction.update {
-                    PopupWindowsCreator.PopupData(
+                    PopupWindowsHandler.PopupData(
                         note = note.noteData,
                         view = note.view,
-                        popupType = PopupWindowsCreator.PopupType.Action
+                        popupType = PopupWindowsHandler.PopupType.Action
                     )
                 }
             }
-
             PressType.SHORT -> onNavigateAction(InfoForNavigationToScreenB((note.noteData as NoteData.ToDoItem).id.toInt(), navigateToScreenB = true))
         }
     }
 
-
-    private fun onInfoClickAction(popupData: PopupWindowsCreator.PopupData) {
+    fun editNote(note: ToDoEntity) {
+        editingToDoNote = editingToDoNote.copy(
+            id = note.id,
+            text = note.text,
+            priority = note.priority,
+            deadline = note.deadline,
+            isDone = note.isDone,
+            createDate = note.createDate,
+            updateDate = note.updateDate
+        )
+    }
+    private fun onInfoClickAction(popupData: PopupWindowsHandler.PopupData) {
         _popupAction.update { popupData }
     }
 
@@ -273,7 +250,7 @@ class MainFragmentViewModel @Inject constructor(
         }
     }
 
-    override fun onItemSwiped(position: Int, direction: Int) {
+    val onItemSwiped: (position: Int, direction: Int) -> Unit = { position, direction ->
         val swipedNoteId = (listOfNotesFlow.value[position] as? NoteData.ToDoItem)
         when (direction) {
             ItemTouchHelper.LEFT -> swipedNoteId?.let { delete(it.id) }
@@ -299,7 +276,6 @@ class MainFragmentViewModel @Inject constructor(
             _yaLogin.emitAll(noteDataRepository.yaLogin(token, isOnline))
         }
     }
-
 }
 
 

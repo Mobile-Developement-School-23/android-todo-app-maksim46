@@ -160,7 +160,7 @@ class MainViewController @Inject constructor(
                     false -> btHide.setImageResource(R.drawable.ic_eye)
                 }
             }
-        }
+        }//
     }
 
     private fun setUpPopupAction() {

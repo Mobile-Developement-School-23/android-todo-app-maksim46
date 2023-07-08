@@ -198,7 +198,7 @@ class MainViewController @Inject constructor(
                 }
             }
         }
-    }
+    }//
 
     private fun setUpYaLogin() {
         val tvLoginName: TextView = rootView.findViewById(R.id.tv_loginName)

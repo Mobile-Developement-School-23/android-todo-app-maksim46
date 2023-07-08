@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.todoapp.R
-import com.example.todoapp.data.model.onErrorModel
+import com.example.todoapp.data.model.OnErrorModel
 import com.example.todoapp.domain.model.InfoForNavigationToScreenB
 import com.example.todoapp.domain.model.NoteData
 import com.example.todoapp.presentation.utility.LastSuccessSync
@@ -30,8 +30,9 @@ import java.text.SimpleDateFormat
 import javax.inject.Inject
 /**
  * Contains logic for main screen views configuration.
+ *
+ * The class is voluminous, but has single responsibility
  */
-
 class MainViewController @Inject constructor(
     private val popUpWindows: PopupWindow,
     private val itemTouchHelper: ItemTouchHelper,
@@ -40,7 +41,6 @@ class MainViewController @Inject constructor(
     private val vm: MainFragmentViewModel,
     private val lastSuccessSynch: LastSuccessSync,
 ) {
-
     lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var rootView: View
     private lateinit var viewLifecycleOwner: LifecycleOwner
@@ -52,7 +52,7 @@ class MainViewController @Inject constructor(
         setUpSwipeToRefresh()
         setUpFab()
         setUpBtHide()
-        setUpBtYaLoggin()
+        setUpBtYaLogin()
         setUpNumberOfDone()
         setUpGetLastResponce()
         setUpGetErrorMessage()
@@ -96,9 +96,9 @@ class MainViewController @Inject constructor(
         btHide.setOnClickListener { vm.flipDoneVisibility() }
     }
 
-    private fun setUpBtYaLoggin() {
-        val btYALoggin: ImageButton = rootView.findViewById(R.id.bt_YALoggin)
-        btYALoggin.setOnClickListener {
+    private fun setUpBtYaLogin() {
+        val btYALogin: ImageButton = rootView.findViewById(R.id.bt_YALoggin)
+        btYALogin.setOnClickListener {
             vm.yaLoginClick(true)
         }
     }
@@ -136,15 +136,13 @@ class MainViewController @Inject constructor(
         viewLifecycleOwner.lifecycleScope.launch {
             vm.getErrorMessage().flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).collect { onErrMessage ->
                 var errMessage = ""
-                when (onErrMessage) {
-                    onErrorModel.ER_400 -> errMessage = activity.getString(R.string.er_400)
-                    onErrorModel.ER_401 -> errMessage = activity.getString(R.string.er_401)
-                    onErrorModel.ER_404 -> errMessage = activity.getString(R.string.er_404)
-                    onErrorModel.ER_UNKNOWN -> errMessage = activity.getString(R.string.er_unexpected)
-                    onErrorModel.ER_INTERNAL -> errMessage = activity.getString(R.string.er_internal)
-                    else -> {
-                        errMessage = ""
-                    }
+                errMessage = when (onErrMessage) {
+                    OnErrorModel.ER_400 -> activity.getString(R.string.er_400)
+                    OnErrorModel.ER_401 -> activity.getString(R.string.er_401)
+                    OnErrorModel.ER_404 -> activity.getString(R.string.er_404)
+                    OnErrorModel.ER_UNKNOWN -> activity.getString(R.string.er_unexpected)
+                    OnErrorModel.ER_INTERNAL -> activity.getString(R.string.er_internal)
+                    else -> { "" }
                 }
                 if (errMessage.isNotEmpty()) {
                     Snackbar.make(rootView.findViewById(R.id.rv_main), errMessage, Snackbar.LENGTH_SHORT).show()
@@ -180,8 +178,7 @@ class MainViewController @Inject constructor(
                             PopupWindowsHandler.CallbackAction.Update -> vm.onNavigateAction(
                                 InfoForNavigationToScreenB(
                                     (data as NoteData.ToDoItem).id.toInt(),
-                                    navigateToScreenB = true
-                                )
+                                    navigateToScreenB = true)
                             )
                             PopupWindowsHandler.CallbackAction.Delete -> {
                                 vm.delete((data as NoteData.ToDoItem).id)
@@ -218,8 +215,6 @@ class MainViewController @Inject constructor(
             vm.syncNotes()
         }
     }
-
-
 }
 
 

@@ -17,12 +17,15 @@ import javax.inject.Inject
  * WorkManager for periodic notes synchronization
  */
 
-class SyncWorker constructor(private val context: Context, workerParam: WorkerParameters, private val noteDataRepository: NoteDataRepository) :
+class SyncWorker constructor(
+    private val context: Context,
+    workerParam: WorkerParameters,
+    private val noteDataRepository: NoteDataRepository) :
     Worker(context, workerParam) {
     private val handler = CoroutineExceptionHandler { _, exception -> Log.d("CoroutineException", "Caught $exception") }
-   // private val scope = CoroutineScope(Dispatchers.IO + handler)
+    // private val scope = CoroutineScope(Dispatchers.IO + handler)
 
-    override  fun doWork(): Result {
+    override fun doWork(): Result {
         return if (isNetworkAvailable(context)) {
             noteDataRepository.syncNotes(true)
             Result.success()
@@ -35,7 +38,8 @@ class SyncWorker constructor(private val context: Context, workerParam: WorkerPa
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val network = connectivityManager.activeNetwork ?: return false
         val networkCapabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
-        return networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) || networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+        return networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
     }
 
     class Factory @Inject constructor(val noteDataRepository: NoteDataRepository) : ChildWorkerFactory {

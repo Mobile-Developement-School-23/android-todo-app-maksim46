@@ -22,7 +22,7 @@ import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 /**
- * Network client for network requests
+ * Initializing network client for network requests
  */
 
 class NetworkClient @Inject constructor(){
@@ -54,7 +54,8 @@ class NetworkClient @Inject constructor(){
     }
 
 
-    suspend inline fun <reified Response> request(typeRequest: HttpMethod, url: String, bodyJson: Any?, lastKnownRevision: String): Response {
+    suspend inline fun <reified Response> request(
+        typeRequest: HttpMethod, url: String, bodyJson: Any?, lastKnownRevision: String): Response {
         return client.request<Response> {
             url(HttpResource.BASE_URL + url)
             method = typeRequest

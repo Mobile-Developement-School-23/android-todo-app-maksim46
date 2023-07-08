@@ -42,10 +42,12 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     lateinit var syncWM: SyncWM
 
     private val component by lazy {
-        (requireActivity().application as ToDoAppApp).component.fragmentMainComponent().create(this, this.requireActivity())
+        (requireActivity().application as ToDoAppApp).component.fragmentMainComponent()
+            .create(this, this.requireActivity())
     }
     lateinit var yandexLoginHandler: YandexLoginHandler
-    private val loginResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    private val loginResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult())
+    { result ->
         yandexLoginHandler.handleResult(result)
     }
 
@@ -68,7 +70,8 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            vm.yaLoginClick.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).collect { yaLogin ->
+            vm.yaLoginClick.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { yaLogin ->
                 if (yaLogin) {
                     yandexLoginHandler.login()
                 }

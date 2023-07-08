@@ -2,7 +2,7 @@ package com.example.todoapp.data.repository
 
 import android.util.Log
 import com.example.todoapp.data.network.model.ToDoDtoModel
-import com.example.todoapp.data.model.onErrorModel
+import com.example.todoapp.data.model.OnErrorModel
 import com.example.todoapp.di.ApplicationScope
 import com.example.todoapp.domain.model.LastResponse
 import com.example.todoapp.domain.model.NoteData
@@ -40,14 +40,14 @@ class NoteDataRepository @Inject constructor(
     private val localNoteDataRepository: LocalNoteDataRepository,
     private val remoteNoteDataRepository: RemoteNoteDataRepository
 ) {
-    private val _onErrorMessage = MutableSharedFlow<onErrorModel>(0, 16)
-    val onErrorMessage: SharedFlow<onErrorModel> = _onErrorMessage.asSharedFlow()
+    private val _onErrorMessage = MutableSharedFlow<OnErrorModel>(0, 16)
+    val onErrorMessage: SharedFlow<OnErrorModel> = _onErrorMessage.asSharedFlow()
 
     private val _syncStatusResponse = Channel<LastResponse>()
     val syncStatusResponse = _syncStatusResponse.receiveAsFlow()
 
     private val handler = CoroutineExceptionHandler { _, exception ->
-        _onErrorMessage.tryEmit(onErrorModel.ER_INTERNAL)
+        _onErrorMessage.tryEmit(OnErrorModel.ER_INTERNAL)
         Log.d("CoroutineException", "Caught $exception")
     }
 
@@ -120,7 +120,7 @@ class NoteDataRepository @Inject constructor(
     fun getToDoNoteList(doneStatus: Boolean): Flow<List<ToDoEntity>> {
         return localNoteDataRepository.getToDoNoteList(doneStatus)
     }
-    fun setErrorMessage(error: onErrorModel) {
+    fun setErrorMessage(error: OnErrorModel) {
        _onErrorMessage.tryEmit(error)
     }
     suspend fun getToDoNote(id: String): ToDoEntity {
@@ -134,7 +134,8 @@ class NoteDataRepository @Inject constructor(
     suspend fun updateDoneStatus(note: NoteData.ToDoItem, isOnline: Boolean) {
         localNoteDataRepository.updateDoneStatus(note.id.toInt())
         if (isOnline) {
-            remoteNoteDataRepository.updateToDoNote(note.copy(updateDate = Date(), isDone = !note.isDone).toEntity().toDtoModel()) {
+            remoteNoteDataRepository
+                .updateToDoNote(note.copy(updateDate = Date(), isDone = !note.isDone).toEntity().toDtoModel()) {
                 _onErrorMessage.tryEmit(it)
             }.collect { noteResponse ->
                 if (noteResponse != null) {

@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.ItemTouchHelper
-import com.example.todoapp.data.model.onErrorModel
+import com.example.todoapp.data.model.OnErrorModel
 import com.example.todoapp.data.repository.NoteDataRepository
 import com.example.todoapp.di.ApplicationScope
 import com.example.todoapp.domain.model.ClickData
@@ -42,16 +42,15 @@ import javax.inject.Inject
 
 /**
  * The view model for notes list.
- * Responsible for initiating data loading, transforming data into UI format
- * and handling user actions.
+ * Responsible for initiating data loading, transforming data into UI format and handling user actions.
+ *
+ * The class is voluminous, but has single responsibility
  */
 @ApplicationScope
-    class MainFragmentViewModel @Inject constructor(
-        private val connectivityObserver: NetworkConnectivityObserver,
-        private val noteDataRepository: NoteDataRepository
-    ) : ViewModel()  {
-
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+class MainFragmentViewModel @Inject constructor(
+    private val connectivityObserver: NetworkConnectivityObserver,
+    private val noteDataRepository: NoteDataRepository
+) : ViewModel() {
 
     private val _listOfNotesFlow = MutableStateFlow<List<NoteData>>(emptyList())
     val listOfNotesFlow: StateFlow<List<NoteData>> = _listOfNotesFlow.asStateFlow()
@@ -68,11 +67,12 @@ import javax.inject.Inject
     private val _navigateAction = MutableStateFlow<InfoForNavigationToScreenB>(InfoForNavigationToScreenB())
     val navigateAction: StateFlow<InfoForNavigationToScreenB> = _navigateAction.asStateFlow()
 
-    private val _toDoNoteByIdForEdit = MutableStateFlow<ToDoEntity>(ToDoEntity("0", "", Priority.Standart, 0, false, Date(0), Date(0)))
+    private val _toDoNoteByIdForEdit = MutableStateFlow(
+        ToDoEntity("0", "", Priority.Standart, 0, false, Date(0), Date(0)))
     val toDoNoteByIdForEdit: StateFlow<ToDoEntity> = _toDoNoteByIdForEdit.asStateFlow()
 
     private val _datePickerFragmentResultListener = MutableSharedFlow<Bundle>(0, 16)
-    val datePickerFragmentResultListener:SharedFlow<Bundle> = _datePickerFragmentResultListener.asSharedFlow()
+    val datePickerFragmentResultListener: SharedFlow<Bundle> = _datePickerFragmentResultListener.asSharedFlow()
 
     private val _isShowDataPicker = MutableStateFlow<Boolean>(false)
     val isShowDataPicker: StateFlow<Boolean> = _isShowDataPicker.asStateFlow()
@@ -83,17 +83,18 @@ import javax.inject.Inject
     private val _yaLogin = MutableStateFlow<String>("")
     val yaLogin: StateFlow<String> = _yaLogin.asStateFlow()
 
-    var editingToDoNote: ToDoEntity = NoteData.ToDoItem().toEntity()
-
+    private var editingToDoNote: ToDoEntity = NoteData.ToDoItem().toEntity()
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
     private var isOnline = false
     private var previousState = true
     private var currentState = true
     private lateinit var getListJob: Job
 
     private val handler = CoroutineExceptionHandler { _, exception ->
-        noteDataRepository.setErrorMessage(onErrorModel.ER_INTERNAL)
+        noteDataRepository.setErrorMessage(OnErrorModel.ER_INTERNAL)
         Log.d("CoroutineException", "Caught $exception")
     }
+
     init {
         getListOfNotes()
         countNumberOfDone()
@@ -113,7 +114,6 @@ import javax.inject.Inject
                 }
                 else -> {
                     isOnline = false
-
                 }
             }
             isOnline = it == ConnectivityObserver.Status.Available
@@ -129,9 +129,7 @@ import javax.inject.Inject
                     mutableListOf<NoteData>().apply {
                         addAll(toDoEntityList.toListOfNoteData().map { noteData ->
                             (noteData as NoteData.ToDoItem).copy(
-                                onNoteClick = ::onNoteClickAction,
-                                onInfoClick = ::onInfoClickAction
-                            )
+                                onNoteClick = ::onNoteClickAction, onInfoClick = ::onInfoClickAction)
                         })
                         add(NoteData.FooterItem(onAddClick = ::onFooterClickAction))
                     }
@@ -153,7 +151,7 @@ import javax.inject.Inject
         return noteDataRepository.syncStatusResponse
     }
 
-    fun getErrorMessage(): SharedFlow<onErrorModel> {
+    fun getErrorMessage(): SharedFlow<OnErrorModel> {
         return noteDataRepository.onErrorMessage
     }
 
@@ -187,7 +185,7 @@ import javax.inject.Inject
         }
     }
 
-    fun updateToDoNote(note: ToDoEntity) {          //save
+    fun updateToDoNote(note: ToDoEntity) {
         viewModelScope.launch(ioDispatcher + handler) {
             noteDataRepository.updateToDoNote(note, isOnline)
         }
@@ -210,24 +208,21 @@ import javax.inject.Inject
                         note = note.noteData,
                         view = note.view,
                         popupType = PopupWindowsHandler.PopupType.Action
-                    )
-                }
+                    )}
             }
-            PressType.SHORT -> onNavigateAction(InfoForNavigationToScreenB((note.noteData as NoteData.ToDoItem).id.toInt(), navigateToScreenB = true))
+
+            PressType.SHORT -> onNavigateAction(
+                InfoForNavigationToScreenB(
+                    (note.noteData as NoteData.ToDoItem).id.toInt(), navigateToScreenB = true
+                )
+            )
         }
     }
 
     fun editNote(note: ToDoEntity) {
-        editingToDoNote = editingToDoNote.copy(
-            id = note.id,
-            text = note.text,
-            priority = note.priority,
-            deadline = note.deadline,
-            isDone = note.isDone,
-            createDate = note.createDate,
-            updateDate = note.updateDate
-        )
+        editingToDoNote = note
     }
+
     private fun onInfoClickAction(popupData: PopupWindowsHandler.PopupData) {
         _popupAction.update { popupData }
     }

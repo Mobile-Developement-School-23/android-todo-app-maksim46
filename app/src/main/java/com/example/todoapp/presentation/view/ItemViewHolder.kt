@@ -26,7 +26,8 @@ class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 noteItem.onNoteClick(ClickData(PressType.LONG, noteItem, groupForClick))
                 true
             }
-            ivInfo.setOnClickListener { noteItem.onInfoClick(PopupWindowsHandler.PopupData(noteItem, ivInfo, PopupWindowsHandler.PopupType.Info)) }
+            ivInfo.setOnClickListener { noteItem.onInfoClick(
+                PopupWindowsHandler.PopupData(noteItem, ivInfo, PopupWindowsHandler.PopupType.Info)) }
 
             tvNote.text = noteItem.text
             when (noteItem.priority) {
@@ -56,7 +57,8 @@ class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 tvNote.setTextAppearance(R.style.TextView_Body)
             }
             if (noteItem.deadline != 0L) {
-                tvDoneBefore.text = SimpleDateFormat("dd MMMM yyyy", itemView.context.resources.configuration.locales.get(0)).format(noteItem.deadline)
+                tvDoneBefore.text = SimpleDateFormat(
+                    "dd MMMM yyyy", itemView.context.resources.configuration.locales.get(0)).format(noteItem.deadline)
                 tvDoneBefore.visibility = View.VISIBLE
                 tvSubHeadDoneBefore.visibility = View.VISIBLE
             }else{

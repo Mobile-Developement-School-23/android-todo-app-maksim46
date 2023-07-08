@@ -9,7 +9,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class ToDoDtoModel(
-
     @SerialName("id")
     val id: String,
     @SerialName("text")

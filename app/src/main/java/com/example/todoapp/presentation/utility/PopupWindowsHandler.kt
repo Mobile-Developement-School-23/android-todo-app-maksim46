@@ -10,9 +10,12 @@ import com.example.todoapp.domain.model.NoteData
 /**
  * Handler for [MainFragment] PopupWindows
  */
+
+const val OFFSET = -400
 class PopupWindowsHandler {
     companion object {
-      fun createPopup(popupWindow: PopupWindow, view: View, popupData: PopupData, action: (action: CallbackAction, data:NoteData) -> Unit) {
+        fun createPopup(popupWindow: PopupWindow, view: View, popupData: PopupData,
+                        action: (action: CallbackAction, data: NoteData) -> Unit) {
             popupWindow.contentView = view
             popupWindow.isOutsideTouchable = true
             popupWindow.setBackgroundDrawable(null)
@@ -23,7 +26,7 @@ class PopupWindowsHandler {
 
                     popupWindow.animationStyle = R.style.PopupAnimationActions
                     popupWindow.isClippingEnabled = false
-                    popupWindow.showAsDropDown(popupData.view, 0, -400, Gravity.TOP)
+                    popupWindow.showAsDropDown(popupData.view, 0, OFFSET, Gravity.TOP)
 
                     view.findViewById<TextView>(R.id.menu_done).setOnClickListener {
                         action(CallbackAction.Done, popupData.note)
@@ -38,6 +41,7 @@ class PopupWindowsHandler {
                         popupWindow.dismiss()
                     }
                 }
+
                 PopupType.Info -> {
                     popupWindow.animationStyle = R.style.PopupAnimationInfo
                     popupWindow.showAsDropDown(popupData.view, 0, 0, Gravity.TOP)
@@ -49,6 +53,7 @@ class PopupWindowsHandler {
                         }
                     }
                 }
+
                 PopupType.Empty -> throw IllegalArgumentException("Invalid PopupType Provided")
             }
         }
@@ -58,7 +63,7 @@ class PopupWindowsHandler {
         val note: NoteData = NoteData.ToDoItem(),
         val view: View? = null,
         val popupType: PopupType = PopupType.Empty,
-        val randomForUpdateFlow:Int = (0..1000).random()
+        val randomForUpdateFlow: Int = (0..1000).random()
     )
 
     enum class PopupType(val value: Int) {

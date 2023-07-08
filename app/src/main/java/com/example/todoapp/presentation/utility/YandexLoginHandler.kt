@@ -13,7 +13,11 @@ import com.yandex.authsdk.YandexAuthToken
  * Handler for Yandex authorization service
  */
 
-class YandexLoginHandler(private val loginResultLauncher: ActivityResultLauncher<Intent>, private val yandexLoginSdk: YandexAuthSdk, private val onTokenReceived: (String) -> Unit) {
+class YandexLoginHandler(
+    private val loginResultLauncher: ActivityResultLauncher<Intent>,
+    private val yandexLoginSdk: YandexAuthSdk,
+    private val onTokenReceived: (String) -> Unit
+) {
     fun login() {
         val intent = yandexLoginSdk.createLoginIntent(YandexAuthLoginOptions.Builder().build())
         loginResultLauncher.launch(intent)

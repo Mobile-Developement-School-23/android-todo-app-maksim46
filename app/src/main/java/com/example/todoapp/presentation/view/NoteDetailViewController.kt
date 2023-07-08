@@ -80,7 +80,8 @@ class NoteDetailViewController @Inject constructor(
 
                 if (noteData.deadline != 0L) {
                     tvDeadlineValue.text =
-                        SimpleDateFormat("dd MMMM yyyy", activity.resources.configuration.locales.get(0)).format(noteData.deadline)
+                        SimpleDateFormat("dd MMMM yyyy", activity.resources.configuration.locales.get(0))
+                            .format(noteData.deadline)
                     deadlineSwitch.isChecked = true
                 } else {
                     deadlineSwitch.isChecked = false
@@ -94,13 +95,12 @@ class NoteDetailViewController @Inject constructor(
 
                 } else {
                     deleteGroup.isEnabled = true
-                    delete.setTextAppearance(com.example.todoapp.R.style.TextView_Body_Red)
-                    ivTrash.setColorFilter(androidx.core.content.ContextCompat.getColor(activity, com.example.todoapp.R.color.L_color_red))
+                    delete.setTextAppearance(R.style.TextView_Body_Red)
+                    ivTrash.setColorFilter(androidx.core.content.ContextCompat.getColor(activity,R.color.L_color_red))
                 }
             }
         }
     }
-
 
     private fun setUpButtonsBehaviour() {
         val tvDeadlineValue: TextView = rootView.findViewById(R.id.tv_deadline_value)

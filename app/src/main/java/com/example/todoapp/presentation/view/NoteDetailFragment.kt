@@ -38,7 +38,8 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note) {
     lateinit var noteDetailViewController: NoteDetailViewController
 
     private val component by lazy {
-        (requireActivity().application as ToDoAppApp).component.fragmentNoteDetailComponent().create(this, this.requireActivity())
+        (requireActivity().application as ToDoAppApp).component.fragmentNoteDetailComponent()
+            .create(this, this.requireActivity())
     }
 
 
@@ -65,7 +66,8 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note) {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            vm.isShowDataPicker.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).collect { isShow ->
+            vm.isShowDataPicker.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { isShow ->
                 if (isShow) {
                     DatePickerFragment().show(supportFragmentManager, "DatePickerFragment")
                 }
@@ -73,11 +75,17 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note) {
         }
     }
 
+    private fun setDatePickerFragmentResultListener(supportFragmentManager: FragmentManager) {
+        supportFragmentManager.setFragmentResultListener("FRAGMENT_RESULT_KEY", viewLifecycleOwner) { _, bundle ->
+            vm.setDatePickerResult(bundle)
+        }
+    }
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
         super.onCreateContextMenu(menu, v, menuInfo)
         MenuInflater(requireContext()).inflate(R.menu.priority_menu, menu)
         val spannable = SpannableString(menu.get(2).title.toString())
-        spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(requireContext(), R.color.L_color_red)), 0, spannable.length, 0)
+        spannable.setSpan(ForegroundColorSpan(
+            ContextCompat.getColor(requireContext(), R.color.L_color_red)), 0, spannable.length, 0)
         menu.get(2).title = spannable
     }
 
@@ -111,12 +119,6 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note) {
             }
 
             else -> super.onContextItemSelected(item)
-        }
-    }
-
-    private fun setDatePickerFragmentResultListener(supportFragmentManager: FragmentManager) {
-        supportFragmentManager.setFragmentResultListener("FRAGMENT_RESULT_KEY", viewLifecycleOwner) { _, bundle ->
-            vm.setDatePickerResult(bundle)
         }
     }
 }

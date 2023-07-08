@@ -11,12 +11,12 @@ import javax.inject.Inject
 
 class GetUuid {
 
-    private val SP_FILENAME = "GetUuid"
+    private val _SP_FILENAME = "GetUuid"
     private val UUID_KEY = "uuid_key"
     val context = ToDoAppApp.appContext
 
     fun getDeviceUUID(): String {
-        val sharedPrefs = context?.getSharedPreferences(SP_FILENAME, Context.MODE_PRIVATE)
+        val sharedPrefs = context?.getSharedPreferences(_SP_FILENAME, Context.MODE_PRIVATE)
         var uuid = sharedPrefs?.getString(UUID_KEY, "1")
 
         if (uuid == null) {

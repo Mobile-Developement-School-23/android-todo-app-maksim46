@@ -23,7 +23,8 @@ class UtilsModule {
     }
 
     @Provides
-    fun provideItemTouchHelperCallback(sbh: SwipeBackgroundHelper, mainFragmentViewModel: MainFragmentViewModel): ItemTouchHelperCallback {
+    fun provideItemTouchHelperCallback(
+        sbh: SwipeBackgroundHelper, mainFragmentViewModel: MainFragmentViewModel): ItemTouchHelperCallback {
         return ItemTouchHelperCallback(sbh, mainFragmentViewModel.onItemSwiped)
     }
 

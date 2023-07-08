@@ -124,7 +124,11 @@ class MainViewController @Inject constructor(
                     lastSuccessSynch.setLastSuccessSync(lastSuccessSync.toString())
                 } else {
                     lastSuccessSync = lastSuccessSynch.getLastSuccessSync()!!
-                    message = "${activity.getString(R.string.not_synch)} $lastSuccessSync"
+                    if (lastSuccessSync == " ") {
+                        message = "${activity.getString(R.string.not_synch_empty)}"
+                    } else {
+                        message = "${activity.getString(R.string.not_synch)} $lastSuccessSync"
+                    }
                 }
                 Snackbar.make(rootView.findViewById(R.id.rv_main), message, Snackbar.LENGTH_LONG).show()
                 swipeRefreshLayout.isRefreshing = false

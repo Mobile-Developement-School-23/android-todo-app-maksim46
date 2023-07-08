@@ -17,7 +17,7 @@ class GetUuid {
 
     fun getDeviceUUID(): String {
         val sharedPrefs = context?.getSharedPreferences(_SP_FILENAME, Context.MODE_PRIVATE)
-        var uuid = sharedPrefs?.getString(UUID_KEY, "1")
+        var uuid = sharedPrefs?.getString(UUID_KEY, null)
 
         if (uuid == null) {
             uuid = UUID.randomUUID().toString()

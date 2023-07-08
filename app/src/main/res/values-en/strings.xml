@@ -21,6 +21,7 @@
     <string name="hello">Hi</string>
     <string name="synch">Tasks in sync</string>
     <string name="not_synch">Tasks out of sync. Data version from</string>
+    <string name="not_synch_empty">Tasks out of sync. Saved data not found</string>
     <string name="unexpected_error">Unexpected error</string>
     <string name="er_400">Error 400: Bad Request</string>
     <string name="er_401">Error 401: Authorization error</string>

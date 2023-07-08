@@ -262,8 +262,10 @@ class MainFragmentViewModel @Inject constructor(
     }
 
     fun syncNotes() {
-        // val vmscope = viewModelScope
         noteDataRepository.syncNotes(isOnline)
+    }
+    override fun onCleared() {
+        noteDataRepository.cancelCoroutine()
     }
 
     fun yaLogin(token: String) {

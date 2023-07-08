@@ -51,7 +51,7 @@ class NoteDataRepository @Inject constructor(
         Log.d("CoroutineException", "Caught $exception")
     }
 
-    private val repoCoroutineScope = CoroutineScope(Job() + Dispatchers.Default+handler)
+    private val repoCoroutineScope = CoroutineScope(Job() + Dispatchers.Default + handler)
     suspend fun saveToDoNote(note: ToDoEntity, isOnline: Boolean) {
         val addedNoteId = localNoteDataRepository.insertToDoNote(note)
         if (isOnline) {
@@ -77,6 +77,12 @@ class NoteDataRepository @Inject constructor(
             }
         }
     }
+
+    suspend fun updateDoneStatus(note: NoteData.ToDoItem, isOnline: Boolean) {
+        val updatedNote = note.copy(updateDate = Date(), isDone = !note.isDone)
+        updateToDoNote(updatedNote.toEntity(), isOnline)
+    }
+
 
     suspend fun deleteToDoNote(id: String, isOnline: Boolean) {
         if (isOnline) {
@@ -120,29 +126,17 @@ class NoteDataRepository @Inject constructor(
     fun getToDoNoteList(doneStatus: Boolean): Flow<List<ToDoEntity>> {
         return localNoteDataRepository.getToDoNoteList(doneStatus)
     }
+
     fun setErrorMessage(error: OnErrorModel) {
-       _onErrorMessage.tryEmit(error)
+        _onErrorMessage.tryEmit(error)
     }
+
     suspend fun getToDoNote(id: String): ToDoEntity {
         return localNoteDataRepository.getToDoNote(id)
     }
 
     fun getNumberOfDone(): Flow<Int> {
         return localNoteDataRepository.getNumberOfDone()
-    }
-
-    suspend fun updateDoneStatus(note: NoteData.ToDoItem, isOnline: Boolean) {
-        localNoteDataRepository.updateDoneStatus(note.id.toInt())
-        if (isOnline) {
-            remoteNoteDataRepository
-                .updateToDoNote(note.copy(updateDate = Date(), isDone = !note.isDone).toEntity().toDtoModel()) {
-                _onErrorMessage.tryEmit(it)
-            }.collect { noteResponse ->
-                if (noteResponse != null) {
-                    Log.d("DELETE", noteResponse.toString())
-                }
-            }
-        }
     }
 
     fun syncNotes(isOnline: Boolean) {
@@ -186,6 +180,7 @@ class NoteDataRepository @Inject constructor(
             flow { }
         }
     }
+
     fun cancelCoroutine() {
         repoCoroutineScope.cancel()
     }

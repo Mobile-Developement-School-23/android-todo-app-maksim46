@@ -21,6 +21,7 @@
     <string name="hello">Привет</string>
     <string name="synch">Дела синхронизированы</string>
     <string name="not_synch">Дела не синхронизированы. Версия данных от</string>
+    <string name="not_synch_empty">Дела не синхронизированы. Сохраненные данные не найдены</string>
     <string name="unexpected_error">Непредвиденная ошибка</string>
     <string name="er_400">Ошибка 400: Неверный запрос</string>
     <string name="er_401">Ошибка 401: Ошибка авторизации</string>

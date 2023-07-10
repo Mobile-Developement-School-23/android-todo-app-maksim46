@@ -13,10 +13,10 @@ import kotlin.reflect.KClass
  * DI module related with WorkManager
  */
 @Module
-abstract class WorkerModule {
+interface WorkerModule {
 
     @Binds
     @IntoMap
     @WorkerKey(SyncWorker::class)
-    internal abstract fun bindMyWorkerFactory(worker: SyncWorker.Factory): ChildWorkerFactory
+    fun bindRefreshDataWorkerFactory(worker: SyncWorker.Factory): ChildWorkerFactory
 }

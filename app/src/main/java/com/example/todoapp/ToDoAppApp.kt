@@ -8,6 +8,7 @@ import android.os.Build
 import androidx.work.Configuration
 import androidx.work.WorkManager
 import com.example.todoapp.data.network.SyncWork.MyWorkerFactory
+import com.example.todoapp.data.repository.NoteDataRepository
 import com.example.todoapp.di.DaggerApplicationComponent
 
 
@@ -18,7 +19,7 @@ import javax.inject.Inject
  * as long as application lives.
  */
 
-class ToDoAppApp: Application() {
+class ToDoAppApp: Application(), Configuration.Provider  {
 
     val component by lazy {
         DaggerApplicationComponent.factory().create(this)
@@ -35,14 +36,17 @@ class ToDoAppApp: Application() {
         component.inject(this)
         appContext = applicationContext
 
-        WorkManager.initialize(
+/*        WorkManager.initialize(
             this,
             Configuration.Builder()
                 .setWorkerFactory(myWorkerFactory)
                 .build()
-        )
-    }
+        )*/
 
+    }
+    override fun getWorkManagerConfiguration(): Configuration {
+        return Configuration.Builder().setWorkerFactory(myWorkerFactory).build()
+    }
     }
 
 

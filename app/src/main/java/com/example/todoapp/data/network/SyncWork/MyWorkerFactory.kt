@@ -13,7 +13,7 @@ import javax.inject.Provider
  * WorkManagerFactory  for work managers creation
  */
 
-class MyWorkerFactory @Inject constructor(
+/*class MyWorkerFactory @Inject constructor(
     private  val workerFactories: Map<Class<out Worker>, @JvmSuppressWildcards Provider<ChildWorkerFactory>>
 ) : WorkerFactory() {
 
@@ -26,6 +26,23 @@ class MyWorkerFactory @Inject constructor(
         val workerFactoryProvider = factoryClass?.let { workerFactories[it] }
         return workerFactoryProvider?.get()?.create(appContext, workerParameters)
     }
+}*/
+
+class MyWorkerFactory @Inject constructor(
+    private val workerProviders: @JvmSuppressWildcards Map<Class<out ListenableWorker>, Provider<ChildWorkerFactory>>
+) : WorkerFactory() {
+
+    override fun createWorker(
+        appContext: Context,
+        workerClassName: String,
+        workerParameters: WorkerParameters
+    ): ListenableWorker? {
+        return when (workerClassName) {
+            SyncWorker::class.qualifiedName -> {
+                val childWorkerFactory = workerProviders[SyncWorker::class.java]?.get()
+                return childWorkerFactory?.create(appContext, workerParameters)
+            }
+            else -> null
+        }
+    }
 }
-
-

@@ -5,6 +5,9 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
 import androidx.work.CoroutineWorker
+import androidx.work.ListenableWorker
+import androidx.work.OneTimeWorkRequest
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.todoapp.data.repository.NoteDataRepository
@@ -16,6 +19,50 @@ import javax.inject.Inject
 /**
  * WorkManager for periodic notes synchronization
  */
+
+
+class SyncWorker (
+    private val context: Context,
+    workerParam: WorkerParameters,
+    private val noteDataRepository: NoteDataRepository) :
+    Worker(context, workerParam) {
+
+
+    override fun doWork(): Result {
+        noteDataRepository.syncNotes(true)
+        return Result.success()
+    }
+
+
+    companion object {
+        const val NAME = "SyncWorker"
+        fun makeRequest(): OneTimeWorkRequest {
+            return OneTimeWorkRequestBuilder<SyncWorker>().build()
+        }
+    }
+
+    class Factory @Inject constructor(
+        private val noteDataRepository: NoteDataRepository
+    ) : ChildWorkerFactory {
+
+        override fun create(
+            context: Context,
+            workerParameters: WorkerParameters
+        ): ListenableWorker {
+            return SyncWorker(
+                context,
+                workerParameters,
+                noteDataRepository = noteDataRepository
+            )
+        }
+    }
+}
+
+
+
+
+
+/*
 
 class SyncWorker constructor(
     private val context: Context,
@@ -50,3 +97,4 @@ class SyncWorker constructor(
         }
     }
 }
+*/

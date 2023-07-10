@@ -19,13 +19,18 @@ const val INIT_REVISION = "-1"
 
 class ToDoNoteApiImpl @Inject constructor(
     private val httpClient: NetworkClient,
-    private val httpClientHandler: HttpClientHandler
+    private val httpClientHandler: HttpClientHandler,
+    private val revisionStorage: RevisionStorage
 ) : ToDoNoteApi {
+
 
     private var dbRevizion = INIT_REVISION
 
     init {
+        dbRevizion =(revisionStorage.getRevision())?: INIT_REVISION
+
         httpClientHandler.dbRevisionGetter = { getDbRevision {} }
+
     }
 
     override suspend fun getListOfToDoNote(onError: (message: OnErrorModel) -> Unit): ToDoListResponse? {
@@ -38,6 +43,7 @@ class ToDoNoteApiImpl @Inject constructor(
             onCompletion = { response ->
                 if (response != null) {
                     dbRevizion = dbRevizion.toInt().coerceAtLeast(response.revision).toString()
+                    revisionStorage.setRevision(dbRevizion)
                 }
             }, onError = onError
         )
@@ -58,12 +64,14 @@ class ToDoNoteApiImpl @Inject constructor(
     }
 
     override suspend fun saveToDoNote(
-        toDoModel: ToDoDtoModel, onError: (message: OnErrorModel) -> Unit): ToDoDtoModel? {
+        toDoModel: ToDoDtoModel, onError: (message: OnErrorModel) -> Unit
+    ): ToDoDtoModel? {
         return httpClientHandler.executeRequest(
             requestCall = { httpClient.postRequest<ToDoResponse>("/list/", toDoModel.toPayload(), dbRevizion) },
             onCompletion = { response ->
                 if (response != null) {
                     dbRevizion = dbRevizion.toInt().coerceAtLeast(response.revision).toString()
+                    revisionStorage.setRevision(dbRevizion)
                 }
             }, onError = onError,
             retryIfError = setOf(HttpStatusCode.BadRequest)
@@ -71,13 +79,16 @@ class ToDoNoteApiImpl @Inject constructor(
     }
 
     override suspend fun updateToDoNote(
-        toDoModel: ToDoDtoModel, onError: (message: OnErrorModel) -> Unit): ToDoDtoModel? {
+        toDoModel: ToDoDtoModel, onError: (message: OnErrorModel) -> Unit
+    ): ToDoDtoModel? {
         return httpClientHandler.executeRequest(
             requestCall = {
-                httpClient.putRequest<ToDoResponse>("/list/${toDoModel.id}", toDoModel.toPayload(), dbRevizion) },
+                httpClient.putRequest<ToDoResponse>("/list/${toDoModel.id}", toDoModel.toPayload(), dbRevizion)
+            },
             onCompletion = { response ->
                 if (response != null) {
                     dbRevizion = dbRevizion.toInt().coerceAtLeast(response.revision).toString()
+                    revisionStorage.setRevision(dbRevizion)
                 }
             }, onError = onError,
             retryIfError = setOf(HttpStatusCode.BadRequest)
@@ -85,12 +96,14 @@ class ToDoNoteApiImpl @Inject constructor(
     }
 
     override suspend fun deleteToDoNote(
-        toDoModel: ToDoDtoModel, onError: (message: OnErrorModel) -> Unit): ToDoDtoModel? {
+        toDoModel: ToDoDtoModel, onError: (message: OnErrorModel) -> Unit
+    ): ToDoDtoModel? {
         return httpClientHandler.executeRequest(
             requestCall = { httpClient.deleteRequest<ToDoResponse>("/list/${toDoModel.id}", null, dbRevizion) },
             onCompletion = { response ->
                 if (response != null) {
                     dbRevizion = dbRevizion.toInt().coerceAtLeast(response.revision).toString()
+                    revisionStorage.setRevision(dbRevizion)
                 }
             }, onError = onError,
             retryIfError = setOf(HttpStatusCode.BadRequest)
@@ -98,12 +111,14 @@ class ToDoNoteApiImpl @Inject constructor(
     }
 
     override suspend fun patchListOfToDoNote(
-        listOfRequests: ToDoListResponse, onError: (message: OnErrorModel) -> Unit): List<ToDoDtoModel>? {
+        listOfRequests: ToDoListResponse, onError: (message: OnErrorModel) -> Unit
+    ): List<ToDoDtoModel>? {
         return httpClientHandler.executeRequest(
             requestCall = { httpClient.patchRequest<ToDoListResponse>("/list/", listOfRequests, dbRevizion) },
             onCompletion = { response ->
                 if (response != null) {
                     dbRevizion = dbRevizion.toInt().coerceAtLeast(response.revision).toString()
+                    revisionStorage.setRevision(dbRevizion)
                 }
             }, onError = onError,
             retryIfError = setOf(HttpStatusCode.BadRequest)

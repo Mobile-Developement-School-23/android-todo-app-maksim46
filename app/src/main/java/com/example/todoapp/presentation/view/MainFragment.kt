@@ -1,11 +1,17 @@
 package com.example.todoapp.presentation.view
 
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Context.ALARM_SERVICE
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -15,12 +21,17 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.todoapp.R
 import com.example.todoapp.ToDoAppApp
 import com.example.todoapp.databinding.FragmentMainBinding
+import com.example.todoapp.domain.AlarmReceiver
+
+import com.example.todoapp.domain.Counter
+import com.example.todoapp.domain.NoteNotificationService
 import com.example.todoapp.presentation.utility.SyncWM
 import com.example.todoapp.presentation.utility.ViewModelFactory
 import com.example.todoapp.presentation.utility.YandexLoginHandler
 import com.yandex.authsdk.YandexAuthOptions
 import com.yandex.authsdk.YandexAuthSdk
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import javax.inject.Inject
 
 /**
@@ -62,7 +73,19 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         return view
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        val alarmManager = requireContext().getSystemService(ALARM_SERVICE) as AlarmManager
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.SECOND, 10)
+        val intent = AlarmReceiver.newIntent(requireContext())
+        val pendingIntent = PendingIntent.getBroadcast(activity, 100, intent, PendingIntent.FLAG_IMMUTABLE)
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+
+        val service = NoteNotificationService(requireContext())
+        service.showNotification(Counter.value)
+
         syncWM.startSynchWM()
 
         yandexLoginHandler = YandexLoginHandler(loginResultLauncher, yandexLoginSdk) { token ->
@@ -77,6 +100,19 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 }
             }
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 }
 

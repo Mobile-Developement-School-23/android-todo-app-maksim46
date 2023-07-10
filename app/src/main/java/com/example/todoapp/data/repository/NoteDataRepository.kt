@@ -3,6 +3,7 @@ package com.example.todoapp.data.repository
 import android.util.Log
 import com.example.todoapp.data.network.model.ToDoDtoModel
 import com.example.todoapp.data.model.OnErrorModel
+import com.example.todoapp.data.network.RevisionStorage
 import com.example.todoapp.di.ApplicationScope
 import com.example.todoapp.domain.model.LastResponse
 import com.example.todoapp.domain.model.NoteData
@@ -19,11 +20,15 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -38,10 +43,15 @@ import javax.inject.Inject
 @ApplicationScope
 class NoteDataRepository @Inject constructor(
     private val localNoteDataRepository: LocalNoteDataRepository,
-    private val remoteNoteDataRepository: RemoteNoteDataRepository
+    private val remoteNoteDataRepository: RemoteNoteDataRepository,
+    private val revisionStorage: RevisionStorage
 ) {
     private val _onErrorMessage = MutableSharedFlow<OnErrorModel>(0, 16)
     val onErrorMessage: SharedFlow<OnErrorModel> = _onErrorMessage.asSharedFlow()
+
+    private val _currentRevision = MutableStateFlow<Int>(0)
+    val currentRevision: StateFlow<Int> = _currentRevision.asStateFlow()
+
 
     private val _syncStatusResponse = Channel<LastResponse>()
     val syncStatusResponse = _syncStatusResponse.receiveAsFlow()
@@ -101,8 +111,9 @@ class NoteDataRepository @Inject constructor(
     }
 
     private suspend fun markAsDeleteToDoNote(id: String) {
-        localNoteDataRepository.markAsDeleteToDoNote(id, Calendar.getInstance().time.time)
+        localNoteDataRepository.markAsDeleteToDoNote(id, Date().time)
     }
+
 
     private suspend fun startSyncNotes(mergedList: List<ToDoEntity>, isOnline: Boolean): LastResponse {
         var remoteResponse = LastResponse()
@@ -139,29 +150,64 @@ class NoteDataRepository @Inject constructor(
         return localNoteDataRepository.getNumberOfDone()
     }
 
+
+    private suspend fun checkRevision(): Boolean {
+        var result = false
+        repoCoroutineScope.async {
+            var incomRevision = 0
+            val revision = (remoteNoteDataRepository.getRevision() {}).map { it ?: 0 }
+            revision.collect {
+                incomRevision = it
+
+            }
+
+
+            var lastKnownRevision = revisionStorage.getRevision()
+            Log.d("assssssLast", lastKnownRevision.toString())
+            Log.d("assssssOnl", incomRevision.toString())
+            if (lastKnownRevision != null) {
+                if (lastKnownRevision.toInt() < incomRevision) {
+                    result = true
+                }
+
+            }
+        }.await()
+        return result
+    }
+
+
     fun syncNotes(isOnline: Boolean) {
         repoCoroutineScope.launch {
             if (!isOnline) {
                 _syncStatusResponse.send(LastResponse(status = false, isOnline = false))
             } else {
-                val mergedList = mergeDBs()
+              val check =  checkRevision()
+                val mergedList = mergeDBs(check)
                 val response = startSyncNotes(mergedList, isOnline)
                 _syncStatusResponse.send(response)
+
+
             }
         }
     }
 
-    private suspend fun mergeDBs(): List<ToDoEntity> {
+
+    private suspend fun mergeDBs(check:Boolean): List<ToDoEntity> {
         return repoCoroutineScope.async(Dispatchers.IO + handler) {
             val local = localNoteDataRepository.getToDoNoteListForSynk(true).first()
             val remote = remoteNoteDataRepository.getListOfToDoNote { }.firstOrNull()
             if (remote != null) {
             }
-            combineToDoEntityAndDto(local, remote)
+            if (check) {
+                combineToDoEntityAndDtoIfUnsync(local, remote)
+            } else {
+                combineToDoEntityAndDto(local, remote)
+            }
         }.await()
     }
 
     private fun combineToDoEntityAndDto(localDbNotes: List<ToDoEntity>, remoteDbNotes: List<ToDoDtoModel>?): List<ToDoEntity> {
+        Log.d("assssssOnl", "SYNC")
         val listDtoToEntity = remoteDbNotes?.map { it.toEntity() } ?: emptyList()
         val combinedList = localDbNotes + listDtoToEntity
         return combinedList.groupBy { it.id }
@@ -170,6 +216,34 @@ class NoteDataRepository @Inject constructor(
             }
             .filter { it.deadline != -1L }
     }
+
+
+private fun combineToDoEntityAndDtoIfUnsync(localDbNotes: List<ToDoEntity>, remoteDbNotes: List<ToDoDtoModel>?): List<ToDoEntity> {
+    val localMap = localDbNotes.associateBy { it.id }
+    val result = mutableListOf<ToDoEntity>()
+
+    remoteDbNotes?.forEach { remoteDto ->
+        val remote = remoteDto.toEntity()
+        val local = localMap[remote.id]
+
+        result.add(
+            if (local != null && local.updateDate > remote.updateDate) {
+                local
+            } else {
+                remote
+            }
+        )
+    }
+
+    localMap.values.filter { it.id !in remoteDbNotes.orEmpty().map { remote -> remote.toEntity().id } }
+        .forEach { item ->
+            val updatedItem = item.copy(deadline = -1L)
+            result.add(updatedItem)
+        }
+
+    return result
+}
+
 
     fun yaLogin(token: String, isOnline: Boolean): Flow<String> {
         return if (isOnline) {

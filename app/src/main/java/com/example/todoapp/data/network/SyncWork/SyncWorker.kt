@@ -26,6 +26,7 @@ class SyncWorker constructor(
     // private val scope = CoroutineScope(Dispatchers.IO + handler)
 
     override fun doWork(): Result {
+        Log.d("Worker", "do work")
         return if (isNetworkAvailable(context)) {
             noteDataRepository.syncNotes(true)
             Result.success()

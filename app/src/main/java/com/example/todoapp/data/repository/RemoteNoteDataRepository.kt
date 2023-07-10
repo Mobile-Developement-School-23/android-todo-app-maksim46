@@ -36,6 +36,10 @@ class RemoteNoteDataRepository @Inject constructor(
         return flow { emit(toDoNoteApi.patchListOfToDoNote(ToDoListResponse(listOfDto, -1, "ok"), onError)) }
     }
 
+    fun getRevision(onError: (message: OnErrorModel) -> Unit): Flow<Int?> {
+        return flow {emit(toDoNoteApi.getDbRevision(onError))}
+    }
+
     fun yaLogin(token: String, onError: (message: OnErrorModel) -> Unit): Flow<String> {
         return flow { emit(toDoNoteApi.yaLogin(token, onError)) }
     }

@@ -3,7 +3,9 @@ package com.example.todoapp.presentation.utility
 import android.content.Context
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 
@@ -22,10 +24,12 @@ class SyncWM @Inject constructor(
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
-        val workRequest = PeriodicWorkRequest.Builder(SyncWorker::class.java, 8, TimeUnit.HOURS, 30, TimeUnit.MINUTES)
+        val workRequest = PeriodicWorkRequest.Builder(SyncWorker::class.java, 15, TimeUnit.MINUTES, 5, TimeUnit.MINUTES)
             .setConstraints(constraints)
             .build()
-
+/*        val workRequest = OneTimeWorkRequest.Builder(SyncWorker::class.java)
+            .setConstraints(constraints)
+            .build()*/
         val workManager = WorkManager.getInstance(context)
 
         workManager.enqueueUniquePeriodicWork(
@@ -33,6 +37,11 @@ class SyncWM @Inject constructor(
             ExistingPeriodicWorkPolicy.KEEP,
             workRequest
         )
+/*        workManager.enqueueUniqueWork(
+            "SyncWork",
+            ExistingWorkPolicy.REPLACE,
+            workRequest
+        )*/
 
     }
 }

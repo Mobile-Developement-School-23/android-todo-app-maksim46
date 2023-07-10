@@ -1,3 +1,4 @@
+/*
 package com.example.todoapp.domain
 
 import android.app.NotificationManager
@@ -8,8 +9,14 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.example.todoapp.R
 import com.example.todoapp.presentation.view.MainFragment
-
+class NoteNotificationService()
+*/
+/*
 class NoteNotificationService(
+*//*
+
+*/
+/*
     private val context: Context
     ) {
         private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -47,3 +54,8 @@ class NoteNotificationService(
             const val NOTE_CHANNEL_ID = "counter_channel"
         }
     }
+*//*
+*/
+/*
+
+*/

@@ -37,7 +37,7 @@ interface ToDoListDao {
     @Query("DELETE FROM todo_list WHERE deadline=-1")
     fun deleteMarked()
 
-    @Query("SELECT COUNT(isDone) FROM todo_list WHERE isDone=1")
+    @Query("SELECT COUNT(isDone) FROM todo_list WHERE isDone=1 AND deadline != -1")
     fun getNumberOfDone(): Flow<Int>
 
     @Update

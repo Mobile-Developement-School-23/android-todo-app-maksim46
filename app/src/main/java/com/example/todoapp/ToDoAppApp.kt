@@ -9,7 +9,7 @@ import androidx.work.Configuration
 import androidx.work.WorkManager
 import com.example.todoapp.data.network.SyncWork.MyWorkerFactory
 import com.example.todoapp.di.DaggerApplicationComponent
-import com.example.todoapp.domain.NoteNotificationService
+
 
 import javax.inject.Inject
 
@@ -41,11 +41,11 @@ class ToDoAppApp: Application() {
                 .setWorkerFactory(myWorkerFactory)
                 .build()
         )
-        createNotificationChannel()
+     //   createNotificationChannel()
     }
 
 
-    private fun createNotificationChannel() {
+/*    private fun createNotificationChannel() {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 NoteNotificationService.NOTE_CHANNEL_ID,
@@ -57,7 +57,7 @@ class ToDoAppApp: Application() {
             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
-    }
+    }*/
 
     }
 

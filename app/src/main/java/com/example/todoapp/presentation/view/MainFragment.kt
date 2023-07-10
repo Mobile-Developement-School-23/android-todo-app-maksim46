@@ -21,10 +21,6 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.todoapp.R
 import com.example.todoapp.ToDoAppApp
 import com.example.todoapp.databinding.FragmentMainBinding
-import com.example.todoapp.domain.AlarmReceiver
-
-import com.example.todoapp.domain.Counter
-import com.example.todoapp.domain.NoteNotificationService
 import com.example.todoapp.presentation.utility.SyncWM
 import com.example.todoapp.presentation.utility.ViewModelFactory
 import com.example.todoapp.presentation.utility.YandexLoginHandler
@@ -76,7 +72,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        val alarmManager = requireContext().getSystemService(ALARM_SERVICE) as AlarmManager
+/*        val alarmManager = requireContext().getSystemService(ALARM_SERVICE) as AlarmManager
         val calendar = Calendar.getInstance()
         calendar.add(Calendar.SECOND, 10)
         val intent = AlarmReceiver.newIntent(requireContext())
@@ -84,7 +80,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
 
         val service = NoteNotificationService(requireContext())
-        service.showNotification(Counter.value)
+        service.showNotification(Counter.value)*/
 
         syncWM.startSynchWM()
 
@@ -100,18 +96,6 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 }
             }
         }
-
-
-
-
-
-
-
-
-
-
-
-
 
     }
 }

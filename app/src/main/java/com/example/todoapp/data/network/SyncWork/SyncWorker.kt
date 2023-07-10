@@ -34,12 +34,12 @@ class SyncWorker (
     }
 
 
-    companion object {
+/*    companion object {
         const val NAME = "SyncWorker"
         fun makeRequest(): OneTimeWorkRequest {
             return OneTimeWorkRequestBuilder<SyncWorker>().build()
         }
-    }
+    }*/
 
     class Factory @Inject constructor(
         private val noteDataRepository: NoteDataRepository

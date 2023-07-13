@@ -71,6 +71,21 @@
             motion:layout_constraintEnd_toEndOf="parent" />
 
         <Constraint
+            android:id="@+id/bt_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="20dp"
+            android:scaleX="1.0"
+            android:scaleY="1.0"
+            android:background="@null"
+            android:elevation="10dp"
+            android:src="@drawable/ic_settings"
+            motion:layout_constraintTop_toBottomOf="@id/bt_YALoggin"
+            motion:layout_constraintEnd_toEndOf="parent"
+            />
+
+        <Constraint
             android:id="@+id/bt_hide"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -148,6 +163,21 @@
             android:src="@drawable/ic_login"
             motion:layout_constraintTop_toTopOf="@id/ab_header"
             motion:layout_constraintEnd_toEndOf="parent" />
+
+        <Constraint
+            android:id="@+id/bt_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="60dp"
+            android:layout_marginTop="-10dp"
+            android:background="@null"
+            android:elevation="10dp"
+
+            android:layout_marginBottom="20dp"
+            android:src="@drawable/ic_settings"
+            motion:layout_constraintTop_toBottomOf="@id/bt_YALoggin"
+            motion:layout_constraintEnd_toEndOf="parent"
+       />
 
         <Constraint
             android:id="@+id/bt_hide"

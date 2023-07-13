@@ -102,7 +102,9 @@ class MainViewController @Inject constructor(
 
     private fun setUpBtHide() {
         val btHide: ImageButton = rootView.findViewById(R.id.bt_hide)
-        btHide.setOnClickListener { vm.flipDoneVisibility() }
+        btHide.setOnClickListener {
+
+            vm.flipDoneVisibility() }
     }
 
     private fun setUpBtYaLogin() {

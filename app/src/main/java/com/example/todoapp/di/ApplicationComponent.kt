@@ -15,6 +15,7 @@ interface ApplicationComponent {
     fun inject(application: ToDoAppApp)
     fun fragmentMainComponent(): FragmentMainComponent.Factory
     fun fragmentNoteDetailComponent(): FragmentNoteDetailComponent.Factory
+    fun fragmentBottomSheetComponent(): FragmentBottomSheetComponent.Factory
 
     @Component.Factory
     interface Factory {

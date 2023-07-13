@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+<!--<ripple xmlns:android="http://schemas.android.com/apk/res/android"
     android:color="?android:attr/colorControlHighlight">
     <item android:id="@android:id/mask">
-        <shape android:shape="rectangle">
-            <solid android:color="?attr/label_secondary" />
+        <shape android:shape="ring">
+            <solid android:color="?attr/back_secondary" />
         </shape>
     </item>
-    <item android:drawable="@android:color/white" />
+    <item android:drawable="?attr/label_secondary" />
+</ripple>-->
+
+
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="?attr/label_tertiary">
+    <item android:id="@android:id/mask">
+        <shape android:shape="rectangle">
+            <solid android:color="?attr/back_primary" />
+        </shape>
+    </item>
+    <item android:drawable="?attr/back_secondary" />
 </ripple>

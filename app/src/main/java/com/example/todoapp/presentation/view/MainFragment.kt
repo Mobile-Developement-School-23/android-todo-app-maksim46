@@ -3,20 +3,24 @@ package com.example.todoapp.presentation.view
 
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.todoapp.R
 import com.example.todoapp.ToDoAppApp
 import com.example.todoapp.data.repository.LocalNoteDataRepository
 import com.example.todoapp.databinding.FragmentMainBinding
+import com.example.todoapp.domain.CurrentThemeStorage
 import com.example.todoapp.domain.ReminderWorker.NoteNotificationReceiver
 import com.example.todoapp.domain.ReminderWorker.NotificationScheduler
 import com.example.todoapp.presentation.utility.SyncWM
@@ -51,6 +55,8 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     @Inject
     lateinit var noteNotificationReceiver: NoteNotificationReceiver
 
+    @Inject
+     lateinit var currentThemeStorage: CurrentThemeStorage
 
     @Inject
     lateinit var syncWM: SyncWM
@@ -68,6 +74,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     override fun onCreate(savedInstanceState: Bundle?) {
         component.inject(this)
         super.onCreate(savedInstanceState)
+        applyTheme(currentThemeStorage.getTheme())
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -78,6 +85,19 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        binding.btSetting.setOnClickListener {
+            findNavController().navigate(R.id.action_mainFragment_to_bottomSheetFragment)
+        }
+
+
+
+
+
+
+
+
+
        // notificationScheduler.setNotify()
         //    setNotify()
 
@@ -116,7 +136,14 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
     }
 
-
+    fun applyTheme(themePreference: String?) {
+        Log.d("THEME","APPLY $themePreference")
+        when (themePreference) {
+            "light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            "dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            "system" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        }
+    }
     /*    private suspend fun getListForNotify(now: Long, in24Hours: Long): List<ToDoEntity> {
         val list = mutableListOf<ToDoEntity>()
         vm.getNotesForNotify(now, in24Hours)

@@ -6,6 +6,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.work.Configuration
 import com.example.todoapp.data.network.SyncWork.MyWorkerFactory
 import com.example.todoapp.di.DaggerApplicationComponent
@@ -36,7 +37,7 @@ class ToDoAppApp : Application(), Configuration.Provider {
         component.inject(this)
         appContext = applicationContext
 
-
+      // AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         createNotificationChannel()
     }
 

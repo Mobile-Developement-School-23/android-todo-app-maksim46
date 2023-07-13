@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/back_secondary">
+
+    <TextView
+        android:id="@+id/tvChooseTheme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        style="@style/TextView.Body"
+        android:layout_marginTop="18dp"
+        android:text="Выберите тему приложения"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/checkBox1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="22dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvChooseTheme">
+
+        <ImageView
+            android:id="@+id/iv_checkBox1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="14dp"
+            android:theme="@style/CheckBoxStyle"
+            app:srcCompat="@drawable/ic_unchecked" />
+
+        <TextView
+            android:id="@+id/tvNote1"
+            style="@style/TextView.Body"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="12dp"
+            android:text="Системная тема"/>
+    </LinearLayout>
+
+        <LinearLayout
+              android:id="@+id/checkBox2"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="horizontal"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintTop_toBottomOf="@+id/checkBox1">
+
+              <ImageView
+                  android:id="@+id/iv_checkBox2"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_marginStart="28dp"
+                  android:layout_marginTop="14dp"
+                  android:layout_marginBottom="14dp"
+                  android:theme="@style/CheckBoxStyle"
+                  app:srcCompat="@drawable/ic_unchecked" />
+
+              <TextView
+                  android:id="@+id/tvNote2"
+                  style="@style/TextView.Body"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_marginStart="8dp"
+                  android:layout_marginTop="12dp"
+                  android:text="Темная тема"/>
+          </LinearLayout>
+
+          <LinearLayout
+              android:id="@+id/checkBox3"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="horizontal"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintTop_toBottomOf="@+id/checkBox2">
+
+              <ImageView
+                  android:id="@+id/iv_checkBox3"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_marginStart="28dp"
+                  android:layout_marginTop="14dp"
+                  android:layout_marginBottom="14dp"
+                  android:theme="@style/CheckBoxStyle"
+                  app:srcCompat="@drawable/ic_unchecked" />
+
+              <TextView
+                  android:id="@+id/tvNote3"
+                  style="@style/TextView.Body"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_marginStart="8dp"
+                  android:layout_marginTop="12dp"
+                  android:text="Светлая тема"/>
+          </LinearLayout>
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/checkBox3">
+
+    </View>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

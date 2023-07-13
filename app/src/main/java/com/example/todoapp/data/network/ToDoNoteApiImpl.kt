@@ -5,6 +5,8 @@ import com.example.todoapp.data.network.model.ToDoDtoModel
 import com.example.todoapp.data.network.model.ToDoListResponse
 import com.example.todoapp.data.network.model.ToDoResponse
 import com.example.todoapp.data.network.model.YaLoginDtoModel
+import com.example.todoapp.data.repository.LocalNoteDataRepository
+import com.example.todoapp.data.repository.NoteDataRepository
 import com.example.todoapp.domain.toPayload
 import io.ktor.client.request.get
 import io.ktor.client.request.header
@@ -22,6 +24,7 @@ class ToDoNoteApiImpl @Inject constructor(
     private val httpClientHandler: HttpClientHandler,
     private val revisionStorage: RevisionStorage
 ) : ToDoNoteApi {
+
 
 
     private var dbRevizion = INIT_REVISION

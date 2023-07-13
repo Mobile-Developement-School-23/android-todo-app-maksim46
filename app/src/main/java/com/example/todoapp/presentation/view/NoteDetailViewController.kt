@@ -1,10 +1,12 @@
 package com.example.todoapp.presentation.view
 
 import android.app.Activity
+import android.os.Build
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.SwitchCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -16,6 +18,9 @@ import com.example.todoapp.domain.model.Priority
 import com.example.todoapp.domain.model.ToDoEntity
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.ZoneId
+import java.util.Calendar
 import java.util.Date
 import javax.inject.Inject
 
@@ -38,6 +43,7 @@ class NoteDetailViewController @Inject constructor(
         setUpInitial()
         setUpButtonsBehaviour()
         setUpDatePickerResult()
+        setUpTimePickerResult()
     }
 
     private fun setUpInitial() {
@@ -49,7 +55,8 @@ class NoteDetailViewController @Inject constructor(
         val delete: TextView = rootView.findViewById(R.id.delete)
         val ivTrash: ImageView = rootView.findViewById(R.id.ivTrash)
         val tvPriorityValue: TextView = rootView.findViewById(R.id.tv_priority_value)
-
+/*        val tvNotifyValue: TextView = rootView.findViewById(R.id.tv_notify)
+        val ivNotify: ImageView = rootView.findViewById(R.id.ivNotify)*/
 
         viewLifecycleOwner.lifecycleScope.launch {
             vm.toDoNoteByIdForEdit.flowWithLifecycle(
@@ -83,6 +90,12 @@ class NoteDetailViewController @Inject constructor(
                         SimpleDateFormat("dd MMMM yyyy", activity.resources.configuration.locales.get(0))
                             .format(noteData.deadline)
                     deadlineSwitch.isChecked = true
+/*                    if (checkSettingNotify(noteData.deadline).first != 0 && checkSettingNotify(noteData.deadline).second != 0) {
+                        tvNotifyValue.text= SimpleDateFormat("HH mm", activity.resources.configuration.locales.get(0))
+                            .format(noteData.deadline)
+                        tvNotifyValue.setTextAppearance(R.style.TextView_Body)
+                        ivNotify.setColorFilter(androidx.core.content.ContextCompat.getColor(activity, R.color.L_color_Blue))
+                    }*/
                 } else {
                     deadlineSwitch.isChecked = false
                     tvDeadlineValue.visibility = View.GONE
@@ -96,7 +109,7 @@ class NoteDetailViewController @Inject constructor(
                 } else {
                     deleteGroup.isEnabled = true
                     delete.setTextAppearance(R.style.TextView_Body_Red)
-                    ivTrash.setColorFilter(androidx.core.content.ContextCompat.getColor(activity,R.color.L_color_red))
+                    ivTrash.setColorFilter(androidx.core.content.ContextCompat.getColor(activity, R.color.L_color_red))
                 }
             }
         }
@@ -151,6 +164,13 @@ class NoteDetailViewController @Inject constructor(
         }
     }
 
+
+    private fun setUpNotification(editingToDoNote: ToDoEntity){
+        if(editingToDoNote.deadline>0L){
+
+        }
+    }
+
     private fun setUpDatePickerResult() {
         viewLifecycleOwner.lifecycleScope.launch {
             vm.datePickerFragmentResultListener.flowWithLifecycle(
@@ -174,6 +194,29 @@ class NoteDetailViewController @Inject constructor(
         }
     }
 
+    private fun setUpTimePickerResult() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            vm.timePickerFragmentResultListener.flowWithLifecycle(
+                viewLifecycleOwner.lifecycle,
+                Lifecycle.State.STARTED
+            ).collect { bundle ->
+                if (bundle.containsKey("SELECTED_TIME")) {
+                    val chosedDate = bundle.getLong("SELECTED_TIME")
+                    vm.editNote(vm.getEditNote().copy(deadline = vm.getEditNote().deadline + chosedDate))
+                    val selectedTime =
+                        SimpleDateFormat("HH mm", activity.resources.configuration.locales.get(0)).format(chosedDate)
+                  //  val tvNotification: TextView = rootView.findViewById(R.id.tv_notify)
+                    // val deadlineSwitch: SwitchCompat = rootView.findViewById(R.id.deadlineSwitch)
+                //    tvNotification.text = selectedTime
+                    //  tvDeadlineValue.visibility = View.VISIBLE
+                    //  isUserTriggeredDeadLineSwitch = false
+                    // deadlineSwitch.isChecked = true
+                    //   isUserTriggeredDeadLineSwitch = true
+                }
+            }
+        }
+    }
+
     private fun checkBeforeSave(editingToDoNote: ToDoEntity): Boolean {
         return if (editingToDoNote.text.isEmpty()) {
             Toast.makeText(activity, R.string.emptyText_Toast, Toast.LENGTH_SHORT).show()
@@ -181,6 +224,17 @@ class NoteDetailViewController @Inject constructor(
         } else {
             true
         }
+    }
+
+
+    private fun checkSettingNotify(time: Long): Pair<Int, Int> {
+        val millis: Long = time
+        val calendar = Calendar.getInstance().apply {
+            timeInMillis = millis
+        }
+        val hour = calendar.get(Calendar.HOUR_OF_DAY)
+        val minute = calendar.get(Calendar.MINUTE)
+        return Pair(hour, minute)
     }
 
 }

@@ -5,15 +5,15 @@
     android:id="@+id/cl_noteItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:elevation="2dp"
     android:background="?attr/back_secondary"
+    android:elevation="2dp"
     android:visibility="visible">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/groupForClick"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-
+        android:background="@drawable/ripple_effect"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -26,9 +26,9 @@
             android:layout_marginTop="14dp"
             android:layout_marginBottom="14dp"
             android:theme="@style/CheckBoxStyle"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:srcCompat="@drawable/ic_unchecked" />
 
         <androidx.constraintlayout.widget.Guideline
@@ -75,25 +75,23 @@
             android:layout_marginBottom="14dp"
             android:text="@string/deadlineSubhead"
             android:visibility="gone"
-            app:layout_constraintLeft_toLeftOf="@+id/tvNote"
-            app:layout_constraintTop_toBottomOf="@+id/tvNote"
             app:layout_constraintBottom_toBottomOf="parent"
-            />
+            app:layout_constraintLeft_toLeftOf="@+id/tvNote"
+            app:layout_constraintTop_toBottomOf="@+id/tvNote" />
 
         <TextView
             android:id="@+id/tvDoneBefore"
             style="@style/TextView.Body.Grey.VerySmall"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="14dp"
-            android:layout_marginStart="6dp"
-            tool:text="дата"
             android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@+id/tvSubHeadDoneBefore"
             app:layout_constraintTop_toBottomOf="@+id/tvNote"
-            app:layout_constraintBottom_toBottomOf="parent"
-             />
+            tool:text="дата" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/glEnd"
@@ -112,9 +110,10 @@
         android:layout_marginTop="14dp"
         android:layout_marginEnd="18dp"
         android:layout_marginBottom="14dp"
+        app:tint = "@drawable/color_selector_info"
         android:theme="@style/MyBInfoButtonTheme"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_info" />
 

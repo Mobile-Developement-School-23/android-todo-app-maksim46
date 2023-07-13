@@ -45,6 +45,7 @@ data class ClickData(
 enum class PressType(val type: String) {
     SHORT("short"),
     LONG("long"),
+    CHECKBOX("checkbox"),
 }
 
 data class InfoForNavigationToScreenB(

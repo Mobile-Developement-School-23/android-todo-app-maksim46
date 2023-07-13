@@ -5,7 +5,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET"/>
-
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <application
@@ -42,8 +42,14 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
-<!--        <receiver android:name=".domain.AlarmReceiver" />
-        <receiver android:name=".domain.NoteNotificationReceiver" />-->
+      <!--  <receiver android:name=".domain.AlarmReceiver" />-->
+        <receiver android:name=".domain.ReminderWorker.NoteNotificationReceiver" />
+        <receiver android:name=".domain.ReminderWorker.BootReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

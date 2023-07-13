@@ -6,6 +6,8 @@ import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.todoapp.R
 import com.example.todoapp.databinding.NoteItemBinding
+
+
 import com.example.todoapp.domain.model.ClickData
 import com.example.todoapp.domain.model.NoteData
 import com.example.todoapp.domain.model.PressType
@@ -21,6 +23,7 @@ class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun bind(noteItem: NoteData.ToDoItem) {
         with(binding) {
+            checkBox.setOnClickListener { noteItem.onNoteClick(ClickData(PressType.CHECKBOX, noteItem, null)) }
             groupForClick.setOnClickListener { noteItem.onNoteClick(ClickData(PressType.SHORT, noteItem, null)) }
             groupForClick.setOnLongClickListener {
                 noteItem.onNoteClick(ClickData(PressType.LONG, noteItem, groupForClick))

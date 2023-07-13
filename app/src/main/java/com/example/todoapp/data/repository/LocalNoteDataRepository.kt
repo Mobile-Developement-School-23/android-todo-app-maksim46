@@ -1,5 +1,6 @@
 package com.example.todoapp.data.repository
 
+import android.util.Log
 import com.example.todoapp.data.database.ToDoListDao
 import com.example.todoapp.data.database.ToDoListDbModel
 import com.example.todoapp.domain.model.ToDoEntity
@@ -23,6 +24,12 @@ class LocalNoteDataRepository @Inject constructor(
         return myToDoListDao.insertNote(note.toDbModel())
     }
 
+    override suspend fun getNotesForNotify(currentTime:Long, future24HoursTime:Long): Flow<List<ToDoEntity>>  {
+       val a =(myToDoListDao.getNotesForNotify(currentTime, future24HoursTime)).map { it.toListOfToDoEntyty() }
+        Log.d("NOTIF_LIST1", a.toString())
+
+        return a
+    }
     override suspend fun insertListOfNotes(list: List<ToDoListDbModel>): List<Long> {
         return myToDoListDao.insertListOfNotes(list)
     }

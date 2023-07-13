@@ -70,6 +70,7 @@
         android:layout_marginEnd="24dp"
         android:layout_marginTop="20dp"
         android:background="@null"
+        app:tint = "@drawable/color_selector_button"
         android:elevation="10dp"
         android:src="@drawable/ic_login"
         app:layout_constraintTop_toTopOf="@id/ab_header"

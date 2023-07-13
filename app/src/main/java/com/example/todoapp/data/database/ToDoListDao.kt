@@ -24,6 +24,9 @@ interface ToDoListDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertNote(note: ToDoListDbModel): Long
 
+    @Query("SELECT * FROM todo_list WHERE deadline >= :currentTime AND deadline <= :future24HoursTime AND isDone = 0" )
+    fun getNotesForNotify(currentTime:Long, future24HoursTime:Long): Flow<List<ToDoListDbModel>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertListOfNotes(list: List<ToDoListDbModel>): List<Long>
 

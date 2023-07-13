@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Date
@@ -46,6 +47,11 @@ class NoteDataRepository @Inject constructor(
     private val remoteNoteDataRepository: RemoteNoteDataRepository,
     private val revisionStorage: RevisionStorage
 ) {
+
+    private val _listOfNotesForNotify = MutableStateFlow<List<ToDoEntity>>(emptyList())
+    val listOfNotesForNotify: StateFlow<List<ToDoEntity>> = _listOfNotesForNotify.asStateFlow()
+
+
     private val _onErrorMessage = MutableSharedFlow<OnErrorModel>(0, 16)
     val onErrorMessage: SharedFlow<OnErrorModel> = _onErrorMessage.asSharedFlow()
 
@@ -62,6 +68,13 @@ class NoteDataRepository @Inject constructor(
     }
 
     private val repoCoroutineScope = CoroutineScope(Job() + Dispatchers.Default + handler)
+
+
+     fun test() {
+         println("REMIONDER")
+         Log.d("REMIONDER", "test")
+    }
+
     suspend fun saveToDoNote(note: ToDoEntity, isOnline: Boolean) {
         val addedNoteId = localNoteDataRepository.insertToDoNote(note)
         if (isOnline) {
@@ -110,8 +123,31 @@ class NoteDataRepository @Inject constructor(
         }
     }
 
+    suspend fun getNotesForNotify(currentTime:Long, future24HoursTime:Long):Flow<List<ToDoEntity>>{
+        return    localNoteDataRepository.getNotesForNotify(currentTime, future24HoursTime)
+
+     /*           localNoteDataRepository.getNotesForNotify(currentTime, future24HoursTime).collect {list ->
+                    Log.d("NOTIF_LIST2", list.toString())
+                    _listOfNotesForNotify.update { list }*/
+            }
+
+
+
+
+
+
+
+
+/*    suspend fun getNotesForNotify(currentTime:Long, future24HoursTime:Long): Flow<List<ToDoEntity>>{
+
+
+      return  localNoteDataRepository.getNotesForNotify(currentTime, future24HoursTime)
+
+
+
+    }*/
     private suspend fun markAsDeleteToDoNote(id: String) {
-        localNoteDataRepository.markAsDeleteToDoNote(id, Date().time)
+      return  localNoteDataRepository.markAsDeleteToDoNote(id, Date().time)
     }
 
 

@@ -179,7 +179,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:clickable="true"
-                android:textColor="?attr/color_blue"
+                style="@style/TextView.InfoMessage"
                 app:layout_constraintStart_toStartOf="@+id/tv_deadline"
                 app:layout_constraintTop_toBottomOf="@+id/tv_deadline"
                 tools:text="2 июня 2021" />
@@ -194,6 +194,33 @@
                 android:theme="@style/MySwitchTheme"
                 app:layout_constraintBottom_toTopOf="@+id/devider2"
                 app:layout_constraintEnd_toEndOf="parent" />
+
+<!--            <LinearLayout
+                android:id="@+id/notifyGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="36dp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toStartOf="@id/deadlineSwitch"
+                app:layout_constraintBottom_toTopOf="@+id/devider2" >
+
+                <ImageView
+                    android:id="@+id/ivNotify"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_notification"
+                    app:tint="?attr/label_disable" />
+
+                <TextView
+                    android:id="@+id/tv_notify"
+                    style="@style/TextView.Body.Disable"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    tools:text="00:00" />
+            </LinearLayout>-->
 
             <LinearLayout
                 android:id="@+id/deleteGroup"
@@ -221,6 +248,9 @@
                     android:layout_marginBottom="16dp"
                     android:text="@string/delete" />
             </LinearLayout>
+
+
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>

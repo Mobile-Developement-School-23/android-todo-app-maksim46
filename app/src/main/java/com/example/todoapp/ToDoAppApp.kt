@@ -1,17 +1,16 @@
 package com.example.todoapp
 
+
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import androidx.work.Configuration
-import androidx.work.WorkManager
 import com.example.todoapp.data.network.SyncWork.MyWorkerFactory
-import com.example.todoapp.data.repository.NoteDataRepository
 import com.example.todoapp.di.DaggerApplicationComponent
 
-
+import com.example.todoapp.domain.ReminderWorker.ReminderWorker
 import javax.inject.Inject
 
 /**
@@ -19,11 +18,12 @@ import javax.inject.Inject
  * as long as application lives.
  */
 
-class ToDoAppApp: Application(), Configuration.Provider  {
+class ToDoAppApp : Application(), Configuration.Provider {
 
     val component by lazy {
         DaggerApplicationComponent.factory().create(this)
     }
+
     @Inject
     lateinit var myWorkerFactory: MyWorkerFactory
 
@@ -36,18 +36,30 @@ class ToDoAppApp: Application(), Configuration.Provider  {
         component.inject(this)
         appContext = applicationContext
 
-/*        WorkManager.initialize(
-            this,
-            Configuration.Builder()
-                .setWorkerFactory(myWorkerFactory)
-                .build()
-        )*/
 
+        createNotificationChannel()
     }
+
+
     override fun getWorkManagerConfiguration(): Configuration {
         return Configuration.Builder().setWorkerFactory(myWorkerFactory).build()
     }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                ReminderWorker.NOTE_CHANNEL_ID,
+                "NoteDeadline",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            channel.description = "Used for the note notifications"
+
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
     }
+}
+
 
 
 

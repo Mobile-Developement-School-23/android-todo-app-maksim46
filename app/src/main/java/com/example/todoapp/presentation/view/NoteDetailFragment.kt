@@ -1,5 +1,6 @@
 package com.example.todoapp.presentation.view
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -23,6 +24,9 @@ import com.example.todoapp.ToDoAppApp
 import com.example.todoapp.databinding.FragmentNoteBinding
 import com.example.todoapp.domain.model.Priority
 import com.example.todoapp.presentation.utility.DatePickerFragment
+import com.example.todoapp.presentation.utility.TimePickerFragment
+
+
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,7 +37,7 @@ import javax.inject.Inject
 class NoteDetailFragment : Fragment(R.layout.fragment_note) {
     private val binding by viewBinding(FragmentNoteBinding::bind)
     private val vm: MainFragmentViewModel by activityViewModels()
-
+   private var choosedDate=0L
     @Inject
     lateinit var noteDetailViewController: NoteDetailViewController
 
@@ -55,10 +59,15 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note) {
 
         val supportFragmentManager = requireActivity().supportFragmentManager
         setDatePickerFragmentResultListener(supportFragmentManager)
+        setTimePickerFragmentResultListener(supportFragmentManager)
 
         binding.tvDeadlineValue.setOnClickListener {
             DatePickerFragment().show(supportFragmentManager, "DatePickerFragment")
         }
+
+/*        binding.notifyGroup.setOnClickListener {
+           TimePickerFragment().show(supportFragmentManager, "TimePickerFragment")
+        }*/
 
         registerForContextMenu(binding.tvPriorityValue)
         binding.tvPriorityValue.setOnClickListener {
@@ -76,8 +85,15 @@ class NoteDetailFragment : Fragment(R.layout.fragment_note) {
     }
 
     private fun setDatePickerFragmentResultListener(supportFragmentManager: FragmentManager) {
-        supportFragmentManager.setFragmentResultListener("FRAGMENT_RESULT_KEY", viewLifecycleOwner) { _, bundle ->
+        supportFragmentManager.setFragmentResultListener("FRAGMENT_DATE_RESULT_KEY", viewLifecycleOwner) { _, bundle ->
             vm.setDatePickerResult(bundle)
+                //  choosedDate= bundle.getLong("SELECTED_DATE")
+        }
+    }
+
+    private fun setTimePickerFragmentResultListener(supportFragmentManager: FragmentManager) {
+        supportFragmentManager.setFragmentResultListener("FRAGMENT_TIME_RESULT_KEY", viewLifecycleOwner) { _, bundle ->
+            vm.setTimePickerResult(bundle)
         }
     }
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {

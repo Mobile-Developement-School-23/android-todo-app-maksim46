@@ -24,7 +24,7 @@ data class MyColors(
 
 
 
-object MyTheme {
+object AppTheme {
     val colors: MyColors
         @Composable
         get() = LocalMyColors.current
@@ -36,9 +36,9 @@ object MyTheme {
 }
 
 val LocalMyColors = staticCompositionLocalOf<MyColors> {
-    error("No colors provided")
+    error("No colors exist")
 }
 
 val LocalMyTypography = staticCompositionLocalOf<Typography> {
-    error("No fonts provided")
+    error("No fonts exist")
 }

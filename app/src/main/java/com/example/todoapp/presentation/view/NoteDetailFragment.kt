@@ -1,7 +1,7 @@
 package com.example.todoapp.presentation.view
 
 
-import MainTheme
+import AppTheme
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
@@ -94,7 +94,7 @@ class NoteDetailFragment : Fragment() {
         component.inject(this)
         val view = ComposeView(requireContext()).apply {
             setContent {
-                MainTheme() {
+                AppTheme() {
                     NoteDetailScreen()
                 }
             }

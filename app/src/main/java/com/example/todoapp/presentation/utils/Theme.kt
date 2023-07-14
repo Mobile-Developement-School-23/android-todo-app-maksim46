@@ -11,7 +11,7 @@ import com.example.todoapp.presentation.utils.blackPalette
 import com.example.todoapp.presentation.utils.lightPalette
 
 @Composable
-fun MainTheme(
+fun AppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {

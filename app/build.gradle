@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'androidx.navigation.safeargs'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.7.20'
 }
 
 android {
@@ -16,6 +17,8 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders = [YANDEX_CLIENT_ID:"0d0970774e284fa8ba9ff70b6b06479a"]
     }
 
     buildTypes {
@@ -54,8 +57,25 @@ dependencies {
     implementation 'androidx.room:room-ktx:2.5.1'
     kapt 'androidx.room:room-compiler:2.5.1'
 
-    implementation 'com.google.dagger:dagger:2.44'
-    kapt 'com.google.dagger:dagger-compiler:2.44'
+    implementation 'com.google.dagger:dagger:2.46.1'
+    kapt 'com.google.dagger:dagger-compiler:2.46.1'
+
+    implementation "io.ktor:ktor-client-android:1.6.0"
+    implementation "io.ktor:ktor-client-serialization:1.6.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1"
+    implementation "io.ktor:ktor-client-logging-jvm:1.6.3"
+
+    implementation "io.ktor:ktor-client-core:1.6.3"
+    implementation "ch.qos.logback:logback-classic:1.2.3"
+
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01"
+
+    implementation "com.yandex.android:authsdk:2.5.1"
+
+
+    implementation "androidx.work:work-runtime-ktx:2.5.0"
+
+    implementation 'com.google.android.material:material:1.4.0'
 
     constraints {
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0") {

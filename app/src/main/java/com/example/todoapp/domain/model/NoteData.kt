@@ -32,7 +32,7 @@ enum class Priority(val value: Int) {
 
 data class ClickData(
     val pressType: PressType,
-    val id: String,
+    val noteData: NoteData,
     val view: View?
 )
 
@@ -45,6 +45,12 @@ enum class PressType(val type: String) {
 data class InfoForNavigationToScreenB(
     val id: Int = NEW_NOTE,
     val navigateToScreenB: Boolean = false
+)
+
+data class LastResponse(
+    val status: Boolean = false,
+    val date: Date = Date(0),
+    val isOnline: Boolean = false
 )
 
 const val NEW_NOTE = -1

@@ -1,27 +1,21 @@
 package com.example.todoapp.domain.repository
 
-import androidx.lifecycle.LiveData
-import com.example.todoapp.domain.model.NoteData
+import com.example.todoapp.data.database.ToDoListDbModel
 import com.example.todoapp.domain.model.ToDoEntity
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
 
-interface NoteDataRepository {
+interface LocalNoteDataRepository {
 
-    suspend fun addToDoNote(note: ToDoEntity):Long
-
+    suspend fun insertToDoNote(note: ToDoEntity): Long
+    suspend fun insertListOfNotes(list: List<ToDoListDbModel>): List<Long>
     suspend fun deleteToDoNote(id: String)
-
-    suspend fun insertToDoNote(note: ToDoEntity)
-
+    suspend fun deleteMarked()
+    suspend fun markAsDeleteToDoNote(id: String, updateDate: Long)
     suspend fun updateToDoNote(note: ToDoEntity)
-
     suspend fun getToDoNote(id: String): ToDoEntity
-
     fun getToDoNoteList(doneStatus: Boolean): Flow<List<ToDoEntity>>
-
+    fun getToDoNoteListForSynk(doneStatus: Boolean): Flow<List<ToDoEntity>>
     fun getNumberOfDone(): Flow<Int>
-
     suspend fun updateDoneStatus(noteId: Int)
 
 }

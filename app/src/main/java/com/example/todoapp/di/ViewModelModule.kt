@@ -17,7 +17,6 @@ interface ViewModelModule {
 
     fun bindMainFragmentViewModel(impl: MainFragmentViewModel): ViewModel
 
-
     @Binds
     fun bindItemTouchHelperAdapter(impl :MainFragmentViewModel):IntItemTouchHelper
 }

@@ -12,7 +12,6 @@ fun Context.hideKeyboard(view: View) {
     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 }
 
-
 fun View.startAnimation(animation: Animation, onEnd: () -> Unit) {
     animation.setAnimationListener(object : Animation.AnimationListener {
         override fun onAnimationStart(animation: Animation?) = Unit
@@ -24,4 +23,9 @@ fun View.startAnimation(animation: Animation, onEnd: () -> Unit) {
         override fun onAnimationRepeat(animation: Animation?) = Unit
     })
     this.startAnimation(animation)
+}
+
+fun <T> T.applyCustom(action: T.() -> Unit): T {
+    this.action()
+    return this
 }

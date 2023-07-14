@@ -18,5 +18,8 @@
     <string name="deadlineSubhead">Сделать до:</string>
     <string name="done">Сменить статус</string>
     <string name="update">Редактировать</string>
-
+    <string name="hello">Привет</string>
+    <string name="synch">Дела синхронизированы</string>
+    <string name="not_synch">Дела не синхронизированы. Версия данных от</string>
+    <string name="unexpected_error">Непредвиденная ошибка</string>
 </resources>

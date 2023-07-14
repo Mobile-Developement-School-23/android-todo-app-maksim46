@@ -12,7 +12,10 @@
         tools:layout="@layout/fragment_main" >
         <action
             android:id="@+id/action_mainFragment_to_noteDetailFragment"
-            app:destination="@id/noteDetailFragment" />
+            app:destination="@id/noteDetailFragment"
+            app:popEnterAnim="@anim/anim_enter"
+            app:popExitAnim="@anim/anim_slide"
+            />
         <action
             android:id="@+id/action_mainFragment_to_bottomSheetFragment"
             app:destination="@id/bottomSheetFragment" />

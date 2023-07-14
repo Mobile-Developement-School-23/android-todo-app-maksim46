@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -125,7 +126,7 @@ class NoteDetailFragment : Fragment() {
         val (updateDate, setUpdateDate) = remember { mutableStateOf(Date(0)) }
 
         val (noteData, setNoteData) = remember { mutableStateOf(ToDoEntity("0", "", Priority.Standart, 0, false, Date(0), Date(0))) }
-
+        var isVisible by remember { mutableStateOf(false) }
 
         LaunchedEffect(vm.toDoNoteByIdForEdit) {
             viewLifecycleOwner.lifecycleScope.launch {
@@ -161,7 +162,10 @@ class NoteDetailFragment : Fragment() {
                     backgroundColor = LocalMyColors.current.colorBackPrimary,
                     title = {},
                     navigationIcon = {
-                        IconButton(onClick = { findNavController().popBackStack() })
+                        IconButton(onClick = {
+                            !isVisible
+                            findNavController().popBackStack()
+                        })
                         {
                             Icon(
                                 imageVector = Icons.Default.Close,
@@ -186,9 +190,14 @@ class NoteDetailFragment : Fragment() {
                                 } else {
                                     vm.addNewNote(ToDoEntity(noteId, noteText, notePriority, deadline, isDone, createDate, updateDate))
                                 }
+                                !isVisible
                                 findNavController().popBackStack()
                             }
-                        })
+                        }
+
+
+                        )
+
                         {
 
                             Text(
@@ -196,8 +205,8 @@ class NoteDetailFragment : Fragment() {
                                 style = MaterialTheme.typography.button,
                                 color = LocalMyColors.current.colorBlue
                             )
-
                         }
+
                     }
                 )
             },
@@ -217,7 +226,7 @@ class NoteDetailFragment : Fragment() {
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(100.dp),
+                                .height(150.dp),
                             backgroundColor = LocalMyColors.current.colorBackSecondary,
                             shape = RoundedCornerShape(8.dp),
                             elevation = 4.dp

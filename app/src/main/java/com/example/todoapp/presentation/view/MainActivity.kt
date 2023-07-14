@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.NotificationManagerCompat
 import com.example.todoapp.R
 import com.example.todoapp.domain.CurrentThemeStorage
+import com.google.android.material.snackbar.Snackbar
 
 /**
  * Contains [MainFragment] and [NoteDetailFragment].
@@ -23,6 +24,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
 
 
     }

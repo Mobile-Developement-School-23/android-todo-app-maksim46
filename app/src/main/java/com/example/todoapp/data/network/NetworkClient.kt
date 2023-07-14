@@ -19,8 +19,13 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
 import kotlinx.serialization.json.Json
+import javax.inject.Inject
 
-class NetworkClient {
+/**
+ * Initializing network client for network requests
+ */
+
+class NetworkClient @Inject constructor(){
     val client = HttpClient {
         install(JsonFeature) {
             serializer = KotlinxSerializer(Json {
@@ -49,7 +54,8 @@ class NetworkClient {
     }
 
 
-    suspend inline fun <reified Response> request(typeRequest: HttpMethod, url: String, bodyJson: Any?, lastKnownRevision: String): Response {
+    suspend inline fun <reified Response> request(
+        typeRequest: HttpMethod, url: String, bodyJson: Any?, lastKnownRevision: String): Response {
         return client.request<Response> {
             url(HttpResource.BASE_URL + url)
             method = typeRequest

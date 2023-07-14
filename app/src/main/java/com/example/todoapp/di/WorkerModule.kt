@@ -9,10 +9,9 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 import kotlin.reflect.KClass
 
-@Retention(AnnotationRetention.RUNTIME)
-@MapKey
-annotation class WorkerKey(val value: KClass<out Worker>)
-
+/**
+ * DI module related with WorkManager
+ */
 @Module
 abstract class WorkerModule {
 

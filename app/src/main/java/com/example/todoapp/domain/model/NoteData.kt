@@ -1,9 +1,14 @@
 package com.example.todoapp.domain.model
 
 import android.view.View
+import com.example.todoapp.presentation.utility.PopupWindowsHandler
+import java.util.Date
 
-import com.example.todoapp.presentation.utils.PopupWindowsCreator
-import java.util.*
+/**
+ * Set of base models describing the structure of the note,
+ * And models uses for transfer data
+ */
+
 
 sealed class NoteData {
 
@@ -14,7 +19,7 @@ sealed class NoteData {
         val deadline: Long = 0,
         val isDone: Boolean = false,
         val onNoteClick: (id: ClickData) -> Unit = {},
-        val onInfoClick: (text: PopupWindowsCreator.PopupData) -> Unit = {},
+        val onInfoClick: (text: PopupWindowsHandler.PopupData) -> Unit = {},
         val createDate: Date = Date(0),
         val updateDate: Date = Date(0)
     ) : NoteData()

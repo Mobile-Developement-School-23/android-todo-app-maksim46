@@ -7,7 +7,7 @@
     android:background="?attr/back_primary"
     android:id="@+id/motion_parent"
     app:layoutDescription="@xml/fragment_main_scene"
-    tools:context=".presentation.MainFragment">
+    tools:context=".presentation.view.MainFragment">
 
 
 

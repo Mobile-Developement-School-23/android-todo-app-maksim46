@@ -1,27 +1,25 @@
 package com.example.todoapp.di
 
 import android.content.Context
-import androidx.work.Configuration
-import androidx.work.WorkManager
-import com.example.todoapp.data.network.SyncWork.MyWorkerFactory
-import com.example.todoapp.presentation.MainFragment
-import com.example.todoapp.presentation.ToDoAppApp
+import com.example.todoapp.ToDoAppApp
 import dagger.BindsInstance
 import dagger.Component
-import javax.inject.Inject
 
+/**
+ * DI subcomponent related with Application [ToDoAppApp]
+ * Initialization of subcomponent factories
+ */
 @ApplicationScope
-@Component(modules = [ViewModelModule::class, DatabaseModule::class, UtilsModule::class,WorkerModule::class])
+@Component(modules = [DatabaseModule::class, WorkerModule::class, NetworkModule::class])
 interface ApplicationComponent {
     fun inject(application: ToDoAppApp)
-    fun inject(fragment: MainFragment)
+    fun fragmentMainComponent(): FragmentMainComponent.Factory
+    fun fragmentNoteDetailComponent(): FragmentNoteDetailComponent.Factory
 
     @Component.Factory
-    interface Factory{
+    interface Factory {
         fun create(
             @BindsInstance context: Context
-        ):ApplicationComponent
+        ): ApplicationComponent
     }
-
-
 }

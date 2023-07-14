@@ -3,6 +3,9 @@ package com.example.todoapp.data.database
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * Description of possible operation with local data base
+ */
 @Dao
 interface ToDoListDao {
 
@@ -23,6 +26,7 @@ interface ToDoListDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertListOfNotes(list: List<ToDoListDbModel>): List<Long>
+
 
     @Query("DELETE FROM todo_list WHERE id=:noteId")
     fun deleteToDoNote(noteId: Int?)

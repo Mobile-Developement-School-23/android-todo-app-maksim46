@@ -36,8 +36,6 @@ class ToDoAppApp : Application(), Configuration.Provider {
         super.onCreate()
         component.inject(this)
         appContext = applicationContext
-
-      // AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         createNotificationChannel()
     }
 
@@ -53,7 +51,7 @@ class ToDoAppApp : Application(), Configuration.Provider {
                 "NoteDeadline",
                 NotificationManager.IMPORTANCE_DEFAULT
             )
-            channel.description = "Used for the note notifications"
+            channel.description = getString(R.string.channel_description)
 
             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)

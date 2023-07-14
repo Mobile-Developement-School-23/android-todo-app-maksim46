@@ -25,9 +25,12 @@ import java.util.Date
 import javax.inject.Inject
 
 /**
+ * NOT USED DUE TO COMPOSE
+ *
  * Contains logic for second screen views configuration.
  */
 
+/*
 class NoteDetailViewController @Inject constructor(
     private val activity: Activity,
     private val vm: MainFragmentViewModel,
@@ -55,8 +58,7 @@ class NoteDetailViewController @Inject constructor(
         val delete: TextView = rootView.findViewById(R.id.delete)
         val ivTrash: ImageView = rootView.findViewById(R.id.ivTrash)
         val tvPriorityValue: TextView = rootView.findViewById(R.id.tv_priority_value)
-/*        val tvNotifyValue: TextView = rootView.findViewById(R.id.tv_notify)
-        val ivNotify: ImageView = rootView.findViewById(R.id.ivNotify)*/
+
 
         viewLifecycleOwner.lifecycleScope.launch {
             vm.toDoNoteByIdForEdit.flowWithLifecycle(
@@ -90,12 +92,14 @@ class NoteDetailViewController @Inject constructor(
                         SimpleDateFormat("dd MMMM yyyy", activity.resources.configuration.locales.get(0))
                             .format(noteData.deadline)
                     deadlineSwitch.isChecked = true
+*/
 /*                    if (checkSettingNotify(noteData.deadline).first != 0 && checkSettingNotify(noteData.deadline).second != 0) {
                         tvNotifyValue.text= SimpleDateFormat("HH mm", activity.resources.configuration.locales.get(0))
                             .format(noteData.deadline)
                         tvNotifyValue.setTextAppearance(R.style.TextView_Body)
                         ivNotify.setColorFilter(androidx.core.content.ContextCompat.getColor(activity, R.color.L_color_Blue))
-                    }*/
+                    }*//*
+
                 } else {
                     deadlineSwitch.isChecked = false
                     tvDeadlineValue.visibility = View.GONE
@@ -237,4 +241,4 @@ class NoteDetailViewController @Inject constructor(
         return Pair(hour, minute)
     }
 
-}
+}*/

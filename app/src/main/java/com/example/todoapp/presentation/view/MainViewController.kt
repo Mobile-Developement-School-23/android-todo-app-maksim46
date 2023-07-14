@@ -1,17 +1,13 @@
 package com.example.todoapp.presentation.view
 
 import android.app.Activity
-import android.app.AlarmManager
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Context.ALARM_SERVICE
+import android.util.Log
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AnimationUtils
 import android.widget.ImageButton
 import android.widget.PopupWindow
 import android.widget.TextView
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
@@ -23,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.todoapp.R
 import com.example.todoapp.data.model.OnErrorModel
-
 import com.example.todoapp.domain.model.InfoForNavigationToScreenB
 import com.example.todoapp.domain.model.NoteData
 import com.example.todoapp.presentation.utility.LastSuccessSync
@@ -33,7 +28,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import javax.inject.Inject
 
 /**
@@ -104,7 +98,8 @@ class MainViewController @Inject constructor(
         val btHide: ImageButton = rootView.findViewById(R.id.bt_hide)
         btHide.setOnClickListener {
 
-            vm.flipDoneVisibility() }
+            vm.flipDoneVisibility()
+        }
     }
 
     private fun setUpBtYaLogin() {
@@ -124,6 +119,7 @@ class MainViewController @Inject constructor(
     }
 
     private fun setUpGetLastResponce() {
+        Log.d("SYNKNOTE", "VM setUpGetLastResponcee")
         viewLifecycleOwner.lifecycleScope.launch {
             var lastSuccessSync = ""
             vm.getLastResponse().flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).collect { lastResponce ->
@@ -236,12 +232,12 @@ class MainViewController @Inject constructor(
     }
 
     private fun setUpNotification() {
-/*        val alarmManager = activity.getSystemService(ALARM_SERVICE) as AlarmManager
-        val calendar = Calendar.getInstance()
-        calendar.add(Calendar.SECOND, 10)
-        val intent = AlarmReceiver.newIntent(activity)
-        val pendingIntent = PendingIntent.getBroadcast(activity, 100, intent, PendingIntent.FLAG_IMMUTABLE)
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)*/
+        /*        val alarmManager = activity.getSystemService(ALARM_SERVICE) as AlarmManager
+                val calendar = Calendar.getInstance()
+                calendar.add(Calendar.SECOND, 10)
+                val intent = AlarmReceiver.newIntent(activity)
+                val pendingIntent = PendingIntent.getBroadcast(activity, 100, intent, PendingIntent.FLAG_IMMUTABLE)
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)*/
     }
 
 }

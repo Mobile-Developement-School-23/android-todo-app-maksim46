@@ -25,8 +25,6 @@ class ToDoNoteApiImpl @Inject constructor(
     private val revisionStorage: RevisionStorage
 ) : ToDoNoteApi {
 
-
-
     private var dbRevizion = INIT_REVISION
 
     init {

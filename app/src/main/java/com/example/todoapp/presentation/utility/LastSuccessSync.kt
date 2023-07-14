@@ -12,9 +12,6 @@ class LastSuccessSync @Inject constructor(
     private val context: Context
 ) {
 
-
-
-
     private val SP_FILENAME = "GetLastTime"
     private val LAST_SYNC_TIME_KEY = "last_time_key"
 

@@ -34,13 +34,6 @@ class SyncWorker (
     }
 
 
-/*    companion object {
-        const val NAME = "SyncWorker"
-        fun makeRequest(): OneTimeWorkRequest {
-            return OneTimeWorkRequestBuilder<SyncWorker>().build()
-        }
-    }*/
-
     class Factory @Inject constructor(
         private val noteDataRepository: NoteDataRepository
     ) : ChildWorkerFactory {
@@ -60,41 +53,3 @@ class SyncWorker (
 
 
 
-
-
-/*
-
-class SyncWorker constructor(
-    private val context: Context,
-    workerParam: WorkerParameters,
-    private val noteDataRepository: NoteDataRepository) :
-    Worker(context, workerParam) {
-    private val handler = CoroutineExceptionHandler { _, exception -> Log.d("CoroutineException", "Caught $exception") }
-    // private val scope = CoroutineScope(Dispatchers.IO + handler)
-
-    override fun doWork(): Result {
-        Log.d("Worker", "do work")
-        return if (isNetworkAvailable(context)) {
-            noteDataRepository.syncNotes(true)
-            Result.success()
-        } else {
-            Result.failure()
-        }
-    }
-
-    private fun isNetworkAvailable(context: Context): Boolean {
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val network = connectivityManager.activeNetwork ?: return false
-        val networkCapabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
-        return networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-                networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
-    }
-
-    class Factory @Inject constructor(val noteDataRepository: NoteDataRepository) : ChildWorkerFactory {
-
-        override fun create(appContext: Context, params: WorkerParameters): Worker {
-            return SyncWorker(appContext, params, noteDataRepository)
-        }
-    }
-}
-*/

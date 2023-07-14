@@ -5,7 +5,6 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,12 +25,13 @@ import com.example.todoapp.ToDoAppApp
 import com.example.todoapp.data.repository.LocalNoteDataRepository
 import com.example.todoapp.databinding.FragmentMainBinding
 import com.example.todoapp.domain.CurrentThemeStorage
-import com.example.todoapp.domain.ReminderWorker.NoteNotificationReceiver
+import com.example.todoapp.domain.CurrentThemeStorage.Companion.DARK
+import com.example.todoapp.domain.CurrentThemeStorage.Companion.LIGHT
+import com.example.todoapp.domain.CurrentThemeStorage.Companion.SYSTEM
 import com.example.todoapp.domain.ReminderWorker.NotificationScheduler
 import com.example.todoapp.presentation.utility.SyncWM
 import com.example.todoapp.presentation.utility.ViewModelFactory
 import com.example.todoapp.presentation.utility.YandexLoginHandler
-import com.google.android.material.snackbar.Snackbar
 import com.yandex.authsdk.YandexAuthOptions
 import com.yandex.authsdk.YandexAuthSdk
 import kotlinx.coroutines.launch
@@ -41,7 +41,6 @@ import javax.inject.Inject
  * Main fragment of the application.
  */
 
-private val NOTIFICATION_PERMISSION_REQUEST = 1
 
 class MainFragment : Fragment(R.layout.fragment_main) {
 
@@ -61,9 +60,6 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
     @Inject
     lateinit var notificationScheduler: NotificationScheduler
-
-    @Inject
-    lateinit var noteNotificationReceiver: NoteNotificationReceiver
 
     @Inject
     lateinit var currentThemeStorage: CurrentThemeStorage
@@ -97,16 +93,9 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         requestPermission()
 
-
-
-        binding.btSetting.setOnClickListener {
-            findNavController().navigate(R.id.action_mainFragment_to_bottomSheetFragment)
-        }
-
-
         syncWM.startSynchWM()
-        notificationScheduler.startReminderNotification()
 
+        notificationScheduler.startReminderNotification()
 
         yandexLoginHandler = YandexLoginHandler(loginResultLauncher, yandexLoginSdk) { token ->
             vm.yaLogin(token)
@@ -120,48 +109,37 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                     }
                 }
         }
-
+        binding.btSetting.setOnClickListener {
+            findNavController().navigate(R.id.action_mainFragment_to_bottomSheetFragment)
+        }
     }
 
 
     private fun requestPermission() {
-
-        Log.d("PERMISSION11", "zapros")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             when {
                 (ContextCompat.checkSelfPermission(
                     requireContext(),
                     Manifest.permission.POST_NOTIFICATIONS
                 ) == PackageManager.PERMISSION_GRANTED) -> {
-                    Log.d("PERMISSION11", "granted")
                 }
-
                 (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), Manifest.permission.POST_NOTIFICATIONS)) -> {
                     if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
-                        Log.d(
-                            "PERMISSION11", "${
-                                shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)
-                            }"
-                        )
-
                         AlertDialog.Builder(requireContext()).apply {
                             setTitle("")
-                            setMessage("Возможность отправлять уведомления, позволяет напоминать Вам о важных делах ")
-                            setPositiveButton("OK") { dialog, id ->
+                            setMessage(getString(R.string.permission_request))
+                            setPositiveButton(getString(R.string.Yes)) { dialog, id ->
                                 requestPermissionLauncher.launch(
                                     Manifest.permission.POST_NOTIFICATIONS
                                 )
                             }
-                            setNegativeButton("Отклонить") { dialog, id ->
+                            setNegativeButton(getString(R.string.Decline)) { dialog, id ->
 
                             }
                         }.create().show()
                     }
-
                 }
-
                 else -> {
-
                     requestPermissionLauncher.launch(
                         Manifest.permission.POST_NOTIFICATIONS
                     )
@@ -170,27 +148,19 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         }
     }
 
-
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
         if (isGranted) {
-            Log.d("PERMISSION11", "predostavl")
         } else if (isPermissionRequested) {
             isPermissionRequested = false
-
             requestPermission()
-
-            Log.d("PERMISSION11", "otkloneno")
         }
     }
 
-
-
-    fun applyTheme(themePreference: String?) {
-        Log.d("THEME", "APPLY $themePreference")
+    private fun applyTheme(themePreference: String?) {
         when (themePreference) {
-            "light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            "dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            "system" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            LIGHT -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            DARK -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            SYSTEM -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         }
     }
 }

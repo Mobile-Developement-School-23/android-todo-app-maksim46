@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.widget.DatePicker
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
@@ -34,7 +35,8 @@ class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
         calendar.set(Calendar.MONTH, month)
         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
         val chosedDate = calendar.time.time
-        selectedDateBundle.putLong("SELECTED_DATE", chosedDate)
+        Log.d("COMPOSE_frag", chosedDate.toString())
+       selectedDateBundle.putLong("SELECTED_DATE", chosedDate)
         setFragmentResult("FRAGMENT_DATE_RESULT_KEY", selectedDateBundle)
     }
 

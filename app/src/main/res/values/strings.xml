@@ -28,4 +28,8 @@
     <string name="er_404">Ошибка 404: Элемент не найден</string>
     <string name="er_unexpected">Неожиданный код состояния HTTP</string>
     <string name="er_internal">Ошибка выполнения приложения</string>
+    <string name="permission_request">"Возможность отправлять уведомления, позволяет напоминать о важных делах \n \n Согласиться получать уведомления? "</string>
+    <string name="Decline">Отклонить</string>
+    <string name="Yes">Да</string>
+    <string name="channel_description">Used for the note notifications</string>
 </resources>

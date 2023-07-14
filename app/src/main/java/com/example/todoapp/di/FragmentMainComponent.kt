@@ -3,7 +3,6 @@ package com.example.todoapp.di
 import android.app.Activity
 import androidx.fragment.app.Fragment
 import com.example.todoapp.presentation.view.MainFragment
-import com.example.todoapp.presentation.view.NoteDetailFragment
 import dagger.BindsInstance
 import dagger.Subcomponent
 

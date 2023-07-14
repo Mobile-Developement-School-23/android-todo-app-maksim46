@@ -19,15 +19,12 @@ import javax.inject.Inject
 class BottomSheetFragment : BottomSheetDialogFragment(R.layout.bottom_sheet) {
     private val binding by viewBinding(BottomSheetBinding::bind)
 
-
     private val component by lazy {
         (requireActivity().application as ToDoAppApp).component.fragmentBottomSheetComponent().create()
     }
 
-
     @Inject
     lateinit var currentThemeStorage: CurrentThemeStorage
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         component.inject(this)

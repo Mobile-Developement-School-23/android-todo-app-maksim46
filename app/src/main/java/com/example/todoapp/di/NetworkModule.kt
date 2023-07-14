@@ -21,15 +21,10 @@ interface NetworkModule {
     @Binds
     fun bindsTaskApi(toDoNoteApi: ToDoNoteApiImpl): ToDoNoteApi
 
-    /*
-    @ApplicationScope
-    @Provides
-    fun provideRevisionStoragee(context: Context): RevisionStorage {
-        return RevisionStorage(context)
-    }
+
 }
-*/
-}
+
+
 
 
 

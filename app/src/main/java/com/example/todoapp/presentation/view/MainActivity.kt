@@ -21,24 +21,9 @@ import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-
-
-    }
 }
 
 
-    /*        val fragmentToOpen = intent.getStringExtra("open_fragment")
-
-            if (fragmentToOpen == "noteDetailFragment") {
-                // Открываем фрагмент
-                val transaction = supportFragmentManager.beginTransaction()
-                transaction.replace(R.id.nav_host_container, MainFragment())
-                transaction.commit()
-            }*/
 
 
 

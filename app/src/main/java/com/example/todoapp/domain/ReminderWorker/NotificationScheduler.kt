@@ -1,16 +1,9 @@
 package com.example.todoapp.domain.ReminderWorker
 
 import android.content.Context
-import android.util.Log
-import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
-import com.example.todoapp.data.network.SyncWork.SyncWorker
-
-import com.example.todoapp.domain.ReminderWorker.ReminderWorker
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -24,7 +17,6 @@ class NotificationScheduler @Inject constructor(
 
     fun startReminderNotification() {
         val currentDate = Calendar.getInstance()
-        Log.d("REMIONDER", "startReminderNotification")
 
         val dueDate = Calendar.getInstance()
         dueDate.set(Calendar.HOUR_OF_DAY, 10)
@@ -52,22 +44,20 @@ class NotificationScheduler @Inject constructor(
 
 
                 currentDate.add(Calendar.SECOND, 15)*/
-  /*      val notificationWorkRequest = OneTimeWorkRequest.Builder(ReminderWorker::class.java)
-            .setInitialDelay(currentDate.timeInMillis, TimeUnit.MILLISECONDS)
-            .build()*/
+        /*      val notificationWorkRequest = OneTimeWorkRequest.Builder(ReminderWorker::class.java)
+                  .setInitialDelay(currentDate.timeInMillis, TimeUnit.MILLISECONDS)
+                  .build()*/
 
 
         val workManager = WorkManager.getInstance(context)
-
         workManager.enqueueUniqueWork(TAG, ExistingWorkPolicy.KEEP, notificationWorkRequest)
 
 
-/*        val workRequest = OneTimeWorkRequest.Builder(ReminderWorker::class.java).build()
+        /*        val workRequest = OneTimeWorkRequest.Builder(ReminderWorker::class.java).build()
 
-        //val workManager = WorkManager.getInstance(context)
+                //val workManager = WorkManager.getInstance(context)
 
-        workManager.enqueueUniqueWork("as", ExistingWorkPolicy.KEEP, workRequest)*/
-
+                workManager.enqueueUniqueWork("as", ExistingWorkPolicy.KEEP, workRequest)*/
 
     }
 

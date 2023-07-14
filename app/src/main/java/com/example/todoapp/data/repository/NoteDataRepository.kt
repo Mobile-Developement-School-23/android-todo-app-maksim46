@@ -47,17 +47,14 @@ class NoteDataRepository @Inject constructor(
     private val remoteNoteDataRepository: RemoteNoteDataRepository,
     private val revisionStorage: RevisionStorage
 ) {
-
     private val _listOfNotesForNotify = MutableStateFlow<List<ToDoEntity>>(emptyList())
     val listOfNotesForNotify: StateFlow<List<ToDoEntity>> = _listOfNotesForNotify.asStateFlow()
-
 
     private val _onErrorMessage = MutableSharedFlow<OnErrorModel>(0, 16)
     val onErrorMessage: SharedFlow<OnErrorModel> = _onErrorMessage.asSharedFlow()
 
     private val _currentRevision = MutableStateFlow<Int>(0)
     val currentRevision: StateFlow<Int> = _currentRevision.asStateFlow()
-
 
     private val _syncStatusResponse = Channel<LastResponse>()
     val syncStatusResponse = _syncStatusResponse.receiveAsFlow()
@@ -68,12 +65,6 @@ class NoteDataRepository @Inject constructor(
     }
 
     private val repoCoroutineScope = CoroutineScope(Job() + Dispatchers.Default + handler)
-
-
-     fun test() {
-         println("REMIONDER")
-         Log.d("REMIONDER", "test")
-    }
 
     suspend fun saveToDoNote(note: ToDoEntity, isOnline: Boolean) {
         val addedNoteId = localNoteDataRepository.insertToDoNote(note)
@@ -106,7 +97,6 @@ class NoteDataRepository @Inject constructor(
         updateToDoNote(updatedNote.toEntity(), isOnline)
     }
 
-
     suspend fun deleteToDoNote(id: String, isOnline: Boolean) {
         if (isOnline) {
             localNoteDataRepository.deleteMarked()
@@ -125,31 +115,11 @@ class NoteDataRepository @Inject constructor(
 
     suspend fun getNotesForNotify(currentTime:Long, future24HoursTime:Long):Flow<List<ToDoEntity>>{
         return    localNoteDataRepository.getNotesForNotify(currentTime, future24HoursTime)
-
-     /*           localNoteDataRepository.getNotesForNotify(currentTime, future24HoursTime).collect {list ->
-                    Log.d("NOTIF_LIST2", list.toString())
-                    _listOfNotesForNotify.update { list }*/
             }
 
-
-
-
-
-
-
-
-/*    suspend fun getNotesForNotify(currentTime:Long, future24HoursTime:Long): Flow<List<ToDoEntity>>{
-
-
-      return  localNoteDataRepository.getNotesForNotify(currentTime, future24HoursTime)
-
-
-
-    }*/
     private suspend fun markAsDeleteToDoNote(id: String) {
       return  localNoteDataRepository.markAsDeleteToDoNote(id, Date().time)
     }
-
 
     private suspend fun startSyncNotes(mergedList: List<ToDoEntity>, isOnline: Boolean): LastResponse {
         var remoteResponse = LastResponse()
@@ -186,7 +156,6 @@ class NoteDataRepository @Inject constructor(
         return localNoteDataRepository.getNumberOfDone()
     }
 
-
     private suspend fun checkRevision(): Boolean {
         var result = false
         repoCoroutineScope.async {
@@ -194,23 +163,16 @@ class NoteDataRepository @Inject constructor(
             val revision = (remoteNoteDataRepository.getRevision() {}).map { it ?: 0 }
             revision.collect {
                 incomRevision = it
-
             }
-
-
             var lastKnownRevision = revisionStorage.getRevision()
-            Log.d("assssssLast", lastKnownRevision.toString())
-            Log.d("assssssOnl", incomRevision.toString())
             if (lastKnownRevision != null) {
                 if (lastKnownRevision.toInt() < incomRevision) {
                     result = true
                 }
-
             }
         }.await()
         return result
     }
-
 
     fun syncNotes(isOnline: Boolean) {
         repoCoroutineScope.launch {
@@ -221,12 +183,9 @@ class NoteDataRepository @Inject constructor(
                 val mergedList = mergeDBs(check)
                 val response = startSyncNotes(mergedList, isOnline)
                 _syncStatusResponse.send(response)
-
-
             }
         }
     }
-
 
     private suspend fun mergeDBs(check:Boolean): List<ToDoEntity> {
         return repoCoroutineScope.async(Dispatchers.IO + handler) {
@@ -243,7 +202,6 @@ class NoteDataRepository @Inject constructor(
     }
 
     private fun combineToDoEntityAndDto(localDbNotes: List<ToDoEntity>, remoteDbNotes: List<ToDoDtoModel>?): List<ToDoEntity> {
-        Log.d("assssssOnl", "SYNC")
         val listDtoToEntity = remoteDbNotes?.map { it.toEntity() } ?: emptyList()
         val combinedList = localDbNotes + listDtoToEntity
         return combinedList.groupBy { it.id }
@@ -253,15 +211,12 @@ class NoteDataRepository @Inject constructor(
             .filter { it.deadline != -1L }
     }
 
-
 private fun combineToDoEntityAndDtoIfUnsync(localDbNotes: List<ToDoEntity>, remoteDbNotes: List<ToDoDtoModel>?): List<ToDoEntity> {
     val localMap = localDbNotes.associateBy { it.id }
     val result = mutableListOf<ToDoEntity>()
-
     remoteDbNotes?.forEach { remoteDto ->
         val remote = remoteDto.toEntity()
         val local = localMap[remote.id]
-
         result.add(
             if (local != null && local.updateDate > remote.updateDate) {
                 local
@@ -276,18 +231,14 @@ private fun combineToDoEntityAndDtoIfUnsync(localDbNotes: List<ToDoEntity>, remo
             val updatedItem = item.copy(deadline = -1L)
             result.add(updatedItem)
         }
-
     return result
 }
-
 
     fun yaLogin(token: String, isOnline: Boolean): Flow<String> {
         return if (isOnline) {
             remoteNoteDataRepository.yaLogin(token) {
-                _onErrorMessage.tryEmit(it)
-            }
-        } else {
-            flow { }
+                _onErrorMessage.tryEmit(it) }
+        } else { flow { }
         }
     }
 

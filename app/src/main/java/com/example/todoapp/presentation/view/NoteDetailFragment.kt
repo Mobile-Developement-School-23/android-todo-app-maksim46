@@ -115,10 +115,11 @@ class NoteDetailFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         component.inject(this)
+        val notedata = vm.getEditNote()
         val view = ComposeView(requireContext()).apply {
             setContent {
                 AppTheme() {
-                    NoteDetailScreen()
+                    NoteDetailScreen(notedata, false)
                 }
             }
         }
@@ -129,7 +130,7 @@ class NoteDetailFragment : Fragment() {
     @OptIn(ExperimentalMaterialApi::class)
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "SuspiciousIndentation")
     @Composable
-    fun NoteDetailScreen() {
+    fun NoteDetailScreen(myData: ToDoEntity, previewMode: Boolean) {
 
 
         val (isUpdated, setIsUpdated) = remember { mutableStateOf(false) }
@@ -159,26 +160,45 @@ class NoteDetailFragment : Fragment() {
         val scope = rememberCoroutineScope()
         val selectedPriority by remember { mutableStateOf(notePriority) }
 
-        LaunchedEffect(vm.toDoNoteByIdForEdit) {
-            viewLifecycleOwner.lifecycleScope.launch {
-                vm.toDoNoteByIdForEdit.flowWithLifecycle(
-                    viewLifecycleOwner.lifecycle,
-                    Lifecycle.State.STARTED
-                ).collect { nData ->
-                    setNoteId(nData.id)
-                    setNoteText(nData.text)
-                    if (nData.text.isNotEmpty()) {
-                        setIsUpdated(true)
+        if (previewMode) {
+            setNoteId(myData.id)
+            setNoteText(myData.text)
+            if (myData.text.isNotEmpty()) {
+                setIsUpdated(true)
+            }
+            setPriority(myData.priority)
+            setDeadline(myData.deadline)
+            if (myData.deadline != 0L) {
+                isDeadlineSwitchEnable = true
+            }
+            setIsDone(myData.isDone)
+            setCreateDate(myData.createDate)
+            setUpdateDate(myData.updateDate)
+            setNoteData(myData)
+        } else {
+
+
+            LaunchedEffect(vm.toDoNoteByIdForEdit) {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    vm.toDoNoteByIdForEdit.flowWithLifecycle(
+                        viewLifecycleOwner.lifecycle,
+                        Lifecycle.State.STARTED
+                    ).collect { nData ->
+                        setNoteId(nData.id)
+                        setNoteText(nData.text)
+                        if (nData.text.isNotEmpty()) {
+                            setIsUpdated(true)
+                        }
+                        setPriority(nData.priority)
+                        setDeadline(nData.deadline)
+                        if (nData.deadline != 0L) {
+                            isDeadlineSwitchEnable = true
+                        }
+                        setIsDone(nData.isDone)
+                        setCreateDate(nData.createDate)
+                        setUpdateDate(nData.updateDate)
+                        setNoteData(nData)
                     }
-                    setPriority(nData.priority)
-                    setDeadline(nData.deadline)
-                    if (nData.deadline != 0L) {
-                        isDeadlineSwitchEnable = true
-                    }
-                    setIsDone(nData.isDone)
-                    setCreateDate(nData.createDate)
-                    setUpdateDate(nData.updateDate)
-                    setNoteData(nData)
                 }
             }
         }
@@ -231,8 +251,10 @@ class NoteDetailFragment : Fragment() {
                                         tint = if (notePriority == bottomSheetPriorityItems[it].priority) LocalMyColors.current.colorBlue else LocalMyColors.current.colorTertiary
                                     )
                                     Spacer(modifier = Modifier.padding(8.dp))
-                                    Text(text = bottomSheetPriorityItems[it].title,
-                                        color = if (notePriority == bottomSheetPriorityItems[it].priority) LocalMyColors.current.colorBlue else LocalMyColors.current.colorTertiary)
+                                    Text(
+                                        text = bottomSheetPriorityItems[it].title,
+                                        color = if (notePriority == bottomSheetPriorityItems[it].priority) LocalMyColors.current.colorBlue else LocalMyColors.current.colorTertiary
+                                    )
                                 }
 
                             })
@@ -580,6 +602,16 @@ class NoteDetailFragment : Fragment() {
         }
     }
 
+    @Preview(uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES, name = "DARK")
+    @Preview(uiMode = android.content.res.Configuration.UI_MODE_NIGHT_NO, name = "LIGHT")
+    @Preview(showBackground = true)
+    @Composable
+    fun NoteDetailScreenPreview() {
+        AppTheme() {
+            NoteDetailScreen(ToDoEntity("12", "MyText", Priority.Standart, 123432342, false, Date(12334324235), Date(12312312)), true)
+        }
+    }
 }
+
 
 

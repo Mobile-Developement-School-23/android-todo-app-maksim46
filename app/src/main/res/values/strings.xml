@@ -32,4 +32,5 @@
     <string name="Decline">Отклонить</string>
     <string name="Yes">Да</string>
     <string name="channel_description">Used for the note notifications</string>
+    <string name="choose_priority">Выберите приоитет</string>
 </resources>

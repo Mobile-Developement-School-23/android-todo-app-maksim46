@@ -9,21 +9,28 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.BottomSheetScaffold
+import androidx.compose.material.BottomSheetValue
+import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LocalTextStyle
@@ -38,19 +45,34 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.DoNotDisturbAlt
+import androidx.compose.material.icons.filled.LowPriority
+import androidx.compose.material.icons.filled.MailOutline
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.PriorityHigh
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.rememberBottomSheetScaffoldState
+import androidx.compose.material.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -104,6 +126,7 @@ class NoteDetailFragment : Fragment() {
     }
 
 
+    @OptIn(ExperimentalMaterialApi::class)
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "SuspiciousIndentation")
     @Composable
     fun NoteDetailScreen() {
@@ -126,7 +149,15 @@ class NoteDetailFragment : Fragment() {
         val (updateDate, setUpdateDate) = remember { mutableStateOf(Date(0)) }
 
         val (noteData, setNoteData) = remember { mutableStateOf(ToDoEntity("0", "", Priority.Standart, 0, false, Date(0), Date(0))) }
+
         var isVisible by remember { mutableStateOf(false) }
+
+        val dateDialogState = rememberMaterialDialogState()
+
+        val bottomSheetState = rememberBottomSheetState(initialValue = BottomSheetValue.Collapsed)
+        val scaffoldState = rememberBottomSheetScaffoldState(bottomSheetState = bottomSheetState)
+        val scope = rememberCoroutineScope()
+        val selectedPriority by remember { mutableStateOf(notePriority) }
 
         LaunchedEffect(vm.toDoNoteByIdForEdit) {
             viewLifecycleOwner.lifecycleScope.launch {
@@ -151,17 +182,98 @@ class NoteDetailFragment : Fragment() {
                 }
             }
         }
-        Log.d("COMPOSE", noteData.toString())
+        data class PriorityItem(val title: String, val icon: ImageVector, val priority: Priority)
 
 
-        val dateDialogState = rememberMaterialDialogState()
+        val bottomSheetPriorityItems = listOf(
+            PriorityItem(title = stringResource(R.string.priority_standart), icon = Icons.Default.DoNotDisturbAlt, Priority.Standart),
+            PriorityItem(title = stringResource(R.string.priority_low), icon = Icons.Default.LowPriority, Priority.Low),
+            PriorityItem(title = stringResource(R.string.priority_hight), icon = Icons.Default.PriorityHigh, Priority.High),
+        )
 
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    backgroundColor = LocalMyColors.current.colorBackPrimary,
-                    title = {},
-                    navigationIcon = {
+
+        BottomSheetScaffold(
+            scaffoldState = scaffoldState,
+            //sheetShape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp),
+            sheetBackgroundColor = LocalMyColors.current.colorBackSecondary,
+            sheetElevation = 16.dp,
+            drawerElevation = 16.dp,
+            sheetContent = {
+                Column(
+                    content = {
+
+                        Spacer(modifier = Modifier.padding(16.dp))
+                        Text(
+                            text = stringResource(R.string.choose_priority),
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.body1,
+                            color = LocalMyColors.current.colorBlue,
+                        )
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(3),
+                        ) {
+                            items(bottomSheetPriorityItems.size, itemContent = {
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 24.dp)
+                                        .clickable {
+                                            setPriority(bottomSheetPriorityItems[it].priority)
+                                        },
+                                ) {
+                                    Spacer(modifier = Modifier.padding(8.dp))
+                                    Icon(
+                                        bottomSheetPriorityItems[it].icon,
+                                        bottomSheetPriorityItems[it].title,
+                                        tint = if (notePriority == bottomSheetPriorityItems[it].priority) LocalMyColors.current.colorBlue else LocalMyColors.current.colorTertiary
+                                    )
+                                    Spacer(modifier = Modifier.padding(8.dp))
+                                    Text(text = bottomSheetPriorityItems[it].title,
+                                        color = if (notePriority == bottomSheetPriorityItems[it].priority) LocalMyColors.current.colorBlue else LocalMyColors.current.colorTertiary)
+                                }
+
+                            })
+                        }
+                    },
+                    modifier = Modifier
+                        .border(
+                            width = 2.dp,
+                            color = LocalMyColors.current.colorSupportSeparator,
+                            shape = RoundedCornerShape(6.dp)
+                        )
+                        .fillMaxWidth()
+                        .height(250.dp)
+
+                        .background(LocalMyColors.current.colorBackSecondary)
+                        .padding(16.dp),
+
+                    )
+            },
+
+
+//////////////////////////////////////////////////////////////////////////////
+
+
+        ) {
+            Column(
+                modifier = Modifier
+                    .background(LocalMyColors.current.colorBackPrimary)
+                    .fillMaxWidth()
+
+
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+
+                ) {
+                    Column(
+                        modifier = Modifier.weight(0.3f)
+                    ) {
+
                         IconButton(onClick = {
                             !isVisible
                             findNavController().popBackStack()
@@ -173,10 +285,10 @@ class NoteDetailFragment : Fragment() {
                                 tint = LocalMyColors.current.colorPrimary
                             )
                         }
-                    },
 
-                    actions = {
-                        TextButton(onClick = {
+                    }
+                    TextButton(
+                        onClick = {
 
                             if (createDate == Date(0)) {
                                 setCreateDate(Date())
@@ -193,25 +305,21 @@ class NoteDetailFragment : Fragment() {
                                 !isVisible
                                 findNavController().popBackStack()
                             }
-                        }
-
-
+                        },
+                        Modifier.padding(end = 8.dp)
+                    )
+                    {
+                        Text(
+                            stringResource(id = R.string.save_button),
+                            style = MaterialTheme.typography.button,
+                            color = LocalMyColors.current.colorBlue
                         )
-
-                        {
-
-                            Text(
-                                stringResource(id = R.string.save_button),
-                                style = MaterialTheme.typography.button,
-                                color = LocalMyColors.current.colorBlue
-                            )
-                        }
-
                     }
-                )
-            },
-            //////////////////////////////////////
-            content = {
+                }
+
+
+                //////////////////////////////////////
+
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -457,11 +565,13 @@ class NoteDetailFragment : Fragment() {
                     }
                 }
             }
-        )
+
+        }
+
     }
 
 
-    fun checkBeforeSave(text: String): Boolean {
+    private fun checkBeforeSave(text: String): Boolean {
         return if (text.isEmpty()) {
             Toast.makeText(activity, R.string.emptyText_Toast, Toast.LENGTH_SHORT).show()
             false
@@ -469,5 +579,7 @@ class NoteDetailFragment : Fragment() {
             true
         }
     }
+
 }
+
 

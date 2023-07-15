@@ -1,5 +1,6 @@
 package com.example.todoapp.presentation.utils
 
+import androidx.compose.material.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
@@ -22,7 +23,14 @@ data class MyColors(
     val colorBackElevated: Color
 )
 
+data class Typography(
+    val h1: Typography,
+    val body1: Typography,
+    val subtitle1: Typography,
+    val button: Typography,
+    val h2: Typography,
 
+)
 
 object AppTheme {
     val colors: MyColors

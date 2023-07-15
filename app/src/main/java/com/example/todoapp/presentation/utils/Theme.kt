@@ -1,14 +1,17 @@
+import android.content.res.Configuration
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.Typography
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.tooling.preview.Preview
 import com.example.todoapp.presentation.utils.LocalMyColors
+import com.example.todoapp.presentation.utils.LocalMyTypography
 import com.example.todoapp.presentation.utils.blackPalette
 import com.example.todoapp.presentation.utils.lightPalette
+import com.example.todoapp.presentation.utils.typography
+
 
 @Composable
 fun AppTheme(
@@ -20,38 +23,9 @@ fun AppTheme(
         else -> lightPalette
     }
 
-    val typography = Typography(
-        h1 = TextStyle(
-            fontFamily = FontFamily.Default,
-            fontWeight = FontWeight.Bold,
-            fontSize = 32.sp
-        ),
-        subtitle1 = TextStyle(
-            fontFamily = FontFamily.Default,
-            fontWeight = FontWeight.Bold,
-            fontSize = 20.sp
-        ),
-        button = TextStyle(
-            fontFamily = FontFamily.Default,
-            fontWeight = FontWeight.Bold,
-            fontSize = 14.sp
-        ),
-        body1 = TextStyle(
-            fontFamily = FontFamily.Default,
-            fontWeight = FontWeight.Normal,
-            fontSize = 20.sp
-        ),
-        body2 = TextStyle(
-            fontFamily = FontFamily.Default,
-            fontWeight = FontWeight.Normal,
-            fontSize = 14.sp
-        )
-    )
-
-
     CompositionLocalProvider(
         LocalMyColors provides colors,
-        //  LocalMyTypography provides typography,
+        LocalMyTypography provides typography,
         content = content
     )
 }

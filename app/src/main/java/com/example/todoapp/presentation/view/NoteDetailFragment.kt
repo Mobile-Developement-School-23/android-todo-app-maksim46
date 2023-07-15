@@ -161,13 +161,7 @@ class NoteDetailFragment : Fragment() {
         var shouldShowSnackbar by remember { mutableStateOf(false) }
 
         val message = Pair(stringResource(R.string.undo), stringResource(R.string.isDelete))
-        val focusRequester = remember { FocusRequester() }
 
-        LaunchedEffect(bottomSheetState.currentValue) {
-            if (bottomSheetState.isExpanded) {
-                focusRequester.requestFocus()
-            }
-        }
 
         if (shouldShowSnackbar) {
             showSnackbarWithCountDown(scaffoldState, scope, message) {

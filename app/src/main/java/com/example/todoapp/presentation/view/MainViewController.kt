@@ -1,6 +1,7 @@
 package com.example.todoapp.presentation.view
 
 import android.app.Activity
+import android.os.CountDownTimer
 import android.util.Log
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
@@ -62,6 +63,7 @@ class MainViewController @Inject constructor(
         setUpPopupAction()
         setUpYaLogin()
         setUpNav()
+        setUpWantToDelete()
     }
 
     private fun setUpArticlesList() {
@@ -82,7 +84,6 @@ class MainViewController @Inject constructor(
         val fab: FloatingActionButton = rootView.findViewById(R.id.fab)
         val animCircle: View = rootView.findViewById(R.id.animCircle)
         fab.setOnClickListener {
-            setUpNotification()
             fab.visibility = View.INVISIBLE
             animCircle.visibility = View.VISIBLE
             animCircle.startAnimation(AnimationUtils.loadAnimation(rootView.context, R.anim.fab_anim).apply {
@@ -196,7 +197,9 @@ class MainViewController @Inject constructor(
                             )
 
                             PopupWindowsHandler.CallbackAction.Delete -> {
-                                vm.delete((data as NoteData.ToDoItem).id)
+                                vm.wantDelete((data as NoteData.ToDoItem).id)
+                                showSnackbarWithCountDown(rootView, (data as NoteData.ToDoItem).id)
+                               // vm.delete((data as NoteData.ToDoItem).id)
                             }
                         }
                     }
@@ -230,16 +233,33 @@ class MainViewController @Inject constructor(
             vm.syncNotes()
         }
     }
-
-    private fun setUpNotification() {
-        /*        val alarmManager = activity.getSystemService(ALARM_SERVICE) as AlarmManager
-                val calendar = Calendar.getInstance()
-                calendar.add(Calendar.SECOND, 10)
-                val intent = AlarmReceiver.newIntent(activity)
-                val pendingIntent = PendingIntent.getBroadcast(activity, 100, intent, PendingIntent.FLAG_IMMUTABLE)
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)*/
+    private fun setUpWantToDelete() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            vm.wantDelete.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).collect {
+                showSnackbarWithCountDown(rootView,it)
+            }
+        }
     }
 
+
+    private fun showSnackbarWithCountDown(view: View, id: String) {
+        val snackbar = Snackbar.make(view, "", Snackbar.LENGTH_INDEFINITE)
+        val countDownTimer = object : CountDownTimer(5000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                snackbar.setText("${activity.getString(R.string.isDelete)} (${millisUntilFinished / 1000})")
+            }
+            override fun onFinish() {
+                snackbar.dismiss()
+                vm.delete(id)
+            }
+        }
+        snackbar.setAction(activity.getString(R.string.undo)) {
+            countDownTimer.cancel()
+            snackbar.dismiss()
+        }
+        snackbar.show()
+        countDownTimer.start()
+    }
 }
 
 

@@ -33,4 +33,7 @@
     <string name="Yes">Yes</string>
     <string name="channel_description">Used for the note notifications</string>
     <string name="choose_priority">Choose priority</string>
+    <string name="undo">Undo</string>
+    <string name="isDelete">Item deleted. Undo?</string>
+    <string name="notify_message"> Need to done the case. A priority:</string>
 </resources>

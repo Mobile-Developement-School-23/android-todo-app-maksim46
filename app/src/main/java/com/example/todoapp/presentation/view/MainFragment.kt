@@ -5,6 +5,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,6 +30,7 @@ import com.example.todoapp.domain.CurrentThemeStorage.Companion.DARK
 import com.example.todoapp.domain.CurrentThemeStorage.Companion.LIGHT
 import com.example.todoapp.domain.CurrentThemeStorage.Companion.SYSTEM
 import com.example.todoapp.domain.ReminderWorker.NotificationScheduler
+import com.example.todoapp.presentation.utility.NavRoutingSP
 import com.example.todoapp.presentation.utility.SyncWM
 import com.example.todoapp.presentation.utility.ViewModelFactory
 import com.example.todoapp.presentation.utility.YandexLoginHandler
@@ -54,6 +56,10 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
     @Inject
     lateinit var mainViewController: MainViewController
+
+    @Inject
+    lateinit var navRoutingSP: NavRoutingSP
+
 
     @Inject
     lateinit var noteDataRepository: LocalNoteDataRepository
@@ -101,6 +107,19 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             vm.yaLogin(token)
         }
 
+        val navRouting = arguments?.getString("navigation_info")
+        if (navRouting == "noteDetailFragment") {
+            val id = arguments?.getString("id")
+            val isRoutable = arguments?.getString("flag")
+            if (navRoutingSP.getRoutingInfo() != isRoutable && id != null) {
+                if (isRoutable != null) {
+                    navRoutingSP.setRoutingInfo(isRoutable)
+                }
+                vm.getToDoNoteForEdit(id.toInt())
+                findNavController().navigate(MainFragmentDirections.actionMainFragmentToNoteDetailFragment())
+            }
+        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             vm.yaLoginClick.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 .collect { yaLogin ->
@@ -123,6 +142,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                     Manifest.permission.POST_NOTIFICATIONS
                 ) == PackageManager.PERMISSION_GRANTED) -> {
                 }
+
                 (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), Manifest.permission.POST_NOTIFICATIONS)) -> {
                     if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
                         AlertDialog.Builder(requireContext()).apply {
@@ -139,6 +159,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                         }.create().show()
                     }
                 }
+
                 else -> {
                     requestPermissionLauncher.launch(
                         Manifest.permission.POST_NOTIFICATIONS

@@ -10,6 +10,7 @@
         android:name="com.example.todoapp.presentation.view.MainFragment"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" >
+
         <action
             android:id="@+id/action_mainFragment_to_noteDetailFragment"
             app:destination="@id/noteDetailFragment"
@@ -20,11 +21,19 @@
             android:id="@+id/action_mainFragment_to_bottomSheetFragment"
             app:destination="@id/bottomSheetFragment" />
     </fragment>
+
+
     <fragment
         android:id="@+id/noteDetailFragment"
         android:name="com.example.todoapp.presentation.view.NoteDetailFragment"
         android:label="NoteDetailFragment" >
     </fragment>
+
+    <deepLink
+        android:id="@+id/deepLink"
+        app:uri="example://details/{id}"
+        android:autoVerify="true"/>
+
     <dialog
         android:id="@+id/bottomSheetFragment"
         android:name="com.example.todoapp.presentation.view.BottomSheetFragment"

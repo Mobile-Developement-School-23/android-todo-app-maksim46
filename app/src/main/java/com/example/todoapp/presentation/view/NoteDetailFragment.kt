@@ -4,6 +4,7 @@ package com.example.todoapp.presentation.view
 import AppTheme
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +24,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomSheetScaffold
+import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.BottomSheetValue
 import androidx.compose.material.Card
 import androidx.compose.material.Divider
@@ -31,6 +33,9 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.SnackbarDuration
+import androidx.compose.material.SnackbarResult
 import androidx.compose.material.Switch
 import androidx.compose.material.SwitchDefaults
 import androidx.compose.material.Text
@@ -46,6 +51,7 @@ import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,6 +59,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.ComposeView
@@ -67,6 +75,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.todoapp.R
 import com.example.todoapp.ToDoAppApp
@@ -78,6 +87,8 @@ import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -104,6 +115,8 @@ class NoteDetailFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         component.inject(this)
         val notedata = vm.getEditNote()
+
+
         val view = ComposeView(requireContext()).apply {
             setContent {
                 AppTheme() {
@@ -145,7 +158,27 @@ class NoteDetailFragment : Fragment() {
         val bottomSheetState = rememberBottomSheetState(initialValue = BottomSheetValue.Collapsed)
         val scaffoldState = rememberBottomSheetScaffoldState(bottomSheetState = bottomSheetState)
         val scope = rememberCoroutineScope()
+        var shouldShowSnackbar by remember { mutableStateOf(false) }
 
+        val message = Pair(stringResource(R.string.undo), stringResource(R.string.isDelete))
+        val focusRequester = remember { FocusRequester() }
+
+        LaunchedEffect(bottomSheetState.currentValue) {
+            if (bottomSheetState.isExpanded) {
+                focusRequester.requestFocus()
+            }
+        }
+
+        if (shouldShowSnackbar) {
+            showSnackbarWithCountDown(scaffoldState, scope, message) {
+                if(it) {
+                    vm.delete(noteId)
+                    findNavController().popBackStack()
+                }else{
+                    shouldShowSnackbar = false
+                }
+            }
+        }
         if (previewMode) {
             setNoteId(myData.id)
             setNoteText(myData.text)
@@ -168,6 +201,7 @@ class NoteDetailFragment : Fragment() {
                         viewLifecycleOwner.lifecycle,
                         Lifecycle.State.STARTED
                     ).collect { nData ->
+
                         setNoteId(nData.id)
                         setNoteText(nData.text)
                         if (nData.text.isNotEmpty()) {
@@ -186,6 +220,8 @@ class NoteDetailFragment : Fragment() {
                 }
             }
         }
+
+
         data class PriorityItem(val title: String, val icon: ImageVector, val priority: Priority)
 
         val bottomSheetPriorityItems = listOf(
@@ -193,7 +229,7 @@ class NoteDetailFragment : Fragment() {
             PriorityItem(title = stringResource(R.string.priority_low), icon = Icons.Default.LowPriority, Priority.Low),
             PriorityItem(title = stringResource(R.string.priority_hight), icon = Icons.Default.PriorityHigh, Priority.High),
         )
-
+        Log.d("FDFDFDFDF", noteText)
         BottomSheetScaffold(
             scaffoldState = scaffoldState,
             sheetPeekHeight = 40.dp,
@@ -223,13 +259,14 @@ class NoteDetailFragment : Fragment() {
                                         .padding(top = 24.dp)
                                         .clickable {
                                             setPriority(bottomSheetPriorityItems[it].priority)
-                                        },
+                                        }
                                 ) {
                                     Spacer(modifier = Modifier.padding(8.dp))
                                     Icon(
                                         bottomSheetPriorityItems[it].icon,
                                         bottomSheetPriorityItems[it].title,
-                                        tint = if (notePriority == bottomSheetPriorityItems[it].priority) LocalMyColors.current.colorBlue else LocalMyColors.current.colorTertiary
+                                        tint = if (notePriority == bottomSheetPriorityItems[it].priority) LocalMyColors.current.colorBlue else LocalMyColors.current.colorTertiary,
+
                                     )
                                     Spacer(modifier = Modifier.padding(8.dp))
                                     Text(
@@ -250,7 +287,7 @@ class NoteDetailFragment : Fragment() {
                         .height(250.dp)
                         .background(LocalMyColors.current.colorBackSecondary)
                         .padding(16.dp),
-                    )
+                )
             },
 
 //////////////////////////////////////////////////////////////////////////////
@@ -458,11 +495,10 @@ class NoteDetailFragment : Fragment() {
                             ) {
                                 datepicker(
                                     initialDate = LocalDate.now(),
-                                    title = "Pick a date",
                                     colors = DatePickerDefaults.colors(
                                         headerBackgroundColor = LocalMyColors.current.colorBlue,
                                         dateActiveBackgroundColor = LocalMyColors.current.colorBlue,
-                                        ),
+                                    ),
                                     allowedDateValidator = { date ->
                                         !date.isBefore(LocalDate.now())
                                     }
@@ -486,8 +522,7 @@ class NoteDetailFragment : Fragment() {
                             modifier = Modifier
                                 .clickable {
                                     if (isUpdated) {
-                                        vm.delete(noteId)
-                                        findNavController().popBackStack()
+                                        shouldShowSnackbar = true
                                     }
                                 }
                         ) {
@@ -520,6 +555,47 @@ class NoteDetailFragment : Fragment() {
             }
         }
     }
+
+    @OptIn(ExperimentalMaterialApi::class)
+    @Composable
+    fun showSnackbarWithCountDown(
+        scaffoldState: BottomSheetScaffoldState,
+        coroutineScope: CoroutineScope,
+        message: Pair<String, String>,
+        durationMillis: Long = 5000L,
+        intervalMillis: Long = 1000L,
+        onCountDownFinish: (Boolean) -> Unit
+    ) {
+        var remainingTime by remember { mutableStateOf(durationMillis) }
+
+        LaunchedEffect(key1 = true) {
+            while (remainingTime > 0) {
+                delay(intervalMillis)
+                remainingTime -= intervalMillis
+            }
+            if (remainingTime <= 0) {
+                onCountDownFinish(true)
+            }
+        }
+
+        LaunchedEffect(key1 = remainingTime) {
+            if (remainingTime > 0) {
+                val snackbarResult = scaffoldState.snackbarHostState.showSnackbar(
+                    message = "${message.second} (${remainingTime / intervalMillis})",
+                    actionLabel = message.first,
+                    duration = SnackbarDuration.Indefinite
+                )
+                if (snackbarResult == SnackbarResult.ActionPerformed) {
+                    onCountDownFinish(false)
+                    coroutineScope.launch {
+                        scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
+                    }
+
+                }
+            }
+        }
+    }
+
 
     private fun checkBeforeSave(text: String): Boolean {
         return if (text.isEmpty()) {

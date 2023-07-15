@@ -38,6 +38,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Date
 import javax.inject.Inject
+import kotlin.properties.Delegates
 
 /**
  * The view model for notes list.
@@ -74,18 +75,14 @@ class MainFragmentViewModel @Inject constructor(
     )
     val toDoNoteByIdForEdit: StateFlow<ToDoEntity> = _toDoNoteByIdForEdit.asStateFlow()
 
-    private val _datePickerFragmentResultListener = MutableSharedFlow<Bundle>(0, 16)
-    val datePickerFragmentResultListener: SharedFlow<Bundle> = _datePickerFragmentResultListener.asSharedFlow()
-
-    private val _timePickerFragmentResultListener = MutableSharedFlow<Bundle>(0, 16)
-    val timePickerFragmentResultListener: SharedFlow<Bundle> = _timePickerFragmentResultListener.asSharedFlow()
-
     private val _isShowDataPicker = MutableStateFlow<Boolean>(false)
     val isShowDataPicker: StateFlow<Boolean> = _isShowDataPicker.asStateFlow()
 
     private val _yaLoginClick = MutableStateFlow<Boolean>(false)
     val yaLoginClick: StateFlow<Boolean> = _yaLoginClick.asStateFlow()
 
+    private val _wantDelete = MutableSharedFlow<String>(0, 16)
+    val wantDelete: SharedFlow<String> = _wantDelete.asSharedFlow()
 
     private val _yaLogin = MutableStateFlow<String>("")
     val yaLogin: StateFlow<String> = _yaLogin.asStateFlow()
@@ -96,6 +93,8 @@ class MainFragmentViewModel @Inject constructor(
     private var previousState = true
     private var currentState = true
     private lateinit var getListJob: Job
+
+
 
     private val handler = CoroutineExceptionHandler { _, exception ->
         noteDataRepository.setErrorMessage(OnErrorModel.ER_INTERNAL)
@@ -147,164 +146,158 @@ class MainFragmentViewModel @Inject constructor(
         }
     }
 
-   suspend fun getNotesForNotify(currentTime: Long, future24HoursTime: Long): Flow<List<ToDoEntity>> {
+    suspend fun getNotesForNotify(currentTime: Long, future24HoursTime: Long): Flow<List<ToDoEntity>> {
         return noteDataRepository.getNotesForNotify(currentTime, future24HoursTime)
 
     }
 
 
-/*    fun getNotesForNotify(currentTime:Long, future24HoursTime:Long) {
+    fun getEditNote(): ToDoEntity {
+        return editingToDoNote
+    }
+
+    fun setShowDataPicker(isShow: Boolean) {
+        _isShowDataPicker.value = true
+        _isShowDataPicker.value = false
+    }
+
+    fun getLastResponse(): Flow<LastResponse> {
+        return noteDataRepository.syncStatusResponse
+    }
+
+    fun getErrorMessage(): SharedFlow<OnErrorModel> {
+        return noteDataRepository.onErrorMessage
+    }
+
+    private fun countNumberOfDone() {
         viewModelScope.launch(ioDispatcher + handler) {
-             noteDataRepository.getNotesForNotify(currentTime, future24HoursTime).collect {list ->
-                 Log.d("NOTIF_LIST2", list.toString())
-                 _listOfNotesForNotify.update { list }
-
-            }
-        }
-    }*/
-
-fun getEditNote(): ToDoEntity {
-    return editingToDoNote
-}
-
-fun setShowDataPicker(isShow: Boolean) {
-    _isShowDataPicker.value = true
-    _isShowDataPicker.value = false
-}
-
-fun getLastResponse(): Flow<LastResponse> {
-    return noteDataRepository.syncStatusResponse
-}
-
-fun getErrorMessage(): SharedFlow<OnErrorModel> {
-    return noteDataRepository.onErrorMessage
-}
-
-fun setDatePickerResult(bundle: Bundle) {
-    _datePickerFragmentResultListener.tryEmit(bundle)
-}
-
-fun setTimePickerResult(bundle: Bundle) {
-    _timePickerFragmentResultListener.tryEmit(bundle)
-}
-
-private fun countNumberOfDone() {
-    viewModelScope.launch(ioDispatcher + handler) {
-        _numberOfDone.emitAll(
-            noteDataRepository.getNumberOfDone()
-        )
-    }
-}
-
-fun changeDoneStatus(note: NoteData.ToDoItem) {
-    viewModelScope.launch(ioDispatcher + handler) {
-        noteDataRepository.updateDoneStatus(note, isOnline)
-    }
-}
-
-fun addNewNote(note: ToDoEntity) {
-    viewModelScope.launch(ioDispatcher + handler) {
-        noteDataRepository.saveToDoNote(note, isOnline)
-    }
-}
-
-fun delete(id: String) {
-    viewModelScope.launch(ioDispatcher + handler) {
-        noteDataRepository.deleteToDoNote(id, isOnline)
-    }
-}
-
-fun updateToDoNote(note: ToDoEntity) {
-    viewModelScope.launch(ioDispatcher + handler) {
-        noteDataRepository.updateToDoNote(note, isOnline)
-    }
-}
-
-fun flipDoneVisibility() {
-    _isDoneVisible.update { it.not() }
-}
-
-fun yaLoginClick(value: Boolean) {
-    _yaLoginClick.update { value }
-    _yaLoginClick.update { false }
-}
-
-private fun onNoteClickAction(note: ClickData) {
-    when (note.pressType) {
-        PressType.LONG -> viewModelScope.launch(ioDispatcher + handler) {
-            _popupAction.update {
-                PopupWindowsHandler.PopupData(
-                    note = note.noteData,
-                    view = note.view,
-                    popupType = PopupWindowsHandler.PopupType.Action
-                )
-            }
-        }
-
-        PressType.SHORT -> onNavigateAction(
-            InfoForNavigationToScreenB(
-                (note.noteData as NoteData.ToDoItem).id.toInt(), navigateToScreenB = true
+            _numberOfDone.emitAll(
+                noteDataRepository.getNumberOfDone()
             )
-        )
-        PressType.CHECKBOX -> changeDoneStatus((note.noteData as NoteData.ToDoItem))
-    }
-}
-
-fun editNote(note: ToDoEntity) {
-    editingToDoNote = note
-}
-
-private fun onInfoClickAction(popupData: PopupWindowsHandler.PopupData) {
-    _popupAction.update { popupData }
-}
-
-private fun onFooterClickAction(text: String) {
-    addNewNote(NoteData.ToDoItem(text = text, createDate = Date(), updateDate = Date()).toEntity())
-}
-
-private fun getToDoNoteForEdit(id: Int) {
-    if (id > 0) {
-        viewModelScope.launch(ioDispatcher + handler) {
-            _toDoNoteByIdForEdit.update { noteDataRepository.getToDoNote(id.toString()) }
         }
-    } else {
+    }
+
+    fun changeDoneStatus(note: NoteData.ToDoItem) {
         viewModelScope.launch(ioDispatcher + handler) {
-            _toDoNoteByIdForEdit.update {
-                NoteData.ToDoItem().toEntity()
+            noteDataRepository.updateDoneStatus(note, isOnline)
+        }
+    }
+
+    fun addNewNote(note: ToDoEntity) {
+        viewModelScope.launch(ioDispatcher + handler) {
+            noteDataRepository.saveToDoNote(note, isOnline)
+        }
+    }
+
+    fun wantDelete(id: String) {
+        Log.d("DELETEDD", id)
+      //  wantedDelete=id
+         //   _wantDelete.tryEmit(id)
+
+    }
+
+    fun delete(id: String) {
+        viewModelScope.launch(ioDispatcher + handler) {
+            noteDataRepository.deleteToDoNote(id, isOnline)
+        }
+    }
+
+    fun updateToDoNote(note: ToDoEntity) {
+        viewModelScope.launch(ioDispatcher + handler) {
+            Log.d("FDFDFDFDF VM", note.toString())
+            noteDataRepository.updateToDoNote(note, isOnline)
+        }
+    }
+
+    fun flipDoneVisibility() {
+        _isDoneVisible.update { it.not() }
+    }
+
+    fun yaLoginClick(value: Boolean) {
+        _yaLoginClick.update { value }
+        _yaLoginClick.update { false }
+    }
+
+    private fun onNoteClickAction(note: ClickData) {
+        when (note.pressType) {
+            PressType.LONG -> viewModelScope.launch(ioDispatcher + handler) {
+                _popupAction.update {
+                    PopupWindowsHandler.PopupData(
+                        note = note.noteData,
+                        view = note.view,
+                        popupType = PopupWindowsHandler.PopupType.Action
+                    )
+                }
+            }
+
+            PressType.SHORT -> onNavigateAction(
+                InfoForNavigationToScreenB(
+                    (note.noteData as NoteData.ToDoItem).id.toInt(), navigateToScreenB = true
+                )
+            )
+
+            PressType.CHECKBOX -> changeDoneStatus((note.noteData as NoteData.ToDoItem))
+        }
+    }
+
+    fun editNote(note: ToDoEntity) {
+        editingToDoNote = note
+    }
+
+    private fun onInfoClickAction(popupData: PopupWindowsHandler.PopupData) {
+        _popupAction.update { popupData }
+    }
+
+    private fun onFooterClickAction(text: String) {
+        addNewNote(NoteData.ToDoItem(text = text, createDate = Date(), updateDate = Date()).toEntity())
+    }
+
+     fun getToDoNoteForEdit(id: Int) {
+        if (id > 0) {
+            viewModelScope.launch(ioDispatcher + handler) {
+                _toDoNoteByIdForEdit.update { noteDataRepository.getToDoNote(id.toString()) }
+            }
+        } else {
+            viewModelScope.launch(ioDispatcher + handler) {
+                _toDoNoteByIdForEdit.update {
+                    NoteData.ToDoItem().toEntity()
+                }
             }
         }
     }
-}
 
-val onItemSwiped: (position: Int, direction: Int) -> Unit = { position, direction ->
-    val swipedNoteId = (listOfNotesFlow.value[position] as? NoteData.ToDoItem)
-    when (direction) {
-        ItemTouchHelper.LEFT -> swipedNoteId?.let { delete(it.id) }
-        ItemTouchHelper.RIGHT -> swipedNoteId?.let {
-            changeDoneStatus(it)
+    val onItemSwiped: (position: Int, direction: Int) -> Unit = { position, direction ->
+        val swipedNoteId = (listOfNotesFlow.value[position] as? NoteData.ToDoItem)
+        when (direction) {
+            ItemTouchHelper.LEFT -> swipedNoteId?.let {
+                delete(it.id)
+            }
+
+            ItemTouchHelper.RIGHT -> swipedNoteId?.let {
+                changeDoneStatus(it)
+            }
         }
     }
-}
 
-fun onNavigateAction(navInfo: InfoForNavigationToScreenB) {
-    getToDoNoteForEdit(navInfo.id)
-    _navigateAction.update { navInfo }
-    _navigateAction.update { navInfo.copy(navigateToScreenB = false) }
-}
-
-fun syncNotes() {
-    noteDataRepository.syncNotes(isOnline)
-}
-
-override fun onCleared() {
-    noteDataRepository.cancelCoroutine()
-}
-
-fun yaLogin(token: String) {
-    viewModelScope.launch(ioDispatcher + handler) {
-        _yaLogin.emitAll(noteDataRepository.yaLogin(token, isOnline))
+    fun onNavigateAction(navInfo: InfoForNavigationToScreenB) {
+        getToDoNoteForEdit(navInfo.id)
+        _navigateAction.update { navInfo }
+        _navigateAction.update { navInfo.copy(navigateToScreenB = false) }
     }
-}
+
+    fun syncNotes() {
+        noteDataRepository.syncNotes(isOnline)
+    }
+
+    override fun onCleared() {
+        noteDataRepository.cancelCoroutine()
+    }
+
+    fun yaLogin(token: String) {
+        viewModelScope.launch(ioDispatcher + handler) {
+            _yaLogin.emitAll(noteDataRepository.yaLogin(token, isOnline))
+        }
+    }
 }
 
 

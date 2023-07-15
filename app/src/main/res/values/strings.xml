@@ -33,4 +33,8 @@
     <string name="Yes">Да</string>
     <string name="channel_description">Used for the note notifications</string>
     <string name="choose_priority">Выберите приоитет</string>
+    <string name="undo">Отменить</string>
+    <string name="isDelete">Дело удаляется. Отменить?</string>
+    <string name="notify_message"> Требуется завршить дело. Приоритет: </string>
+
 </resources>

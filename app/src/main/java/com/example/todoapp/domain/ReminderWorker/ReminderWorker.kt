@@ -1,10 +1,8 @@
 package com.example.todoapp.domain.ReminderWorker
 
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
-import android.os.Build
+import android.os.Bundle
 import androidx.core.app.NotificationCompat
 import androidx.navigation.NavDeepLinkBuilder
 import androidx.work.CoroutineWorker
@@ -15,11 +13,13 @@ import com.example.todoapp.data.network.SyncWork.ChildWorkerFactory
 import com.example.todoapp.data.repository.NoteDataRepository
 import com.example.todoapp.domain.model.Priority
 import com.example.todoapp.domain.model.ToDoEntity
-import com.example.todoapp.presentation.view.MainActivity
 import kotlinx.coroutines.flow.first
-import java.text.SimpleDateFormat
 import java.util.Calendar
 import javax.inject.Inject
+
+/**
+ * WorkManager defined for notifications
+ */
 
 class ReminderWorker(
     private val context: Context,
@@ -28,8 +28,6 @@ class ReminderWorker(
     private val notificationScheduler: NotificationScheduler
 ) : CoroutineWorker(context, workerParams) {
 
-    private val selectedDate = SimpleDateFormat("dd MMMM yyyy HH mm ss", context.resources?.configuration?.locales?.get(0))  //tmp
-
     override suspend fun doWork(): Result {
         val timeOfCurrentDay = getStartAndEndOfCurrentDay()
         val now = timeOfCurrentDay.first
@@ -37,53 +35,63 @@ class ReminderWorker(
         val list = getTasksForNotification(now, in24Hours)
 
         list.forEach { toDoEntity ->
-            val noteId = toDoEntity.id
-            val noteText = toDoEntity.text
-            val notePriority: Priority = toDoEntity.priority
-            sendNotification(noteId, noteText, notePriority)
+            sendNotification(toDoEntity)
         }
         notificationScheduler.startReminderNotification()
         return Result.success()
     }
 
 
-    private fun sendNotification(noteId: String, noteText: String, notePriority: Priority) {
+    private fun sendNotification(note: ToDoEntity) {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
+        val args = Bundle().apply {
+            putString("navigation_info", "noteDetailFragment")
+            putString("id", note.id)
+            putString("flag", System.currentTimeMillis().toString())
+
+        }
         val navigationIntent = NavDeepLinkBuilder(context)
-            .setComponentName(MainActivity::class.java)
             .setGraph(R.navigation.nav_main)
             .setDestination(R.id.mainFragment)
+            .setArguments(args)
             .createPendingIntent()
 
-        val postponeIntent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            putExtra("open_fragment", "noteDetailFragment")
-            putExtra("noteID", noteId)
+
+        /*        val postponeIntent = Intent(context, MainFragment::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                   // putExtra("open_fragment", "noteDetailFragment")
+                    putExtra("noteID", args)
+                }
+
+                val postponePendingIntent = PendingIntent.getBroadcast(
+                    context,
+                    2,
+                    postponeIntent,
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0*/
+        //)
+        val notePriority = when (note.priority) {
+            Priority.Standart -> context.getString(R.string.priority_standart)
+            Priority.Low -> context.getString(R.string.priority_low)
+            Priority.High -> context.getString(R.string.priority_hight)
         }
 
-        val postponePendingIntent = PendingIntent.getBroadcast(
-            context,
-            2,
-            postponeIntent,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
-        )
         val mBuilder = NotificationCompat.Builder(context, NOTE_CHANNEL_ID)
             .setAutoCancel(true)
             .setSmallIcon(R.drawable.ic_main_pic)
-            .setContentTitle("Требуется завршить дело. Приоритет $notePriority")
-            .setContentText(noteText)
+            .setContentTitle("${context.getString(R.string.notify_message)} $notePriority")
+            .setContentText(note.text)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setContentIntent(navigationIntent)
-            /*        .addAction(
-                        R.drawable.ic_notification,
-                        "Отложить",
-                        postponePendingIntent
-                    )*/
+            /*                    .addAction(
+                                    R.drawable.ic_notification,
+                                    "Отложить",
+                                    postponePendingIntent
+                                )*/
             .build()
 
-        notificationManager.notify(noteId.toInt(), mBuilder)
+        notificationManager.notify(note.id.toInt(), mBuilder)
     }
 
     private suspend fun getTasksForNotification(now: Long, in24Hours: Long): List<ToDoEntity> {

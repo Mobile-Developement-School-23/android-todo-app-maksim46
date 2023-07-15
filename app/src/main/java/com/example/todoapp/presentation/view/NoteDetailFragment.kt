@@ -4,7 +4,6 @@ package com.example.todoapp.presentation.view
 import AppTheme
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,37 +19,29 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.BottomSheetValue
-import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.Divider
-import androidx.compose.material.DropdownMenu
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Switch
 import androidx.compose.material.SwitchDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DoNotDisturbAlt
 import androidx.compose.material.icons.filled.LowPriority
-import androidx.compose.material.icons.filled.MailOutline
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PriorityHigh
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material.rememberBottomSheetState
 import androidx.compose.runtime.Composable
@@ -62,17 +53,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -132,7 +120,6 @@ class NoteDetailFragment : Fragment() {
     @Composable
     fun NoteDetailScreen(myData: ToDoEntity, previewMode: Boolean) {
 
-
         val (isUpdated, setIsUpdated) = remember { mutableStateOf(false) }
 
         val (noteId, setNoteId) = remember { mutableStateOf("0") }
@@ -158,7 +145,6 @@ class NoteDetailFragment : Fragment() {
         val bottomSheetState = rememberBottomSheetState(initialValue = BottomSheetValue.Collapsed)
         val scaffoldState = rememberBottomSheetScaffoldState(bottomSheetState = bottomSheetState)
         val scope = rememberCoroutineScope()
-        val selectedPriority by remember { mutableStateOf(notePriority) }
 
         if (previewMode) {
             setNoteId(myData.id)
@@ -176,8 +162,6 @@ class NoteDetailFragment : Fragment() {
             setUpdateDate(myData.updateDate)
             setNoteData(myData)
         } else {
-
-
             LaunchedEffect(vm.toDoNoteByIdForEdit) {
                 viewLifecycleOwner.lifecycleScope.launch {
                     vm.toDoNoteByIdForEdit.flowWithLifecycle(
@@ -204,24 +188,21 @@ class NoteDetailFragment : Fragment() {
         }
         data class PriorityItem(val title: String, val icon: ImageVector, val priority: Priority)
 
-
         val bottomSheetPriorityItems = listOf(
             PriorityItem(title = stringResource(R.string.priority_standart), icon = Icons.Default.DoNotDisturbAlt, Priority.Standart),
             PriorityItem(title = stringResource(R.string.priority_low), icon = Icons.Default.LowPriority, Priority.Low),
             PriorityItem(title = stringResource(R.string.priority_hight), icon = Icons.Default.PriorityHigh, Priority.High),
         )
 
-
         BottomSheetScaffold(
             scaffoldState = scaffoldState,
-            //sheetShape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp),
+            sheetPeekHeight = 40.dp,
             sheetBackgroundColor = LocalMyColors.current.colorBackSecondary,
             sheetElevation = 16.dp,
             drawerElevation = 16.dp,
             sheetContent = {
                 Column(
                     content = {
-
                         Spacer(modifier = Modifier.padding(16.dp))
                         Text(
                             text = stringResource(R.string.choose_priority),
@@ -256,7 +237,6 @@ class NoteDetailFragment : Fragment() {
                                         color = if (notePriority == bottomSheetPriorityItems[it].priority) LocalMyColors.current.colorBlue else LocalMyColors.current.colorTertiary
                                     )
                                 }
-
                             })
                         }
                     },
@@ -268,29 +248,22 @@ class NoteDetailFragment : Fragment() {
                         )
                         .fillMaxWidth()
                         .height(250.dp)
-
                         .background(LocalMyColors.current.colorBackSecondary)
                         .padding(16.dp),
-
                     )
             },
 
-
 //////////////////////////////////////////////////////////////////////////////
-
 
         ) {
             Column(
                 modifier = Modifier
                     .background(LocalMyColors.current.colorBackPrimary)
                     .fillMaxWidth()
-
-
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
-
                 ) {
                     Column(
                         modifier = Modifier.weight(0.3f)
@@ -307,7 +280,6 @@ class NoteDetailFragment : Fragment() {
                                 tint = LocalMyColors.current.colorPrimary
                             )
                         }
-
                     }
                     TextButton(
                         onClick = {
@@ -338,7 +310,6 @@ class NoteDetailFragment : Fragment() {
                         )
                     }
                 }
-
 
                 //////////////////////////////////////
 
@@ -391,68 +362,31 @@ class NoteDetailFragment : Fragment() {
                                 modifier = Modifier.padding(top = 26.dp, start = 16.dp),
                                 color = LocalMyColors.current.colorPrimary
                             )
-
                             Text(text =
                             when (notePriority) {
                                 Priority.Standart -> stringResource(R.string.priority_standart)
                                 Priority.Low -> stringResource(R.string.priority_low)
                                 Priority.High -> stringResource(R.string.priority_hight)
                             },
-                                color = if (noteData.priority == Priority.High) {
+                                color = if (notePriority == Priority.High) {
                                     LocalMyColors.current.colorRed
                                 } else {
                                     LocalMyColors.current.colorSecondary
                                 },
+
                                 style = MaterialTheme.typography.body2,
                                 modifier = Modifier
                                     .padding(top = 16.dp, bottom = 16.dp, start = 16.dp)
-                                    .clickable { priorityExpand = true }
+                                    .clickable {
+                                        scope.launch {
+                                            if (bottomSheetState.isCollapsed) {
+                                                bottomSheetState.expand()
+                                            } else {
+                                                bottomSheetState.collapse()
+                                            }
+                                        }
+                                    }
                             )
-
-                            DropdownMenu(
-                                expanded = priorityExpand,
-                                onDismissRequest = { priorityExpand = false },
-                                modifier = Modifier
-                                    .background(LocalMyColors.current.colorBackSecondary)
-                                    .width(200.dp)
-                            ) {
-                                Text(
-                                    stringResource(R.string.priority_standart),
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            notePriority = Priority.Standart
-                                            priorityExpand = false
-                                        }
-                                        .padding(4.dp),
-                                    color = LocalMyColors.current.colorPrimary
-                                )
-                                Divider()
-                                Text(
-                                    stringResource(R.string.priority_low),
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            notePriority = Priority.Low
-                                            priorityExpand = false
-                                        }
-                                        .padding(4.dp),
-                                    color = LocalMyColors.current.colorPrimary
-                                )
-                                Divider()
-                                Text(
-                                    stringResource(R.string.priority_hight),
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            notePriority = Priority.High
-                                            priorityExpand = false
-                                        }
-                                        .padding(4.dp),
-                                    color = LocalMyColors.current.colorRed
-                                )
-                            }
-
                         }
                         //////////////////////////////////////
 
@@ -526,14 +460,11 @@ class NoteDetailFragment : Fragment() {
                                     initialDate = LocalDate.now(),
                                     title = "Pick a date",
                                     colors = DatePickerDefaults.colors(
-
                                         headerBackgroundColor = LocalMyColors.current.colorBlue,
                                         dateActiveBackgroundColor = LocalMyColors.current.colorBlue,
-
                                         ),
                                     allowedDateValidator = { date ->
                                         !date.isBefore(LocalDate.now())
-
                                     }
                                 ) {
                                     setDeadline((Date.from(it.atStartOfDay(ZoneId.systemDefault()).toInstant())).time)
@@ -587,11 +518,8 @@ class NoteDetailFragment : Fragment() {
                     }
                 }
             }
-
         }
-
     }
-
 
     private fun checkBeforeSave(text: String): Boolean {
         return if (text.isEmpty()) {

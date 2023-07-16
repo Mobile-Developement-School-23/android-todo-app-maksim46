@@ -6,7 +6,7 @@ import javax.inject.Inject
 class NavRoutingSP @Inject constructor(
     private val context: Context
 ) {
-    private val SP_FILENAME = "GetRevision"
+    private val SP_FILENAME = "GetRoutingInfo"
     private val ROUTING_KEY = "routing_key"
 
     fun getRoutingInfo(): String? {

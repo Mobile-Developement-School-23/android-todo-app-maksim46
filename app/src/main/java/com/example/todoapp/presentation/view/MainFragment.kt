@@ -153,9 +153,8 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                                     Manifest.permission.POST_NOTIFICATIONS
                                 )
                             }
-                            setNegativeButton(getString(R.string.Decline)) { dialog, id ->
-
-                            }
+/*                            setNegativeButton(getString(R.string.Decline)) { dialog, id ->
+                            }*/
                         }.create().show()
                     }
                 }

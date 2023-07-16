@@ -28,9 +28,9 @@
     <string name="er_404">Error 404: Element not found</string>
     <string name="er_unexpected">Unexpected HTTP status code</string>
     <string name="er_internal">Application runtime error</string>
-    <string name="permission_request">"The ability to send notifications allows you to be reminded of important things \n \n Agree to receive notifications?"</string>
+    <string name="permission_request">"The ability to send notifications allows you to be reminded of important things"</string>
     <string name="Decline">Decline</string>
-    <string name="Yes">Yes</string>
+    <string name="Yes">OK</string>
     <string name="channel_description">Used for the note notifications</string>
     <string name="choose_priority">Choose priority</string>
     <string name="undo">Undo</string>

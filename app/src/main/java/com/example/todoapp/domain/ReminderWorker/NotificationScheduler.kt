@@ -36,7 +36,7 @@ class NotificationScheduler @Inject constructor(
 
 
         // notify when screen start
-        /*                val workRequest = OneTimeWorkRequest.Builder(ReminderWorker::class.java).build()
+/*                        val workRequest = OneTimeWorkRequest.Builder(ReminderWorker::class.java).build()
                         val workManager = WorkManager.getInstance(context)
                         workManager.enqueueUniqueWork("as", ExistingWorkPolicy.KEEP, workRequest)*/
 

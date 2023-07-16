@@ -10,7 +10,10 @@ import android.widget.ImageButton
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation.findNavController
@@ -64,6 +67,7 @@ class MainViewController @Inject constructor(
         setUpYaLogin()
         setUpNav()
         setUpWantToDelete()
+
     }
 
     private fun setUpArticlesList() {
@@ -198,7 +202,7 @@ class MainViewController @Inject constructor(
 
                             PopupWindowsHandler.CallbackAction.Delete -> {
                                 vm.wantDelete((data as NoteData.ToDoItem).id)
-                                showSnackbarWithCountDown(rootView, (data as NoteData.ToDoItem).id)
+                                showSnackbarWithCountDown(rootView, (data as NoteData.ToDoItem).id,viewLifecycleOwner)
                                // vm.delete((data as NoteData.ToDoItem).id)
                             }
                         }
@@ -236,29 +240,42 @@ class MainViewController @Inject constructor(
     private fun setUpWantToDelete() {
         viewLifecycleOwner.lifecycleScope.launch {
             vm.wantDelete.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).collect {
-                showSnackbarWithCountDown(rootView,it)
+                showSnackbarWithCountDown(rootView,it,viewLifecycleOwner)
             }
         }
     }
 
 
-    private fun showSnackbarWithCountDown(view: View, id: String) {
+    private fun showSnackbarWithCountDown(view: View, id: String,    viewLifecycleOwner: LifecycleOwner) {
+
         val snackbar = Snackbar.make(view, "", Snackbar.LENGTH_INDEFINITE)
+
+
         val countDownTimer = object : CountDownTimer(5000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 snackbar.setText("${activity.getString(R.string.isDelete)} (${millisUntilFinished / 1000})")
             }
+
             override fun onFinish() {
                 snackbar.dismiss()
                 vm.delete(id)
             }
         }
+        (viewLifecycleOwner.lifecycle.addObserver(LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_PAUSE) {
+                countDownTimer.cancel()
+                snackbar.dismiss()
+            }
+        })
+                )
         snackbar.setAction(activity.getString(R.string.undo)) {
             countDownTimer.cancel()
             snackbar.dismiss()
         }
         snackbar.show()
         countDownTimer.start()
+
+
     }
 }
 
